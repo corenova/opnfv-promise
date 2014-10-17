@@ -18,7 +18,7 @@ StormForge enables plugin-based services extension capability to model
 each Virtualized Infrastructure Service and flexibly manage each of the
 running services.
 
-StormForge leverages [http://github.com/stormstack/cloudio](CloudIO)
+StormForge leverages [CloudIO](http://github.com/stormstack/cloudio)
 workflow processing engine to sequence the necessary southbound API
 interactions to the resource provider APIs across Compute, Storage,
 and Network.
