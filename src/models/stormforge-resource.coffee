@@ -2,24 +2,19 @@ DS = require '../stormforge'
 
 class StormForgeResource extends DS.Model
 
-    name: 'resource'
+    name: @attr 'string', required: true
+    provider: @belongsTo DS.ResourceProvider, required:true
 
-    schema:
-        name:        DS.attr 'string', required: true
+    # using the following resource elements that exist in the above provider!
+    flavor: @belongsTo DS.ResourceElement
+    image: @belongsTo DS.ResourceElement
+    networks: @hasMany DS.ResourceElement
 
-        # 1. allocated on 'provider'
-        provider:    DS.belongsTo 'resourceProvider', required:true
+    asset: @belongsTo DS.Asset
 
-        # using the following resource elements that exist in the above provider!
-        flavor:      DS.belongsTo 'resourceElement'
-        image:       DS.belongsTo 'resourceElement'
-        networks:    DS.hasMany   'resourceElement'
-
-        # the asset is the actual manifestation of this resource (it can CHANGE!)
-        isActive: DS.computed (->
-            try @get('asset').get('isActive') catch then false
-        ), property: 'asset.isActive'
-
-        asset: DS.belongsTo 'asset'
+    # the asset is the actual manifestation of this resource (it can CHANGE!)
+    isActive: @computed (->
+        try @get('asset').get('isActive') catch then false
+    ), property: 'asset.isActive'
 
 module.exports = StormForgeResource
