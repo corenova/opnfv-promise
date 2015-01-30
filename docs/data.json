@@ -1,0 +1,1233 @@
+{
+    "project": {
+        "name": "The StormForge API",
+        "description": "The StormForge API: a framework for building ambitious Virtual Infrastructure Manager Extensible Services",
+        "url": "http://github.com/stormstack/stormforge/wiki",
+        "version": "0.1.0"
+    },
+    "files": {
+        "src/models/stormforge-asset.coffee": {
+            "name": "src/models/stormforge-asset.coffee",
+            "modules": {
+                "StormForgeAsset": 1
+            },
+            "classes": {
+                "StormForgeAsset": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/models/stormforge-compute-service.coffee": {
+            "name": "src/models/stormforge-compute-service.coffee",
+            "modules": {
+                "ResourceProvider": 1
+            },
+            "classes": {
+                "ComputeCapacity": 1,
+                "Hypervisor": 1,
+                "ComputeService": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/models/stormforge-resource-pool.coffee": {
+            "name": "src/models/stormforge-resource-pool.coffee",
+            "modules": {
+                "StormForgeResource": 1
+            },
+            "classes": {
+                "ResourcePool": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/models/stormforge-resource-provider.coffee": {
+            "name": "src/models/stormforge-resource-provider.coffee",
+            "modules": {},
+            "classes": {
+                "ResourceElement": 1,
+                "ServiceCapacity": 1,
+                "ProviderService": 1,
+                "ResourceProvider": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/models/stormforge-resource-reservation.coffee": {
+            "name": "src/models/stormforge-resource-reservation.coffee",
+            "modules": {
+                "ResourceReservation": 1
+            },
+            "classes": {
+                "ResourceReservation": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/models/stormforge-resource.coffee": {
+            "name": "src/models/stormforge-resource.coffee",
+            "modules": {},
+            "classes": {
+                "StormForgeResource": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/stormforge.coffee": {
+            "name": "src/stormforge.coffee",
+            "modules": {
+                "StormForge": 1
+            },
+            "classes": {
+                "StormForge": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {
+        "StormForge": {
+            "name": "StormForge",
+            "submodules": {
+                "StormForgeAsset": 1,
+                "ResourceProvider": 1,
+                "StormForgeResource": 1,
+                "ResourceReservation": 1
+            },
+            "classes": {
+                "StormForgeAsset": 1,
+                "ComputeCapacity": 1,
+                "Hypervisor": 1,
+                "ComputeService": 1,
+                "ResourcePool": 1,
+                "ResourceElement": 1,
+                "ServiceCapacity": 1,
+                "ProviderService": 1,
+                "ResourceProvider": 1,
+                "ResourceReservation": 1,
+                "StormForgeResource": 1,
+                "StormForge": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "main",
+            "file": "src/stormforge.coffee",
+            "line": 9,
+            "description": "Provides the VIM Extensibe services",
+            "itemtype": "main"
+        },
+        "StormForgeAsset": {
+            "name": "StormForgeAsset",
+            "submodules": {},
+            "classes": {
+                "StormForgeAsset": 1
+            },
+            "fors": {},
+            "is_submodule": 1,
+            "namespaces": {},
+            "module": "StormForge",
+            "namespace": "",
+            "file": "src/models/stormforge-asset.coffee",
+            "line": 10,
+            "description": "StormForge Asset describes the actual instance properties such as the status, IP Address to reach etc.,",
+            "tag": "main",
+            "itemtype": "main"
+        },
+        "ResourceProvider": {
+            "name": "ResourceProvider",
+            "submodules": {},
+            "classes": {
+                "ComputeCapacity": 1,
+                "Hypervisor": 1,
+                "ComputeService": 1,
+                "ResourceElement": 1,
+                "ServiceCapacity": 1,
+                "ProviderService": 1,
+                "ResourceProvider": 1
+            },
+            "fors": {},
+            "is_submodule": 1,
+            "namespaces": {},
+            "module": "StormForge",
+            "namespace": "",
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 91,
+            "tag": "main",
+            "itemtype": "main",
+            "description": "Capacity of the compute in cores, ram and instances"
+        },
+        "StormForgeResource": {
+            "name": "StormForgeResource",
+            "submodules": {},
+            "classes": {
+                "ResourcePool": 1,
+                "StormForgeResource": 1
+            },
+            "fors": {},
+            "is_submodule": 1,
+            "namespaces": {},
+            "module": "StormForge",
+            "namespace": "",
+            "file": "src/models/stormforge-resource.coffee",
+            "line": 9,
+            "description": "A pool of resources from various Resource Providers",
+            "tag": "main",
+            "itemtype": "main"
+        },
+        "ResourceReservation": {
+            "name": "ResourceReservation",
+            "submodules": {},
+            "classes": {
+                "ResourceReservation": 1
+            },
+            "fors": {},
+            "is_submodule": 1,
+            "namespaces": {},
+            "module": "StormForge",
+            "namespace": "",
+            "file": "src/models/stormforge-resource-reservation.coffee",
+            "line": 9,
+            "description": "Resource reservation data model",
+            "tag": "main",
+            "itemtype": "main"
+        }
+    },
+    "classes": {
+        "StormForgeAsset": {
+            "name": "StormForgeAsset",
+            "shortname": "StormForgeAsset",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "StormForge",
+            "submodule": "StormForgeAsset",
+            "namespace": "",
+            "file": "src/models/stormforge-asset.coffee",
+            "line": 10,
+            "description": "Asset Contains actual instance details",
+            "extends": "DS.Model"
+        },
+        "ComputeCapacity": {
+            "name": "ComputeCapacity",
+            "shortname": "ComputeCapacity",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "StormForge",
+            "submodule": "ResourceProvider",
+            "namespace": "",
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 7,
+            "description": "Capacity of the compute in cores, ram and instances"
+        },
+        "Hypervisor": {
+            "name": "Hypervisor",
+            "shortname": "Hypervisor",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "StormForge",
+            "submodule": "ResourceProvider",
+            "namespace": "",
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 29,
+            "description": "Contains Hypervisor details"
+        },
+        "ComputeService": {
+            "name": "ComputeService",
+            "shortname": "ComputeService",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "StormForge",
+            "submodule": "ResourceProvider",
+            "namespace": "",
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 102,
+            "description": "Describes Compute Service",
+            "extends": "ProviderService"
+        },
+        "ResourcePool": {
+            "name": "ResourcePool",
+            "shortname": "ResourcePool",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "StormForge",
+            "submodule": "StormForgeResource",
+            "namespace": "",
+            "file": "src/models/stormforge-resource-pool.coffee",
+            "line": 8,
+            "extends": "DS.Model"
+        },
+        "ResourceElement": {
+            "name": "ResourceElement",
+            "shortname": "ResourceElement",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "StormForge",
+            "submodule": "ResourceProvider",
+            "namespace": "",
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 9,
+            "description": "Builds a relation between resource element with Resource Provider",
+            "extends": "DS.Model"
+        },
+        "ServiceCapacity": {
+            "name": "ServiceCapacity",
+            "shortname": "ServiceCapacity",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "StormForge",
+            "submodule": "ResourceProvider",
+            "namespace": "",
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 29,
+            "extends": "DS.Model"
+        },
+        "ProviderService": {
+            "name": "ProviderService",
+            "shortname": "ProviderService",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "StormForge",
+            "submodule": "ResourceProvider",
+            "namespace": "",
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 37,
+            "extends": "DS.Model"
+        },
+        "ResourceProvider": {
+            "name": "ResourceProvider",
+            "shortname": "ResourceProvider",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "StormForge",
+            "submodule": "ResourceProvider",
+            "namespace": "",
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 91,
+            "extends": "DS.Model"
+        },
+        "ResourceReservation": {
+            "name": "ResourceReservation",
+            "shortname": "ResourceReservation",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "StormForge",
+            "submodule": "ResourceReservation",
+            "namespace": "",
+            "file": "src/models/stormforge-resource-reservation.coffee",
+            "line": 9,
+            "description": "The reservation definition",
+            "extends": "DS.Model"
+        },
+        "StormForgeResource": {
+            "name": "StormForgeResource",
+            "shortname": "StormForgeResource",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "StormForge",
+            "submodule": "StormForgeResource",
+            "namespace": "",
+            "file": "src/models/stormforge-resource.coffee",
+            "line": 9,
+            "description": "Resource Contains details to create an asset\nNote: Asset is the actual manifestation of this resource (it can CHANGE!)",
+            "extends": "DS.Model"
+        },
+        "StormForge": {
+            "name": "StormForge",
+            "shortname": "StormForge",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "StormForge",
+            "namespace": "",
+            "file": "src/stormforge.coffee",
+            "line": 9,
+            "is_constructor": 1
+        }
+    },
+    "classitems": [
+        {
+            "file": "src/models/stormforge-asset.coffee",
+            "line": 21,
+            "itemtype": "attribute",
+            "name": "resource",
+            "type": "{StormForgeResource} it belongs to.",
+            "required": 1,
+            "class": "StormForgeAsset",
+            "module": "StormForge",
+            "submodule": "StormForgeAsset"
+        },
+        {
+            "file": "src/models/stormforge-asset.coffee",
+            "line": 27,
+            "itemtype": "attribute",
+            "name": "instance",
+            "type": "{String} UUID of the instance",
+            "required": 1,
+            "class": "StormForgeAsset",
+            "module": "StormForge",
+            "submodule": "StormForgeAsset"
+        },
+        {
+            "file": "src/models/stormforge-asset.coffee",
+            "line": 33,
+            "itemtype": "attribute",
+            "name": "isActive",
+            "type": "{Boolean} Active status of the asset",
+            "default": "false",
+            "class": "StormForgeAsset",
+            "module": "StormForge",
+            "submodule": "StormForgeAsset"
+        },
+        {
+            "file": "src/models/stormforge-asset.coffee",
+            "line": 39,
+            "itemtype": "attribute",
+            "name": "ipAddress",
+            "type": "{String} IP Address of the instance",
+            "class": "StormForgeAsset",
+            "module": "StormForge",
+            "submodule": "StormForgeAsset"
+        },
+        {
+            "file": "src/models/stormforge-asset.coffee",
+            "line": 44,
+            "itemtype": "attribute",
+            "name": "agent",
+            "type": "{String} UUID of the agent this instance belongs to",
+            "optional": 1,
+            "class": "StormForgeAsset",
+            "module": "StormForge",
+            "submodule": "StormForgeAsset"
+        },
+        {
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 13,
+            "itemtype": "attribute",
+            "name": "cores",
+            "type": "{Number} cores in the compute",
+            "class": "ComputeCapacity",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 18,
+            "itemtype": "attribute",
+            "name": "ram",
+            "type": "{Number} Total RAM in the compute",
+            "class": "ComputeCapacity",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 23,
+            "itemtype": "attribute",
+            "name": "instances",
+            "type": "{Number} instances running in the compute",
+            "class": "ComputeCapacity",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 36,
+            "itemtype": "attribute",
+            "name": "cpu",
+            "type": "{Number} Total number of CPU cores",
+            "class": "Hypervisor",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 41,
+            "itemtype": "attribute",
+            "name": "workload",
+            "type": "{Number} current workload of the hypervisor",
+            "class": "Hypervisor",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 46,
+            "itemtype": "attribute",
+            "name": "hostname",
+            "type": "{String} hostname of the hypervisor",
+            "class": "Hypervisor",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 51,
+            "itemtype": "attribute",
+            "name": "type",
+            "type": "{String} type of the hypervisor",
+            "class": "Hypervisor",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 56,
+            "itemtype": "attribute",
+            "name": "ram",
+            "type": "{Number} Total RAM in GB",
+            "class": "Hypervisor",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 61,
+            "itemtype": "attribute",
+            "name": "ramUsed",
+            "type": "{Number} Total RAM in GB used",
+            "class": "Hypervisor",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 66,
+            "itemtype": "attribute",
+            "name": "ramFree",
+            "type": "{Number} Total RAM in GB free",
+            "class": "Hypervisor",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 71,
+            "itemtype": "attribute",
+            "name": "disk",
+            "type": "{Number} Total disk in GB",
+            "class": "Hypervisor",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 76,
+            "itemtype": "attribute",
+            "name": "diskUsed",
+            "type": "{Number} Total disk in GB used",
+            "class": "Hypervisor",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 81,
+            "itemtype": "attribute",
+            "name": "diskFree",
+            "type": "{Number} Total disk iin GB free",
+            "class": "Hypervisor",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 86,
+            "itemtype": "attribute",
+            "name": "instances",
+            "type": "{Number} Total number of instances running",
+            "class": "Hypervisor",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 91,
+            "itemtype": "attribute",
+            "name": "vcpus",
+            "type": "{Number} Total number of VCPUs",
+            "class": "Hypervisor",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 96,
+            "itemtype": "attribute",
+            "name": "vcpusUsed",
+            "type": "{Number} Total number of VCPUs used",
+            "class": "Hypervisor",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 116,
+            "itemtype": "attribute",
+            "name": "quota",
+            "type": "{ComputeCapacity} Compute Quota",
+            "class": "ComputeService",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 121,
+            "itemtype": "attribute",
+            "name": "usage",
+            "type": "{ComputeCapacity} Compute Usage",
+            "class": "ComputeService",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 126,
+            "itemtype": "attribute",
+            "name": "reserved",
+            "type": "{ComputeCapacity} Compute Reserved",
+            "class": "ComputeService",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 131,
+            "itemtype": "method",
+            "name": "available",
+            "return": {
+                "description": "Available compute capacity",
+                "type": "ComputeCapacity"
+            },
+            "class": "ComputeService",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 137,
+            "itemtype": "attribute",
+            "name": "hypervisors",
+            "type": "{Hypervisor} list of hypervisors",
+            "class": "ComputeService",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-compute-service.coffee",
+            "line": 143,
+            "itemtype": "attribute",
+            "name": "instances",
+            "type": "{StormForgeAsset} list of instances",
+            "class": "ComputeService",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-resource-pool.coffee",
+            "line": 14,
+            "itemtype": "attribute",
+            "name": "providers",
+            "type": "{ResourceProvider} List of Resource Providers for this pool",
+            "required": 1,
+            "class": "ResourcePool",
+            "module": "StormForge",
+            "submodule": "StormForgeResource"
+        },
+        {
+            "file": "src/models/stormforge-resource-pool.coffee",
+            "line": 21,
+            "itemtype": "method",
+            "name": "compute",
+            "return": {
+                "description": "Aggregated  Compute resources in this pool",
+                "type": "ComputeService"
+            },
+            "class": "ResourcePool",
+            "module": "StormForge",
+            "submodule": "StormForgeResource"
+        },
+        {
+            "file": "src/models/stormforge-resource-pool.coffee",
+            "line": 28,
+            "itemtype": "method",
+            "name": "storage",
+            "return": {
+                "description": "Aggregated  Storage resources in this pool",
+                "type": "StorageService"
+            },
+            "class": "ResourcePool",
+            "module": "StormForge",
+            "submodule": "StormForgeResource"
+        },
+        {
+            "file": "src/models/stormforge-resource-pool.coffee",
+            "line": 35,
+            "itemtype": "method",
+            "name": "network",
+            "return": {
+                "description": "Aggregated  Network resources in this pool",
+                "type": "NetworkService"
+            },
+            "class": "ResourcePool",
+            "module": "StormForge",
+            "submodule": "StormForgeResource"
+        },
+        {
+            "file": "src/models/stormforge-resource-pool.coffee",
+            "line": 42,
+            "itemtype": "method",
+            "name": "elements",
+            "return": {
+                "description": "Aggregated  resources in this pool",
+                "type": "ResourceElement"
+            },
+            "class": "ResourcePool",
+            "module": "StormForge",
+            "submodule": "StormForgeResource"
+        },
+        {
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 15,
+            "itemtype": "attribute",
+            "name": "type",
+            "type": "{String} Type of the resource element",
+            "required": 1,
+            "class": "ResourceElement",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 22,
+            "itemtype": "attribute",
+            "name": "provider",
+            "type": "{ResourceProvider} mapping of the resource to the provider",
+            "required": 1,
+            "class": "ResourceElement",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 47,
+            "itemtype": "attribute",
+            "name": "provider",
+            "type": "{ResourceProvider} mapping of the resource to the provider",
+            "required": 1,
+            "class": "ProviderService",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 53,
+            "itemtype": "attribute",
+            "name": "endpoint",
+            "type": "{String} Endpoint to reach the provider service",
+            "required": 1,
+            "class": "ProviderService",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 61,
+            "itemtype": "attribute",
+            "name": "quota",
+            "type": "{ServiceCapacity} quota capacity of the provider service",
+            "class": "ProviderService",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 66,
+            "itemtype": "attribute",
+            "name": "usage",
+            "type": "{ServiceCapacity} usage capacity of the provider service",
+            "readonly": "",
+            "class": "ProviderService",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 72,
+            "itemtype": "attribute",
+            "name": "reserved",
+            "type": "{ServiceCapacity} reserved capacity of the provider service",
+            "readonly": "",
+            "class": "ProviderService",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 78,
+            "itemtype": "attribute",
+            "name": "available",
+            "type": "{ServiceCapacity} available capacity of the provider service",
+            "readonly": "",
+            "class": "ProviderService",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 84,
+            "itemtype": "attribute",
+            "name": "elements",
+            "type": "{ResourceElement} List of elements of the provider service",
+            "class": "ProviderService",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 102,
+            "itemtype": "attribute",
+            "name": "name",
+            "type": "{String} name of the resource provider",
+            "required": 1,
+            "class": "ResourceProvider",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 108,
+            "itemtype": "attribute",
+            "name": "username",
+            "type": "{String} username for the resource provider",
+            "required": 1,
+            "class": "ResourceProvider",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 114,
+            "itemtype": "attribute",
+            "name": "password",
+            "type": "{String} password for the resource provider",
+            "required": 1,
+            "class": "ResourceProvider",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 120,
+            "itemtype": "attribute",
+            "name": "endpoint",
+            "type": "{String} Endpoint to reach resource provider",
+            "required": 1,
+            "class": "ResourceProvider",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 127,
+            "itemtype": "attribute",
+            "name": "tenant",
+            "type": "{String} tenant in the resource provider",
+            "required": 1,
+            "class": "ResourceProvider",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 133,
+            "itemtype": "attribute",
+            "name": "regionName",
+            "type": "{String} region name of the resource provider",
+            "required": 1,
+            "class": "ResourceProvider",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 139,
+            "itemtype": "attribute",
+            "name": "identity",
+            "type": "{IdentityService} Identity details of resource provider",
+            "required": 1,
+            "class": "ResourceProvider",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 146,
+            "itemtype": "attribute",
+            "name": "image",
+            "type": "{ImageService} Image Service details of the resource provider",
+            "required": 1,
+            "class": "ResourceProvider",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 152,
+            "itemtype": "attribute",
+            "name": "compute",
+            "type": "{ComputeService} Compute Service details of the resource provider",
+            "required": 1,
+            "class": "ResourceProvider",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 159,
+            "itemtype": "attribute",
+            "name": "flavors",
+            "type": "{ResourceFlavor} flavors to use with this resource provider",
+            "required": 1,
+            "class": "ResourceProvider",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-resource-provider.coffee",
+            "line": 170,
+            "itemtype": "method",
+            "name": "elements",
+            "return": {
+                "description": "List of resource elements in this resource provider",
+                "type": "ResourceElement"
+            },
+            "class": "ResourceProvider",
+            "module": "StormForge",
+            "submodule": "ResourceProvider"
+        },
+        {
+            "file": "src/models/stormforge-resource-reservation.coffee",
+            "line": 16,
+            "itemtype": "attribute",
+            "name": "pool",
+            "type": "{ResourcePool} it belongs to.",
+            "class": "ResourceReservation",
+            "module": "StormForge",
+            "submodule": "ResourceReservation"
+        },
+        {
+            "file": "src/models/stormforge-resource-reservation.coffee",
+            "line": 22,
+            "itemtype": "attribute",
+            "name": "start",
+            "type": "{Date} Start date for this reservation",
+            "required": 1,
+            "class": "ResourceReservation",
+            "module": "StormForge",
+            "submodule": "ResourceReservation"
+        },
+        {
+            "file": "src/models/stormforge-resource-reservation.coffee",
+            "line": 28,
+            "itemtype": "attribute",
+            "name": "end",
+            "type": "{Date} End date for this reservation",
+            "required": 1,
+            "class": "ResourceReservation",
+            "module": "StormForge",
+            "submodule": "ResourceReservation"
+        },
+        {
+            "file": "src/models/stormforge-resource-reservation.coffee",
+            "line": 35,
+            "itemtype": "attribute",
+            "name": "isActive",
+            "type": "{Boolean} Status of this reservation",
+            "default": "false",
+            "class": "ResourceReservation",
+            "module": "StormForge",
+            "submodule": "ResourceReservation"
+        },
+        {
+            "file": "src/models/stormforge-resource-reservation.coffee",
+            "line": 42,
+            "description": "reservable element-based reservation (such as images, flavors, etc.)",
+            "itemtype": "attribute",
+            "name": "elsements",
+            "type": "{ResourceElement} List of resource Elements for this provider",
+            "class": "ResourceReservation",
+            "module": "StormForge",
+            "submodule": "ResourceReservation"
+        },
+        {
+            "file": "src/models/stormforge-resource-reservation.coffee",
+            "line": 49,
+            "description": "capacity-based reservation",
+            "itemtype": "attribute",
+            "name": "compute",
+            "type": "{ComputeCapacity} Capacity of compute resources to use",
+            "class": "ResourceReservation",
+            "module": "StormForge",
+            "submodule": "ResourceReservation"
+        },
+        {
+            "file": "src/models/stormforge-resource-reservation.coffee",
+            "line": 55,
+            "description": "capacity-based reservation",
+            "itemtype": "attribute",
+            "name": "storage",
+            "type": "{StorageCapacity} Capacity of Storage resources to use",
+            "class": "ResourceReservation",
+            "module": "StormForge",
+            "submodule": "ResourceReservation"
+        },
+        {
+            "file": "src/models/stormforge-resource-reservation.coffee",
+            "line": 61,
+            "description": "capacity-based reservation",
+            "itemtype": "attribute",
+            "name": "network",
+            "type": "{NetworkCapacity} Capacity of Network resources to use",
+            "class": "ResourceReservation",
+            "module": "StormForge",
+            "submodule": "ResourceReservation"
+        },
+        {
+            "file": "src/models/stormforge-resource-reservation.coffee",
+            "line": 68,
+            "itemtype": "attribute",
+            "name": "allocations",
+            "type": "{ResourceAllocation} Resources allocated for this reservation",
+            "readonly": "",
+            "class": "ResourceReservation",
+            "module": "StormForge",
+            "submodule": "ResourceReservation"
+        },
+        {
+            "file": "src/models/stormforge-resource-reservation.coffee",
+            "line": 74,
+            "itemtype": "attribute",
+            "name": "usedCompute",
+            "type": "{ComputeCapacity} Compute capacity used for this reservation",
+            "readonly": "",
+            "class": "ResourceReservation",
+            "module": "StormForge",
+            "submodule": "ResourceReservation"
+        },
+        {
+            "file": "src/models/stormforge-resource-reservation.coffee",
+            "line": 80,
+            "itemtype": "attribute",
+            "name": "usedStorage",
+            "type": "{StorageCapacity} Storage capacity used for this reservation",
+            "readonly": "",
+            "class": "ResourceReservation",
+            "module": "StormForge",
+            "submodule": "ResourceReservation"
+        },
+        {
+            "file": "src/models/stormforge-resource-reservation.coffee",
+            "line": 86,
+            "itemtype": "attribute",
+            "name": "usedNetwork",
+            "type": "{NetworkCapacity} Network capacity used for this reservation",
+            "readonly": "",
+            "class": "ResourceReservation",
+            "module": "StormForge",
+            "submodule": "ResourceReservation"
+        },
+        {
+            "file": "src/models/stormforge-resource.coffee",
+            "line": 17,
+            "itemtype": "attribute",
+            "name": "name",
+            "type": "{String} Name of the resource",
+            "required": 1,
+            "class": "StormForgeResource",
+            "module": "StormForge",
+            "submodule": "StormForgeResource"
+        },
+        {
+            "file": "src/models/stormforge-resource.coffee",
+            "line": 23,
+            "itemtype": "attribute",
+            "name": "provider",
+            "type": "{ResourceProvider} Provider where the asset is brought up",
+            "required": 1,
+            "class": "StormForgeResource",
+            "module": "StormForge",
+            "submodule": "StormForgeResource"
+        },
+        {
+            "file": "src/models/stormforge-resource.coffee",
+            "line": 31,
+            "itemtype": "attribute",
+            "name": "flavor",
+            "type": "{ResourceElement} flavor to use for the asset",
+            "required": 1,
+            "class": "StormForgeResource",
+            "module": "StormForge",
+            "submodule": "StormForgeResource"
+        },
+        {
+            "file": "src/models/stormforge-resource.coffee",
+            "line": 37,
+            "itemtype": "attribute",
+            "name": "image",
+            "type": "{ResourceElement} Image to use for the asset",
+            "required": 1,
+            "class": "StormForgeResource",
+            "module": "StormForge",
+            "submodule": "StormForgeResource"
+        },
+        {
+            "file": "src/models/stormforge-resource.coffee",
+            "line": 43,
+            "itemtype": "attribute",
+            "name": "networks",
+            "type": "{ResourceElement} Networks to use for the asset",
+            "required": 1,
+            "class": "StormForgeResource",
+            "module": "StormForge",
+            "submodule": "StormForgeResource"
+        },
+        {
+            "file": "src/models/stormforge-resource.coffee",
+            "line": 49,
+            "itemtype": "attribute",
+            "name": "asset",
+            "type": "{StormForgeAsset} Asset associated with this resource",
+            "class": "StormForgeResource",
+            "module": "StormForge",
+            "submodule": "StormForgeResource"
+        },
+        {
+            "file": "src/models/stormforge-resource.coffee",
+            "line": 56,
+            "itemtype": "method",
+            "name": "isActive",
+            "return": {
+                "description": "status of the asset associated with this resource",
+                "type": "Boolean"
+            },
+            "class": "StormForgeResource",
+            "module": "StormForge",
+            "submodule": "StormForgeResource"
+        },
+        {
+            "file": "src/stormforge.coffee",
+            "line": 26,
+            "description": "Contains APIs for Resource Providers",
+            "itemtype": "attribute",
+            "name": "resourceProviders",
+            "type": "ResourceProvider",
+            "default": "none",
+            "example": [
+                "\n    POST /stormforge/resourceProviders"
+            ],
+            "class": "StormForge",
+            "module": "StormForge"
+        },
+        {
+            "file": "src/stormforge.coffee",
+            "line": 35,
+            "description": "Contains APIs for Resource Provider Services",
+            "itemtype": "attribute",
+            "name": "providerServices",
+            "type": "ProviderService",
+            "default": "none",
+            "class": "StormForge",
+            "module": "StormForge"
+        },
+        {
+            "file": "src/stormforge.coffee",
+            "line": 42,
+            "description": "Contains APIs for Resource Elements",
+            "itemtype": "attribute",
+            "name": "resourceElements",
+            "type": "ResourceElement",
+            "default": "none",
+            "class": "StormForge",
+            "module": "StormForge"
+        },
+        {
+            "file": "src/stormforge.coffee",
+            "line": 49,
+            "description": "Contains APIs for  Resource Pools",
+            "itemtype": "attribute",
+            "name": "resourcePools",
+            "type": "ResourcePool",
+            "default": "none",
+            "class": "StormForge",
+            "module": "StormForge"
+        },
+        {
+            "file": "src/stormforge.coffee",
+            "line": 56,
+            "description": "Contains APIs for reservations",
+            "itemtype": "attribute",
+            "name": "reservations",
+            "type": "ResourceReservation",
+            "default": "none",
+            "class": "StormForge",
+            "module": "StormForge"
+        },
+        {
+            "file": "src/stormforge.coffee",
+            "line": 63,
+            "description": "Contains APIs foro Resources",
+            "itemtype": "attribute",
+            "name": "resources",
+            "type": "StormForgeResource",
+            "default": "none",
+            "class": "StormForge",
+            "module": "StormForge"
+        },
+        {
+            "file": "src/stormforge.coffee",
+            "line": 71,
+            "description": "Contains APIs for Assets",
+            "itemtype": "attribute",
+            "name": "assets",
+            "type": "StormForgeAsset",
+            "default": "none",
+            "class": "StormForge",
+            "module": "StormForge"
+        }
+    ],
+    "warnings": []
+}

@@ -1,0 +1,12 @@
+{
+    "name": "The StormForge API",
+    "description": "The StormForge API: a framework for building ambitious Virtual Infrastructure Manager Extensible Services",
+    "url": "http://github.com/stormstack/stormforge/wiki",
+    "options": {
+        "paths": [
+            "./src"
+            ],
+        "exclude": "/lib",
+        "outdir":   "docs"
+    }
+}

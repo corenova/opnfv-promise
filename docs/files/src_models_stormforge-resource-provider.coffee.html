@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/models/stormforge-resource-provider.coffee - The StormForge API</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="The StormForge API"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 0.1.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/ComputeCapacity.html">ComputeCapacity</a></li>
+                                <li><a href="../classes/ComputeService.html">ComputeService</a></li>
+                                <li><a href="../classes/Hypervisor.html">Hypervisor</a></li>
+                                <li><a href="../classes/ProviderService.html">ProviderService</a></li>
+                                <li><a href="../classes/ResourceElement.html">ResourceElement</a></li>
+                                <li><a href="../classes/ResourcePool.html">ResourcePool</a></li>
+                                <li><a href="../classes/ResourceProvider.html">ResourceProvider</a></li>
+                                <li><a href="../classes/ResourceReservation.html">ResourceReservation</a></li>
+                                <li><a href="../classes/ServiceCapacity.html">ServiceCapacity</a></li>
+                                <li><a href="../classes/StormForge.html">StormForge</a></li>
+                                <li><a href="../classes/StormForgeAsset.html">StormForgeAsset</a></li>
+                                <li><a href="../classes/StormForgeResource.html">StormForgeResource</a></li>
+                            </ul>
+                
+                            <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/ResourceProvider.html">ResourceProvider</a></li>
+                                <li><a href="../modules/ResourceReservation.html">ResourceReservation</a></li>
+                                <li><a href="../modules/StormForge.html">StormForge</a></li>
+                                <li><a href="../modules/StormForgeAsset.html">StormForgeAsset</a></li>
+                                <li><a href="../modules/StormForgeResource.html">StormForgeResource</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <h1 class="file-heading">File: src/models/stormforge-resource-provider.coffee</h1>
+                        
+                        <div class="file">
+                            <pre class="code prettyprint linenums">
+                        ###*
+                         @module StormForge
+                         @submodule ResourceProvider
+                         @main ResourceProvider
+                        ###
+                        
+                        DS = require &#x27;../stormforge&#x27;
+                        
+                        ###*
+                         Builds a relation between resource element with Resource Provider
+                         @class ResourceElement
+                         @extends DS.Model
+                        ###
+                        class ResourceElement extends DS.Model
+                        ###*
+                         @attribute type
+                         @type {String} Type of the resource element
+                         @required
+                        ###
+                            type:      DS.attr &#x27;string&#x27;, required: true
+                            # must define the provider that has this resource element!
+                        ###*
+                         @attribute provider
+                         @type {ResourceProvider} mapping of the resource to the provider
+                         @required
+                        ###
+                            provider:  @belongsTo DS.Provider, required: true
+                        
+                        ###*
+                         @class ServiceCapacity
+                         @extends DS.Model
+                        ###
+                        class ServiceCapacity extends DS.Model
+                            alias: &#x27;serviceCapacity&#x27;
+                        
+                        
+                        ###*
+                         @class ProviderService
+                         @extends DS.Model
+                        ###
+                        class ProviderService extends DS.Model
+                            alias: &#x27;providerService&#x27;
+                        
+                            @Capacity = ServiceCapacity
+                            @Element  = ResourceElement
+                        
+                        ###*
+                         @attribute provider
+                         @type {ResourceProvider} mapping of the resource to the provider
+                         @required
+                        ###
+                            provider: @belongsTo DS.Provider, required: true
+                        ###*
+                         @attribute endpoint
+                         @type {String} Endpoint to reach the provider service
+                         @required
+                        ###
+                            endpoint: @attr &#x27;string&#x27;, required: true
+                        
+                            # the following properties must be sub-classed by specific service
+                        ###*
+                         @attribute quota
+                         @type {ServiceCapacity} quota capacity of the provider service
+                        ###
+                            quota:     @belongsTo @Capacity, embedded: true
+                        ###*
+                         @attribute usage
+                         @type {ServiceCapacity} usage capacity of the provider service
+                         @readonly
+                        ###
+                            usage:     @belongsTo @Capacity, embedded: true, readonly: true
+                        ###*
+                         @attribute reserved
+                         @type {ServiceCapacity} reserved capacity of the provider service
+                         @readonly
+                        ###
+                            reserved:  @belongsTo @Capacity, embedded: true, readonly: true
+                        ###*
+                         @attribute available
+                         @type {ServiceCapacity} available capacity of the provider service
+                         @readonly
+                        ###
+                            available: @belongsTo @Capacity, embedded: true, readonly: true
+                        ###*
+                         @attribute elements
+                         @type {ResourceElement} List of elements of the provider service
+                        ###
+                        
+                            elements: @hasMany @Element
+                        
+                        ###*
+                         @class ResourceProvider
+                         @extends DS.Model
+                        ###
+                        class ResourceProvider extends DS.Model
+                        
+                            @Service = ProviderService
+                            @ComputeService  = require &#x27;./stormforge-compute-service&#x27;
+                            @ImageService    = require &#x27;./stormforge-image-service&#x27;
+                            @IdentityService = require &#x27;./stormforge-identity-service&#x27;
+                        
+                        ###*
+                         @attribute name
+                         @type {String} name of the resource provider
+                         @required
+                        ###
+                            name:        DS.attr &#x27;string&#x27;, required: true
+                        ###*
+                         @attribute username
+                         @type {String} username for the resource provider
+                         @required
+                        ###
+                            username:    DS.attr &#x27;string&#x27;, required: true
+                        ###*
+                         @attribute password
+                         @type {String} password for the resource provider
+                         @required
+                        ###
+                            password:    DS.attr &#x27;string&#x27;, required: true
+                        ###*
+                         @attribute endpoint
+                         @type {String} Endpoint to reach resource provider
+                         @required
+                        ###
+                        
+                            endpoint:    DS.attr &#x27;string&#x27;, required: true
+                        ###*
+                         @attribute tenant
+                         @type {String} tenant in the resource provider
+                         @required
+                        ###
+                            tenant:      DS.attr &#x27;string&#x27;, required: true
+                        ###*
+                         @attribute regionName
+                         @type {String} region name of the resource provider
+                         @required
+                        ###
+                            regionName:  DS.attr &#x27;string&#x27;, required: true
+                        ###*
+                         @attribute identity
+                         @type {IdentityService} Identity details of resource provider
+                         @required
+                        ###
+                        
+                            identity: @belongsTo @IdentityService, required: true
+                        ###*
+                         @attribute image
+                         @type {ImageService} Image Service details of the resource provider
+                         @required
+                        ###
+                            image:    @belongsTo @ImageService, required: true
+                        ###*
+                         @attribute compute
+                         @type {ComputeService} Compute Service details of the resource provider
+                         @required
+                        ###
+                            compute:  @belongsTo @ComputeService, required: true
+                        
+                        ###*
+                         @attribute flavors
+                         @type {ResourceFlavor} flavors to use with this resource provider
+                         @required
+                        ###
+                            flavors: @hasMany @ResourceFlavor
+                        
+                            # storage: @belongsTo @StorageService
+                            # network: @belongsTo @NetworkService
+                        
+                            # auto-computed list of all Elements from provider&#x27;s Services
+                        ###*
+                          @method elements
+                          @return {ResourceElement} List of resource elements in this resource provider
+                        ###
+                            elements: @computed (-&gt;
+                                Array::concat.apply (@get(service).get(&#x27;elements&#x27;) for service in [&#x27;identity&#x27;, &#x27;image&#x27;, &#x27;compute&#x27;])
+                            )
+                        
+                        module.exports = ResourceProvider
+                        
+                        
+                        
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>
