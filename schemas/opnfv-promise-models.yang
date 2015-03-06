@@ -1,0 +1,120 @@
+module opnfv-promise-models {
+  prefix opm;
+
+  import yang-storm-compiler { prefix ys; }
+  
+  import opnfv-vim {
+    //prefix rp;
+    ys:source '../schemas/opnfv-vim.yang';
+  }
+  import openstack-vim {
+    //prefix orp
+    ys:source '../schemas/openstack-vim.yang';
+  }
+    
+  ys:complex-type ResourcePool {
+    ys:instance-list providers {
+      description "List of ResourceProvider belonging to this ResourcePool"
+      ys:instance-type ResourceProvider;
+    }
+    container services {
+      ys:instance compute {
+        ys:instance-type ComputeServicee;
+        ys:computed true;
+        // aggregate all compute-service data models into a single entry
+      }
+      ys:instance storage {
+        ys:instance-type StorageService;
+        ys:computed true;
+        // aggregate all storage-service data models into a single entry
+      }
+      ys:instance network {
+        description
+          "An aggregate representation of all 'network-service' data
+          models available across 'providers'";
+        ys:instance-type NetworkService;
+        ys:computed true;
+      }
+      ys:instance-list elements {
+        ys:instance-type ResourceElement;
+        ys:computed true;
+        //Array::concat.apply null, (provider.get('elements') for provider in @get('providers'))
+      }
+    }
+  }
+
+  ys:complex-type ResourceReservation {
+    ys:instance pool {
+      ys:instance-type ResourcePool;
+    }
+    leaf start { type ys:date-and-time; }
+    leaf end   { type ys:date-and-time; }
+    leaf priority {
+      type number;
+      config false;
+    }
+
+    container request {
+      description
+        "The request should contain the capacities of various
+         resource services being reserved along with any resource
+         elements needed to be available at the time of
+         allocation(s).
+
+         Optionally, a list of allocations can be specified, which
+         will take effect automatically at the time of reservation
+         'start' date/time if the reservation request is accepted.";
+
+      container capacity {
+        container compute { uses ComputeCapacity; }
+        container storage { uses StorageCapacity; }
+        container network { uses NetworkCapacity; }
+      }
+      ys:instance-list elements {
+        ys:instance-type ResourceElement;
+      }
+      ys:instance-list allocations {
+        ys:instance-type ResourceAllocation;
+      }
+    }
+    
+    container consumed {
+      description
+        "Provides visibility into total consumed capacity for this
+         reservation based on allocations that took effect utilizing
+         this reservation ID as a reference.";
+      
+      container capacity {
+        container compute { uses ComputeCapacity; config false; }
+        container storage { uses StorageCapacity; config false; }
+        container network { uses NetworkCapacity; config false; }
+      }
+      ys:instance-list allocations {
+        ys:instance-type ResourceAllocation;
+        config false;
+      } 
+    }
+  }
+
+  // below Allocation related models are WIP...
+  
+  ys:complex-type AllocationDescription {
+    leaf name { type string; }
+
+    ys:instance provider { ys:instance-type ResourceProvider; }
+    ys:instance flavor { ys:instance-type ResourceElement; }
+    ys:instance image { ys:instance-type ResourceElement; }
+    //(@get 'provider.elements').contains id: value
+
+    ys:instance-list networks {
+      ys:instance-type ResourceElement;
+    }
+  }
+
+  ys:complex-type ResourceAllocation {
+    ys:instance reservation {
+      ys:instance-type ResourceReservation;
+    }
+  }
+}
+

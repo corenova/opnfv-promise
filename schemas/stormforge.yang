@@ -1,0 +1,54 @@
+module stormforge {
+  namespace "http://github.com/stormstack/stormforge";
+  prefix sf;
+
+  import yang-storm-compiler { prefix ys; }
+  import opnfv-promise-models {
+    prefix opm;
+    ys:source '../schemas/opnfv-promise-models.yang';
+  }
+
+  description
+    "Virtualized Infrastructure Manager Data Models with complex types and
+typed instance identifiers representing Resource providers, pools,
+capacities, reservations, etc.";
+  
+  revision 2015-03-05 {
+    description
+      "The 'stormforge' YANG module is modeled using 'yang-storm-compiler'
+which natively provides complex types and typed instance identifiers.
+This module provides various collections of data models defined in
+'stormforge-models' schema for instance based management";
+  }
+
+  feature provider {
+    description "If supported, the endpoint can be used manage one or more resource providers";
+  }
+
+  // MAIN CONTAINER
+
+  container stormforge {
+    description "Top-level node of the stormforge data model";
+    
+    ys:instance-list resourceProviders {
+      if-feature provider;
+      description "Aggregate collection of all registered ResourceProvider instances"
+      ys:instance-type opm:ResourceProvider;
+    }
+    
+    ys:instance-list providerServices {
+      description "Aggregate collection of all registered ProviderService instances"
+      ys:instance-type opm:ProviderService;
+    }
+    
+    ys:instance-list resourcePools {
+      description "Aggregate collection of all registered ResourcePool instances"
+      ys:instance-type opm:ResourcePool;
+    }
+
+    ys:instance-list resourceReservations {
+      description "Aggregate collection of all registered ResourceReservation instances"
+      ys:instance-type opm:ResourceReservation;
+    } 
+  }
+}

@@ -1,0 +1,94 @@
+module opnvf-vim {
+  prefix vim;
+
+  import yang-storm-compiler { prefix ys; }
+
+  /*********************************************
+   * Abstract Models (must be subclassed)
+   *********************************************/
+  ys:complex-type ResourceElement {
+    ys:abstract true;
+    leaf name { type string; }
+  }
+  
+  ys:complex-type ResourceProvider {
+    ys:abstract true;
+    
+    leaf name { type string; }
+    leaf endpoint { type uri; }
+    leaf tenant { type string; }
+    leaf region { type string; }
+
+    container credentials {
+      leaf username { type string; }
+      leaf password { type string; }
+    }
+    
+    container services {
+      description 'Conceptual container that will be extended by explicit provider';
+    }
+    
+    ys:instance-list flavors { ys:instance-type ResourceElement; }
+    ys:instance-list elements {
+      ys:instance-type ResourceElement;
+      ys:computed true;
+      //Array::concat.apply null, (service.get "elements") for name, service of (@get 'services')
+    }
+  }
+  
+  ys:complex-type ProviderService {
+    ys:abstract true;
+    
+    ys:instance provider { ys:instance-type ResourceProvider; }
+    leaf endpoint { type uri; }
+    container capacity {
+      container quota { description 'Conceptual container that should be extended'; config false; }
+      container usage { description 'Conceptual container that should be extended'; config false; }
+      container reserved { description 'Conceptual container that should be extended'; config false; }
+      container available { description 'Conceptual container that should be extended'; config false; }
+    }
+    ys:instance-list elements { ys:instance-type ResourceElement; }
+  }
+
+  ys:complex-type ServiceCapacity {
+    ys:abstract true;
+    leaf timestamp { type ys:date-and-time; }
+  }
+
+  /*********************************************
+   * Compute Models
+   *********************************************/
+  
+  ys:complex-type ComputeCapacity {
+    ys:extends ServiceCapacity;
+    
+    leaf cores { type number; default 0; }
+    leaf ram { type number: default 0; }
+    leaf instances { type number; default 0; }
+  }
+
+  ys:complex-type ComputeInstance {
+    leaf created-on { type ys:data-and-time; }
+    leaf ip-address { type ys:ip-address; }
+  }
+  
+  ys:complex-type ComputeService {
+    ys:extends ProviderService;
+    
+    augment /capacity/quota { uses ComputeCapacity; }
+    augment /capacity/usage { uses ComputeCapacity; }
+    augment /capacity/reserved { uses ComputeCapacity; }
+    augment /capacity/available {
+      uses ComputeCapacity;
+      ys:computed true;
+      //available = quota - usage - reserved
+    }
+      
+    ys:instance-list instances {
+      ys:instance-type ComputeInstance;
+      config false;
+      ys:computed true;
+      // get a list of servers (@invoke 'list-serves')
+    }
+  }
+}

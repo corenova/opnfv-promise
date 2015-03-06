@@ -1,28 +1,39 @@
-stormforge
-==========
+# stormforge
 
-A DataStorm to manage instantiation of virtual resources across
-providers 
+A YANG module which provides a collection of Virtualized
+Infrastructure Manager resource models to provide data model driven
+management of resources across providers.
 
-StormForge provides various API-driven services for managing
-a Virtualized Infrastructure.
+  [![NPM Version][npm-image]][npm-url]
+  [![NPM Downloads][downloads-image]][downloads-url]
+
+This module is maintained under direction of
+[OPNFV Promise](http://wiki.opnfv.org/promise) project.
 
 Currently planned key services are:
 
-* Resource Reservation Service
 * Resource Capacity Management Service
+* Resource Reservation Service
 
-Primary target Virtualized Infrastructure is OpenStack.
+## Installation
+```bash
+$ npm install stormforge
+```
 
-StormForge is created using the
-[stormify](http://github.com/stormstack/stormify) data modeling
-framework in order to model each Virtualized Infrastructure Service
-and flexibly manage each of the running services.
+## Literate Coffeescript Documentation
 
-StormForge is used in conjunction with
-[StormIO](http://github.com/stormstack/stormio) workflow processing
-engine to sequence the necessary southbound API interactions to the
-resource provider APIs across Compute, Storage, and Network.
+* [YANG stormforge Module](src/stormforge.litcoffee)
 
-StormForge DataStorm is invoked by using
-[stormrunner](http://github.com/stormstack/stormrunner).
+## YANG Schemas
+* [stormforge](schemas/stormforge.yang)
+* [opnfv-promise-models](schemas/opnfv-promise-models.yang)
+* [opnfv-vim](schemas/opnfv-vim.yang)
+* [opnstack-vim](schemas/openstack-vim.yang)
+
+## License
+  [MIT](LICENSE)
+
+[npm-image]: https://img.shields.io/npm/v/stormforge.svg
+[npm-url]: https://npmjs.org/package/stormforge
+[downloads-image]: https://img.shields.io/npm/dm/stormforge.svg
+[downloads-url]: https://npmjs.org/package/stormforge
