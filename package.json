@@ -13,7 +13,7 @@
     "bunyan": "^0.23.1",
     "minimist": "0.1.0",
     "promise": "^6.0.1",
-    "yang-storm": ">=0.3.1"
+    "yang-storm": ">=0.3.2"
   },
   "devDependencies": {
     "chai": "^1.10.0",
@@ -27,7 +27,6 @@
     "node": ">=1.0.x"
   },
   "main": "./lib/stormforge",
-  "stormify": {},
   "scripts": {
 		"prepublish": "mkdir -p lib; coffee -o lib -c src",
     "test": "mocha test --recursive"
