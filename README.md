@@ -28,7 +28,7 @@ $ npm install stormforge
 * [stormforge](schemas/stormforge.yang)
 * [opnfv-promise-models](schemas/opnfv-promise-models.yang)
 * [opnfv-vim](schemas/opnfv-vim.yang)
-* [opnstack-vim](schemas/openstack-vim.yang)
+* [openstack-vim](schemas/openstack-vim.yang)
 
 ## License
   [MIT](LICENSE)
