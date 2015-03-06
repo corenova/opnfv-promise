@@ -5,7 +5,7 @@ module stormforge {
   import yang-storm-compiler { prefix ys; }
   import opnfv-promise-models {
     prefix opm;
-    ys:source '../schemas/opnfv-promise-models.yang';
+    ys:source './opnfv-promise-models.yang';
   }
 
   description
@@ -32,22 +32,22 @@ This module provides various collections of data models defined in
     
     ys:instance-list resourceProviders {
       if-feature provider;
-      description "Aggregate collection of all registered ResourceProvider instances"
+      description "Aggregate collection of all registered ResourceProvider instances";
       ys:instance-type opm:ResourceProvider;
     }
     
     ys:instance-list providerServices {
-      description "Aggregate collection of all registered ProviderService instances"
+      description "Aggregate collection of all registered ProviderService instances";
       ys:instance-type opm:ProviderService;
     }
     
     ys:instance-list resourcePools {
-      description "Aggregate collection of all registered ResourcePool instances"
+      description "Aggregate collection of all registered ResourcePool instances";
       ys:instance-type opm:ResourcePool;
     }
 
     ys:instance-list resourceReservations {
-      description "Aggregate collection of all registered ResourceReservation instances"
+      description "Aggregate collection of all registered ResourceReservation instances";
       ys:instance-type opm:ResourceReservation;
     } 
   }
