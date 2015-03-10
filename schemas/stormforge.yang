@@ -2,10 +2,10 @@ module stormforge {
   namespace "http://github.com/stormstack/stormforge";
   prefix sf;
 
-  import yang-storm-compiler { prefix ys; }
+  import yang-storm { prefix ys; }
   import opnfv-promise-models {
     prefix opm;
-    ys:source './opnfv-promise-models.yang';
+    ys:source 'opnfv-promise-models.yang';
   }
 
   description

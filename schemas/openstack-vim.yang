@@ -1,7 +1,7 @@
 module openstack-vim {
   prefix osvim;
   
-  import yang-storm-compiler { prefix ys; }
+  import yang-storm { prefix ys; }
   import opnfv-vim { prefix vim; }
 
   ys:complex-type Hypervisor {
@@ -38,7 +38,7 @@ module openstack-vim {
   ys:complex-type OpenStack {
     ys:extends vim:ResourceProvider;
     augment {
-      leaf tenant { type string }
+      leaf tenant { type string; }
     }
     augment services {
       ys:instance compute { ys:instance-type OpenStackComputeService; }

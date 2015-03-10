@@ -15,8 +15,11 @@ details about this module.
 
 ## Compiling the new stormforge module
 
+    path = require 'path'
+    schemas = (path.resolve __dirname, '../schemas')
+
     compiler = require 'yang-storm'
-    schema = (require 'fs').readFileSync "#{__dirname}/../schemas/stormforge.yang", 'utf-8'
-    output = compiler.compile schema
+    schema = (require 'fs').readFileSync (path.join schemas, 'stormforge.yang'), 'utf-8'
+    output = compiler.compile schema, sourcedir: schemas
 
     module.exports = output

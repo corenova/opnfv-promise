@@ -1,11 +1,12 @@
 module opnvf-vim {
   prefix vim;
 
-  import yang-storm-compiler { prefix ys; }
+  import yang-storm { prefix ys; }
 
   /*********************************************
    * Abstract Models (must be subclassed)
    *********************************************/
+
   ys:complex-type ResourceElement {
     ys:abstract true;
     leaf name { type string; }
@@ -58,12 +59,12 @@ module opnvf-vim {
   /*********************************************
    * Compute Models
    *********************************************/
-  
+
   ys:complex-type ComputeCapacity {
     ys:extends ServiceCapacity;
     
     leaf cores { type number; default 0; }
-    leaf ram { type number: default 0; }
+    leaf ram { type number; default 0; }
     leaf instances { type number; default 0; }
   }
 

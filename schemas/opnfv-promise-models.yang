@@ -1,20 +1,20 @@
 module opnfv-promise-models {
   prefix opm;
 
-  import yang-storm-compiler { prefix ys; }
+  import yang-storm { prefix ys; }
   
   import opnfv-vim {
     //prefix rp;
-    ys:source '../schemas/opnfv-vim.yang';
+    ys:source 'opnfv-vim.yang';
   }
   import openstack-vim {
     //prefix orp
-    ys:source '../schemas/openstack-vim.yang';
+    ys:source 'openstack-vim.yang';
   }
     
   ys:complex-type ResourcePool {
     ys:instance-list providers {
-      description "List of ResourceProvider belonging to this ResourcePool"
+      description "List of ResourceProvider belonging to this ResourcePool";
       ys:instance-type ResourceProvider;
     }
     container services {
