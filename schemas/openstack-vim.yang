@@ -37,10 +37,19 @@ module openstack-vim {
   
   ys:complex-type OpenStack {
     ys:extends vim:ResourceProvider;
-    augment {
-      leaf tenant { type string; }
+
+    augment "auth" {
+      ys:instance-list tokens { ys:instance-type vim:AuthorizationToken; }
     }
-    augment services {
+
+    augment "network" {
+      if-feature has-networking;
+      ys:instance-list networks;
+      ys:instance-list subnets;
+      ys:instance-list ports;
+    }
+    
+    augment "services" {
       ys:instance compute { ys:instance-type OpenStackComputeService; }
       //ys:instance identity { ys:instance-type OpenStackIdentityService; }
       //ys:instance image { ys:instance-type OpenStackImageService; }

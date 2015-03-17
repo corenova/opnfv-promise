@@ -11,29 +11,72 @@ module opnvf-vim {
     ys:abstract true;
     leaf name { type string; }
   }
+
+  ys:complex-type ResourceDomain {
+    ys:abstract true;
+    description
+      "ResourceDomain represent a distinct administrative domain across
+       collection of users, groups, and projects.";
+    
+    leaf name { type string; mandatory true; }
+    leaf description { type string; }
+    leaf enabled { type boolean; default false; }
+
+    leaf-list users { type instance-identifier { ys:instance-type DomainUser; } }
+    leaf-list groups { type instance-identifer { ys:instance-type DomainGroup; } }
+    leaf-list projects { type instance-identifier { ys:instance-type DomainProject; } }
+  }
+
+  ys:complex-type DomainProject {
+    ys:abstract true;
+    description
+      "DomainProject represent a distinct resource consumption space across
+       collection of users and groups that can reserve and allocate
+       resources.";
+    
+    leaf domain {
+      type instance-identifier { ys:instance-type ResourceDomain; }
+      mandatory true;
+    }
+    leaf enabled { type boolean; default false; }
+    leaf name { type string; mandatory true; }
+
+    leaf-list users { type instance-identifier { ys:instance-type DomainUser; } }
+    leaf-list groups { type instance-identifer { ys:instance-type DomainGroup; } }
+  }
   
   ys:complex-type ResourceProvider {
     ys:abstract true;
     
-    leaf name { type string; }
-    leaf endpoint { type uri; }
-    leaf tenant { type string; }
-    leaf region { type string; }
+    leaf name { type string; mandatory true; }
 
-    container credentials {
-      leaf username { type string; }
-      leaf password { type string; }
+    ys:instance-list domains { ys:instance-type ResourceDomain; }
+    ys:instance-list projects { ys:instance-type DomainProject; }
+    ys:instance-list users { ys:instance-type DomainUser; }
+    ys:instance-list groups { ys:instance-type DomainGroup; }
+    ys:instance-list credentials { ys:instance-type AccessCredential; }
+    ys:instance-list roles { ys:instance-type AccessRole; }
+    ys:instance-list policies { ys:instance-type AccessPolicy; }
+
+    ys:instance-list services { ys:instance-type ProviderService; }
+    ys:instance-list endpoints { ys:instance-type ServiceEndpoint; }
+
+    container auth {
+      description 'Conceptual container that will be extended by explicit provider';
     }
-    
-    container services {
+
+    container network {
       description 'Conceptual container that will be extended by explicit provider';
     }
     
     ys:instance-list flavors { ys:instance-type ResourceElement; }
-    ys:instance-list elements {
-      ys:instance-type ResourceElement;
-      ys:computed true;
-      //Array::concat.apply null, (service.get "elements") for name, service of (@get 'services')
+
+    leaf-list elements {
+      type instance-identifier {
+        ys:instance-type ResourceElement;
+      }
+      config false;
+      must "/services/*/elements";
     }
   }
   
@@ -43,10 +86,10 @@ module opnvf-vim {
     ys:instance provider { ys:instance-type ResourceProvider; }
     leaf endpoint { type uri; }
     container capacity {
-      container quota { description 'Conceptual container that should be extended'; config false; }
-      container usage { description 'Conceptual container that should be extended'; config false; }
-      container reserved { description 'Conceptual container that should be extended'; config false; }
-      container available { description 'Conceptual container that should be extended'; config false; }
+      leaf quota { description 'Conceptual leaf that should be extended'; config false; }
+      leaf usage { description 'Conceptual leaf that should be extended'; config false; }
+      leaf reserved { description 'Conceptual leaf that should be extended'; config false; }
+      leaf available { description 'Conceptual leaf that should be extended'; config false; }
     }
     ys:instance-list elements { ys:instance-type ResourceElement; }
   }
@@ -76,19 +119,16 @@ module opnvf-vim {
   ys:complex-type ComputeService {
     ys:extends ProviderService;
     
-    augment /capacity/quota { uses ComputeCapacity; }
-    augment /capacity/usage { uses ComputeCapacity; }
-    augment /capacity/reserved { uses ComputeCapacity; }
-    augment /capacity/available {
+    refine "/capacity/quota" { type instance-identifier { ys:instance-type ComputeCapacity; } }
+    refine "/capacity/usage" { uses ComputeCapacity; }
+    refine "/capacity/reserved" { uses ComputeCapacity; }
+    refine "/capacity/available" {
       uses ComputeCapacity;
-      ys:computed true;
       //available = quota - usage - reserved
     }
       
     ys:instance-list instances {
       ys:instance-type ComputeInstance;
-      config false;
-      ys:computed true;
       // get a list of servers (@invoke 'list-serves')
     }
   }
