@@ -4,7 +4,7 @@ module stormforge {
 
   import yang-storm { prefix ys; }
   import opnfv-vim { prefix vim; ys:source 'opnfv-vim.yang'; }
-  import opnfv-promise-models { prefix opm; ys:source 'opnfv-promise-models.yang'; }
+  //import opnfv-promise-models { prefix opm; ys:source 'opnfv-promise-models.yang'; }
 
   description
     "Virtualized Infrastructure Manager Data Models with complex types and

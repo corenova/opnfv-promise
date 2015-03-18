@@ -4,55 +4,61 @@ module openstack-vim {
   import yang-storm { prefix ys; }
   import opnfv-vim { prefix vim; }
 
-  ys:complex-type Hypervisor {
-    leaf cpu { type number; default 0; }
-    leaf workload { type number; default 0; }
-    leaf hostname { type string; }
-    leaf type { type string; }
-    leaf ram { type number; units 'GB'; }
-    leaf ram-used { type number; units 'GB'; }
-    leaf ram-free { type number; units 'MB'; }
-    leaf disk { type number; units 'GB'; }
-    leaf disk-used { type number; units 'GB'; }
-    leaf disk-free { type number; units 'GB'; }
-    leaf instances { type number; }
-    leaf vcpus { type number; }
-    leaf vcpus-used { type number; }
-  }
-  
-  ys:complex-type OpenStackComputeService {
-    ys:extends vim:ComputeService;
-
-    // unique element for openstack compute service
-    ys:instance-list hypervisors {
-      ys:instance-type Hypervisor;
-      config false;
-    }
-
-    rpc list-servers;
-    rpc create-server;
-    rpc destroy-server;
-    rpc reboot-server;
-  }
-  
   ys:complex-type OpenStack {
     ys:extends vim:ResourceProvider;
+
+    // NOTE: unsure whether services and endpoints are needed
+    ys:instance-list services { ys:instance-type OpenStackService; }
+    ys:instance-list endpoints { ys:instance-type ServiceEndpoint; }
 
     augment "auth" {
       ys:instance-list tokens { ys:instance-type vim:AuthorizationToken; }
     }
 
-    augment "network" {
-      if-feature has-networking;
-      ys:instance-list networks;
-      ys:instance-list subnets;
-      ys:instance-list ports;
+    refine "compute/servers" { ys:instance-type OpenStackServerInstance; }
+    refine "networking/networks" { ys:instance-type OpenStackNetwork; }
+  }
+
+  ys:complex-type OpenStackServerInstance {
+    ys:extends vim:ServerInstance;
+
+    leaf zone {
+      if-feature os-availability-zone;
+      type string;
+    }
+
+    container extended-status {
+      if-feature os-extended-status;
+      leaf locked-by;
+      leaf power;
+      leaf task;
+      leaf vm;
+    }
+
+    leaf-list security-groups {
+      type instance-identifier { ys:instance-type SecurityGroup; }
     }
     
-    augment "services" {
-      ys:instance compute { ys:instance-type OpenStackComputeService; }
-      //ys:instance identity { ys:instance-type OpenStackIdentityService; }
-      //ys:instance image { ys:instance-type OpenStackImageService; }
-    }
+    // Various RPC extensions available on the ServerInstance
+
+    rpc resize;
+    rpc reboot;
+    
+    rpc backup;
+    rpc migrate;
+    rpc restore;
+    rpc evacuate;
+    
+    rpc lock;
+    rpc unlock;
+
+    rpc suspend;
+    rpc resume;
+
+    rpc pause;
+    rpc unpause;
+    
+    rpc inject-network;
+    rpc reset-network;
   }
 }
