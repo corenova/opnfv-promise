@@ -1,36 +1,14 @@
-module opnfv-promise-models {
-  prefix opm;
+submodule opnfv-promise-models {
 
-  import yang-storm { prefix ys; }
+  belongs-to opnfv-vim { prefix vim; }
   
-  import opnfv-vim { prefix vim; ys:source 'opnfv-vim.yang'; }
-    
-  ys:complex-type ResourcePool {
-    leaf-list providers {
-      description "Reference to list of one-or-more existing ResourceProvider belonging to this ResourcePool";
-      type instance-identifier {
-        ys:instance-type vim:ResourceProvider;
-      }
-      mandatory true;
-    }
-    leaf-list services {
-      description "Aggregate list of all services available from /providers";
-      type instance-identifier {
-        ys:instance-type vim:ProviderService;
-      }
-      config false;
-    }
-    leaf-list elements {
-      description "Aggregate list of all elements available from /providers";
-      type instance-identifier {
-        ys:instance-type vim:ResourceElement;
-      }
-      config false;
-      //Array::concat.apply null, (provider.get('elements') for provider in @get('providers'))
-    }
-  }
+  import yang-storm { prefix ys; }
 
+  feature resource-reservation;
+  
   ys:complex-type ResourceReservation {
+    ys:extends vim:ResourceElement;
+    
     description
       "Contains the capacities of various resource services being reserved
        along with any resource elements needed to be available at
@@ -45,10 +23,10 @@ module opnfv-promise-models {
        allocations will take effect automatically at the reservation
        'start' date/time.";
     
-    leaf pool {
-      description "Reference to an existing pool from which this reservation will be drawn";
+    leaf provider {
+      description "Reference to an existing provider from which this reservation will be drawn";
       type instance-identifier {
-        ys:instance-type ResourcePool;
+        ys:instance-type vim:ResourceProvider;
         require-instance true;
       }
       mandatory true;
@@ -62,74 +40,51 @@ module opnfv-promise-models {
       config false;
     }
 
-    ys:instance-list capacity {
-      ys:instance-type vim:ServiceCapacity;
-      min-elements 1;
+    leaf scope {
+      description "Reference to an existing AccessIdentity model (domain, project, group, user)";
+      type instance-identifier { ys:instance-type vim:AccessIdentity; }
     }
 
-    leaf-list elements {
-      description "Reference to collection of existing resource elements required by this reservation";
+    container capacity {
+      uses vim:compute-capacity;
+      uses vim:networking-capcity;
+      uses vim:storage-capacity;
+    }
+
+    leaf-list resources {
+      description
+        "Reference to a collection of existing resource elements required by
+         this reservation. It can contain any instance derived from
+         ResourceElement, such as ServerInstances or even other
+         ResourceReservations. If the ResourceReservation request is
+         accepted, the ResourceElement(s) listed here will be placed
+         into 'protected' mode as to prevent accidental delete.";
       type instance-identifier {
         ys:instance-type vim:ResourceElement;
       }
       // following 'must' statement applies to each element
-      must "boolean(/pool/elements/*[@id=id])" {
-        error-message "One or more of the ResourceElement(s) does not exist in the pool to be reserved";
+      must "boolean(/provider/elements/*[@id=id])" {
+        error-message "One or more of the ResourceElement(s) does not exist in the provider to be reserved";
       }
     }
 
     leaf allocate-on-start { type boolean; default false; }
-
-    container allocation {
-      ys:instance-list planned {
-        ys:instance-type AllocationDescription;
-      }
-      leaf-list fulfilled {
-        type instance-identifier {
-          ys:instance-type ResourceAllocation;
-        }
-        config false;
-      }
-    }
     
+    ys:instance-list allocations {
+      description "Contains list of new ResourceElements that will be allocated in the future";
+      ys:instance-type vim:ResourceElement;
+    }
+
     container consumed {
       config false;
       description
         "Provides visibility into total consumed capacity for this
          reservation based on allocations that took effect utilizing
          this reservation ID as a reference.";
-      
-      container capacity {
-        container compute { uses ComputeCapacity; }
-        container storage { uses StorageCapacity; }
-        container network { uses NetworkCapacity; }
-      }
-      ys:instance-list allocations {
-        ys:instance-type ResourceAllocation;
-      } 
-    }
-  }
 
-  // below Allocation related models are WIP...
-  
-  ys:complex-type AllocationDescription {
-    leaf name { type string; }
-
-    ys:instance provider { ys:instance-type vim:ResourceProvider; }
-    ys:instance flavor { ys:instance-type vim:ResourceElement; }
-    ys:instance image { ys:instance-type vim:ResourceElement; }
-    //(@get 'provider.elements').contains id: value
-
-    ys:instance-list networks {
-      ys:instance-type vim:ResourceElement;
-    }
-  }
-
-  ys:complex-type ResourceAllocation {
-    leaf reservation {
-      type instance-identifier {
-        ys:instance-type ResourceReservation;  
-      }
+      uses vim:compute-capacity;
+      uses vim:networking-capcity;
+      uses vim:storage-capacity;
     }
   }
 }

@@ -1,0 +1,76 @@
+submodule opnfv-identity-models {
+
+  belongs-to opnfv-vim { prefix vim; }
+  
+  import yang-storm { prefix ys; }
+  
+  /*********************************************
+   * AccessIdentity Models
+   *********************************************/
+
+  ys:complex-type ResourceDomain {
+    ys:extends vim:AccessIdentity;
+    description
+      "ResourceDomain represent a distinct administrative domain across
+       collection of users, groups, and projects.";
+    
+    leaf-list users { type instance-identifier { ys:instance-type DomainUser; } }
+    leaf-list groups { type instance-identifer { ys:instance-type DomainGroup; } }
+    leaf-list projects { type instance-identifier { ys:instance-type DomainProject; } }
+  }
+
+  ys:complex-type DomainIdentity {
+    ys:extends vim:AccessIdentity;
+    ys:abstract true;
+    leaf domain {
+      type instance-identifier { ys:instance-type ResourceDomain; }
+      mandatory true;
+    }
+  }
+  
+  ys:complex-type DomainProject {
+    ys:extends DomainIdentity;
+    description
+      "DomainProject represent a distinct resource consumption space across
+       collection of users and groups that can reserve and allocate
+       resources.";
+    
+    leaf-list users { type instance-identifier { ys:instance-type DomainUser; } }
+    leaf-list groups { type instance-identifer { ys:instance-type DomainGroup; } }
+
+    container resource {
+      leaf-list images {
+        if-feature vim-vm-images;
+        type instance-identifier { ys:instance-type vim:VirtualMachineImage; }
+      }
+
+      leaf-list flavors {
+        if-feature vim-compute-flavors;
+        type instance-identifier { ys:instance-type vim:VirtualMachineFlavor; }
+      }
+    }
+  }
+
+  ys:complex-type DomainGroup {
+    ys:extends DomainIdentity;
+    
+    leaf-list users { type instance-identifier { ys:instance-type DomainUser; } }
+  }
+  
+  ys:complex-type DomainUser {
+    ys:extends DomainIdentity;
+
+    leaf credential {
+      type instance-identifier { ys:instance-type AccessCredential; }
+      mandatory true;
+    }
+    
+    container contact {
+      leaf fullName { type string; }
+      leaf email { type email; }
+    }
+
+    leaf-list groups { type instance-identifer { ys:instance-type DomainGroup; } }
+    leaf-list projects { type instance-identifier { ys:instance-type DomainProject; } }
+  }
+}

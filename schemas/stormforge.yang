@@ -4,7 +4,6 @@ module stormforge {
 
   import yang-storm { prefix ys; }
   import opnfv-vim { prefix vim; ys:source 'opnfv-vim.yang'; }
-  //import opnfv-promise-models { prefix opm; ys:source 'opnfv-promise-models.yang'; }
 
   description
     "Virtualized Infrastructure Manager Data Models with complex types and
@@ -34,14 +33,9 @@ This module provides various collections of data models defined in
       ys:instance-type vim:ResourceProvider;
     }
 
-    ys:instance-list resourcePools {
-      description "Aggregate collection of all registered ResourcePool instances";
-      ys:instance-type opm:ResourcePool;
-    }
-
     ys:instance-list resourceReservations {
       description "Aggregate collection of all registered ResourceReservation instances";
-      ys:instance-type opm:ResourceReservation;
+      ys:instance-type vim:ResourceReservation;
     } 
   }
 

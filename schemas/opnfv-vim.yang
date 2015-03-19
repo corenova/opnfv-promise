@@ -1,64 +1,18 @@
-module opnvf-vim {
+module opnfv-vim {
   prefix vim;
 
   import yang-storm { prefix ys; }
 
-  feature vim-networking;
-  feature vim-networking-capacity;
+  include opnfv-abstract-models { ys:source 'opnfv-abstract-models.yang'; }
+  include opnfv-identity-models { ys:source 'opnfv-identity-models.yang'; }
+  include opnfv-compute-models  { ys:source 'opnfv-compute-models.yang'; }
+  include opnfv-network-models  { ys:source 'opnfv-network-models.yang'; }
+  //include opnfv-storage-modesl  { ys:source 'opnfv-storage-models.yang'; }
+  include opnfv-promise-models  { ys:source 'opnfv-promise-models.yang'; }
 
   /*********************************************
    * Abstract Models (must be subclassed)
    *********************************************/
-
-  ys:complex-type AccessIdentity {
-    ys:abstract true;
-    description "AccessIdentity represents an administrative access model entity";
-    leaf name { type string; mandatory true; }
-    leaf description { type string; }
-    leaf enabled { type boolean; default true; }
-  }
-
-  ys:complex-type ResourceElement {
-    ys:abstract true;
-    
-    leaf name { type string; mandatory true; }
-    leaf enabled { type boolean; default true; }
-    leaf protected { type boolean; default false; }
-    leaf owner { type instance-identifier { ys:instance-type DomainUser; } }
-    leaf visibility {
-      description "Specify visibility level available from the perspective of 'owner'";
-      type enumeration {
-        enum public;
-        enum domain;
-        enum project;
-        enum group;
-        enum user;
-      }
-      default user;
-    }
-    leaf-list tags { type string; }
-    
-    leaf-list members {
-      description "Optionally share with explicit list of members of AccessIdentity complex-type";
-      type instance-identifier {
-        ys:instance-type AccessIdentity;
-      }
-    }
-  }
-
-  ys:complex-type ResourceInstance {
-    ys:extends ResourceElement;
-    ys:abstract true;
-
-    leaf status {
-      type enumeration {
-        enum active;
-        enum inactive;
-        enum pending;
-      }
-    }
-    leaf progress { type number; default 0; }
-  }
   
   grouping resource-capacity {
     container capacity {
@@ -67,20 +21,6 @@ module opnvf-vim {
       container reserved { description 'Conceptual container that should be extended'; config false; }
       container available { description 'Conceptual container that should be extended'; config false; }
     }
-  }
-
-  grouping vim-compute-capacity {
-    leaf cores { type number; }
-    leaf ram { type number; }
-    leaf instances { type number; }
-  }
-
-  grouping vim-networking-capacity {
-    leaf network { type number; }
-    leaf port { type number; }
-    leaf router { type number; }
-    leaf subnet { type number; }
-    leaf address { type number; }
   }
 
   ys:complex-type ResourceProvider {
@@ -100,28 +40,28 @@ module opnvf-vim {
       // ys:instance-list policies { ys:instance-type AccessPolicy; }
     }
 
+    ys:instance-list hosts { ys:instance-type PhysicalHost; }
+    ys:instance-list hypervisors { ys:instance-type Hypervisor; }
+
     container compute {
-      if-feature vim-compute;
+      if-feature has-compute;
       description "Contains compute related resources";
 
       ys:instance-list servers { ys:instance-type ServerInstance; }
       ys:instance-list images { ys:instance-type VirtualMachineImage; }
       ys:instance-list flavors { ys:instance-type VirtualMachineFlavor; }
 
-      ys:instance-list hosts { ys:instance-type PhysicalHost; }
-      ys:instance-list hypervisors { ys:instance-type Hypervisor; }
-      
       uses resource-capacity {
-        if-feature vim-compute-capacity;
-        augment "capacity/quota" { uses vim-compute-capacity; }
-        augment "capacity/usage" { uses vim-compute-capacity; }
-        augment "capacity/reserved" { uses vim-compute-capacity; }
-        augment "capacity/available" { uses vim-compute-capacity; }
+        if-feature has-compute-capacity;
+        augment "capacity/quota" { uses compute-capacity; }
+        augment "capacity/usage" { uses compute-capacity; }
+        augment "capacity/reserved" { uses compute-capacity; }
+        augment "capacity/available" { uses compute-capacity; }
       }
     }
 
     container networking {
-      if-feature vim-networking;
+      if-feature has-networking;
       description "Contains networking related resources";
         
       ys:instance-list networks { ys:instance-type Network; }
@@ -130,88 +70,23 @@ module opnvf-vim {
       ys:instance-list routers { ys:instance-type Router; }
 
       uses resource-capacity {
-        if-feature vim-networking-capacity;
-        augment "capacity/quota" { uses vim-networking-capacity; }
-        augment "capacity/usage" { uses vim-networking-capacity; }
-        augment "capacity/reserved" { uses vim-networking-capacity; }
-        augment "capacity/available" { uses vim-networking-capacity; }
+        if-feature has-networking-capacity;
+        augment "capacity/quota" { uses networking-capacity; }
+        augment "capacity/usage" { uses networking-capacity; }
+        augment "capacity/reserved" { uses networking-capacity; }
+        augment "capacity/available" { uses networking-capacity; }
       }
     }
 
+    ys:instance-list reservations {
+      if-feature resource-reservation;
+      ys:instance-type ResourceReservation;
+    }
+    
     rpc list-servers;
     rpc create-server;
     rpc destroy-server;
     rpc reboot-server;
-  }
-  
-  /*********************************************
-   * AccessIdentity Models
-   *********************************************/
-
-  ys:complex-type ResourceDomain {
-    ys:extends AccessIdentity;
-    description
-      "ResourceDomain represent a distinct administrative domain across
-       collection of users, groups, and projects.";
-    
-    leaf-list users { type instance-identifier { ys:instance-type DomainUser; } }
-    leaf-list groups { type instance-identifer { ys:instance-type DomainGroup; } }
-    leaf-list projects { type instance-identifier { ys:instance-type DomainProject; } }
-  }
-
-  ys:complex-type DomainIdentity {
-    ys:extends AccessIdentity;
-    ys:abstract true;
-    leaf domain {
-      type instance-identifier { ys:instance-type ResourceDomain; }
-      mandatory true;
-    }
-  }
-  
-  ys:complex-type DomainProject {
-    ys:extends DomainIdentity;
-    description
-      "DomainProject represent a distinct resource consumption space across
-       collection of users and groups that can reserve and allocate
-       resources.";
-    
-    leaf-list users { type instance-identifier { ys:instance-type DomainUser; } }
-    leaf-list groups { type instance-identifer { ys:instance-type DomainGroup; } }
-
-    container resource {
-      leaf-list images {
-        if-feature vim-vm-images;
-        type instance-identifier { ys:instance-type VirtualMachineImage; }
-      }
-
-      leaf-list flavors {
-        if-feature vim-compute-flavors;
-        type instance-identifier { ys:instance-type ComputeFlavor; }
-      }
-    }
-  }
-
-  ys:complex-type DomainGroup {
-    ys:extends DomainIdentity;
-    
-    leaf-list users { type instance-identifier { ys:instance-type DomainUser; } }
-  }
-  
-  ys:complex-type DomainUser {
-    ys:extends DomainIdentity;
-
-    leaf credential {
-      type instance-identifier { ys:instance-type AccessCredential; }
-      mandatory true;
-    }
-    
-    container contact {
-      leaf fullName { type string; }
-      leaf email { type email; }
-    }
-
-    leaf-list groups { type instance-identifer { ys:instance-type DomainGroup; } }
-    leaf-list projects { type instance-identifier { ys:instance-type DomainProject; } }
   }
   
   /*********************************************
@@ -263,83 +138,4 @@ module opnvf-vim {
     rpc evacuate;
   }
   
-  /*********************************************
-   * Compute Models
-   *********************************************/
-
-  ys:complex-type ComputeElement {
-    ys:extends ResourceElement;
-    ys:abstract true;
-
-    container constraint {
-      leaf disk { type number; units 'GB'; default 0; }
-      leaf ram { type number; units 'MB'; default 0; }
-      leaf vcpu { type number; default 0; }
-    }
-
-    leaf-list instances {
-      description "State info about instances currently using this resource element";
-      type instance-identifier {
-        ys:instance-type ResourceInstance;
-      }
-      config false;
-    }
-  }
-
-  ys:complex-type VirtualMachineImage {
-    ys:extends ComputeElement;
-
-    container data {
-      leaf checksum { type string; mandatory true; }
-      leaf size { type number; units 'Bytes'; mandatory true; }
-      
-      container format {
-        leaf container {
-          type enumeration { enum ami; enum ari; enum aki; enum bare; enum ovf; }
-          default bare;
-        }
-        leaf disk {
-          type enumeration { enum ami; enum ari; enum aki; enum vhd; enum vmdk; enum raw; enum qcow2; enum vdi; enum iso; }
-        }
-      }
-    }
-
-    rpc upload {
-      description "uploads binary image data";
-    }
-    rpc download {
-      description "downloads binary image data";
-    }
-  }
-
-  ys:complex-type VirtualMachineFlavor {
-    ys:extends ComputeElement;
-  }
-
-  ys:complex-type ServerInstance {
-    ys:extends ResourceInstance;
-
-    leaf project {
-      type instance-identifier { ys:instance-type DomainProject; }
-      mandatory true;
-    }
-    leaf flavor {
-      type instance-identifier { ys:instance-type VirtualMachineFlavor; }
-      mandatory true;
-    }
-    leaf image {
-      type instance-identifier { ys:instance-type VirtualMachineImage; }
-      mandatory true;
-    }
-    ys:instance metadata { ys:instance-type MetaData; }
-
-    leaf host {
-      type instance-identifier { ys:instance-type PhysicalHost; }
-    }
-
-    leaf-list networks {
-      type instance-identifier { ys:instance-type Network; }
-    }
-
-  }
 }
