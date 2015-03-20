@@ -16,8 +16,43 @@ submodule opnfv-network-models {
   }
 
   /*********************************************
-   * Network Models (TBD)
+   * Network Models (Work-in-Progress)
    *********************************************/
-  
 
+  ys:complex-type NetworkingElement {
+    ys:extends vim:ResourceElement;
+    ys:abstract true;
+
+    
+  }
+
+  ys:complex-type Network {
+    ys:extends NetworkingElement;
+
+    leaf-list subnets {
+      type instance-identifier { ys:instance-type SubNetwork; }
+    }
+  }
+
+  ys:complex-type SubNetwork {
+    ys:extends NetworkingElement;
+
+    leaf network { type instance-identifier { ys:instance-type Network; } }
+
+    leaf-list nameservers { type string; }
+    
+    container dhcp {
+      leaf enabled { type boolean; }
+      list pools {
+        leaf start { type ip-address; }
+        leaf end { type ip-address; }
+      }
+    }
+  }
+
+  ys:complex-type SwitchPort {
+    ys:extends NetworkingElement;
+
+    leaf subnet { type instance-identifier { ys:instance-type SubNetwork; } }
+  }
 }

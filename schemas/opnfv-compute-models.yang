@@ -87,8 +87,12 @@ submodule opnfv-compute-models {
       type instance-identifier { ys:instance-type vim:PhysicalHost; }
     }
 
-    leaf-list networks {
-      type instance-identifier { ys:instance-type vim:Network; }
+    leaf-list links {
+      description
+        "References to collection of NetworkingElement class objects such as
+         Network, Subnet, Port, Router that this ServerInstance is
+         connected with.";
+      type instance-identifier { ys:instance-type vim:NetworkingElement; }
     }
   }
 }

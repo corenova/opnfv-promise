@@ -26,8 +26,12 @@ $ npm install stormforge
 
 ## YANG Schemas
 * [stormforge](schemas/stormforge.yang)
-* [opnfv-promise-models](schemas/opnfv-promise-models.yang)
 * [opnfv-vim](schemas/opnfv-vim.yang)
+  * [opnfv-abstract-models](schemas/opnfv-abstract-models.yang)
+  * [opnfv-identity-models](schemas/opnfv-identity-models.yang)
+  * [opnfv-compute-models](schemas/opnfv-compute-models.yang)
+  * [opnfv-network-models](schemas/opnfv-network-models.yang)
+  * [opnfv-promise-models](schemas/opnfv-promise-models.yang)
 * [openstack-vim](schemas/openstack-vim.yang)
 
 ## License
