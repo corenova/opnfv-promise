@@ -1,7 +1,7 @@
 {
   "name": "stormforge",
   "description": "A YANG module to manage virtual resources across multiple providers",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "author": "Peter K. Lee <peter@intercloud.net>",
   "homepage": "http://stormstack.org",
   "license": "MIT",
@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "promise": "^6.0.1",
+		"yang-compiler": "^0.3.0",
     "yang-storm": "^0.3.14"
   },
   "devDependencies": {

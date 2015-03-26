@@ -18,7 +18,9 @@ details about this module.
     path = require 'path'
     schemas = (path.resolve __dirname, '../schemas')
 
-    compiler = require 'yang-storm'
+    compiler = require 'yang-compiler'
+    compiler.merge (require 'yang-storm')
+      
     schema = (require 'fs').readFileSync (path.join schemas, 'stormforge.yang'), 'utf-8'
     output = compiler.compile schema, sourcedir: schemas
 

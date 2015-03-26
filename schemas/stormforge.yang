@@ -38,7 +38,7 @@ This module provides various collections of data models defined in
       ys:instance-type vim:ResourceReservation;
     } 
   }
-
+  
   rpc list-providers;
   rpc add-provider;
   rpc remove-provider;

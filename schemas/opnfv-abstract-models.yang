@@ -9,7 +9,9 @@ submodule opnfv-abstract-models {
    *********************************************/
 
   ys:complex-type AccessIdentity {
+    ys:extends ys:DataModel;
     ys:abstract true;
+    
     description "AccessIdentity represents an administrative access model entity";
     leaf name { type string; mandatory true; }
     leaf description { type string; }
@@ -17,6 +19,7 @@ submodule opnfv-abstract-models {
   }
 
   ys:complex-type ResourceElement {
+    ys:extends ys:DataModel;
     ys:abstract true;
     
     leaf name { type string; mandatory true; }

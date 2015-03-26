@@ -33,6 +33,10 @@ submodule opnfv-promise-models {
     }
     leaf start { type ys:date-and-time; }
     leaf end   { type ys:date-and-time; }
+    leaf expiry {
+      description "Duration in seconds from start when unallocated reserved resources will be released back into the pool";
+      type number; units "seconds";
+    }
     leaf priority {
       description
         "Reflects current priority level of the reservation according to classification rules";
@@ -71,6 +75,7 @@ submodule opnfv-promise-models {
     leaf allocate-on-start { type boolean; default false; }
     
     ys:instance-list allocations {
+      when "allocate-on-start is true";
       description "Contains list of new ResourceElements that will be allocated in the future";
       ys:instance-type vim:ResourceElement;
     }
