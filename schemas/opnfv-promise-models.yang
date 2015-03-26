@@ -12,49 +12,22 @@ submodule opnfv-promise-models {
     description
       "Contains the capacities of various resource services being reserved
        along with any resource elements needed to be available at
-       the time of allocation(s).
-
-       Optionally, a list of 'planned' allocations can be specified,
-       which will be used during handling of the reservation request
-       for assessing available capacity and capabilities of the
-       underlying infrastructure.  
-
-       If 'allocate-on-start' is set to true, the 'planned'
-       allocations will take effect automatically at the reservation
-       'start' date/time.";
+       the time of allocation(s).";
     
-    leaf provider {
-      description "Reference to an existing provider from which this reservation will be drawn";
-      type instance-identifier {
-        ys:instance-type vim:ResourceProvider;
-        require-instance true;
-      }
-      mandatory true;
-    }
+    reference "OPNFV-PROMISE, Section 3.4.1";
+    
     leaf start { type ys:date-and-time; }
     leaf end   { type ys:date-and-time; }
     leaf expiry {
       description "Duration in seconds from start when unallocated reserved resources will be released back into the pool";
       type number; units "seconds";
     }
-    leaf priority {
-      description
-        "Reflects current priority level of the reservation according to classification rules";
-      type number;
-      config false;
-    }
-
-    leaf scope {
-      description "Reference to an existing AccessIdentity model (domain, project, group, user)";
-      type instance-identifier { ys:instance-type vim:AccessIdentity; }
-    }
-
+    leaf zone { type instance-identifier { ys:instance-type vim:AvailabilityZone; } }
     container capacity {
       uses vim:compute-capacity;
       uses vim:networking-capcity;
       uses vim:storage-capacity;
     }
-
     leaf-list resources {
       description
         "Reference to a collection of existing resource elements required by
@@ -72,18 +45,24 @@ submodule opnfv-promise-models {
       }
     }
 
-    leaf allocate-on-start { type boolean; default false; }
-    
-    ys:instance-list allocations {
-      when "allocate-on-start is true";
-      description "Contains list of new ResourceElements that will be allocated in the future";
-      ys:instance-type vim:ResourceElement;
+    leaf provider {
+      if-feature multi-provider;
+      config false;
+      
+      description
+        "Reference to a specified existing provider from which this reservation
+         will be drawn if used in the context of multi-provider
+         environment.";
+      type instance-identifier {
+        ys:instance-type vim:ResourceProvider;
+        require-instance true;
+      }
     }
 
-    container consumed {
+    container remaining {
       config false;
       description
-        "Provides visibility into total consumed capacity for this
+        "Provides visibility into total remaining capacity for this
          reservation based on allocations that took effect utilizing
          this reservation ID as a reference.";
 
@@ -91,6 +70,72 @@ submodule opnfv-promise-models {
       uses vim:networking-capcity;
       uses vim:storage-capacity;
     }
+
+    leaf-list allocations {
+      config false;
+      description
+        "Reference to a collection of consumed allocations referencing
+         this reservation.";
+      type instance-identifier {
+        ys:instance-type ResourceAllocation;
+      }
+    }
+
+    notification reservation-error;
+  }
+
+  ys:complex-type ResourceAllocation {
+    ys:extends vim:ResourceElement;
+
+    description
+       "Contains a list of resources to be allocated with optional reference
+       to an existing reservation.
+       
+       If reservation is specified but this request is received prior
+       to reservation start timestamp, then it will be rejected unless
+       'allocate-on-start' is set to true.  'allocate-on-start' allows
+       the allocation to be auto-initiated and scheduled to run in the
+       future.
+       
+       The 'priority' state indicates the classification for dealing
+       with resource starvation scenarios. Lower priority allocations
+       will be forcefully terminated to allow for higher priority
+       allocations to be fulfilled.
+
+       Allocations without reference to an existing reservation will
+       receive the lowest priority.";
+    
+    reference "OPNFV-PROMISE, Section 3.4.3";
+
+    leaf reservation {
+      description "Reference to an existing reservation identifier";
+      
+      type instance-identifier {
+        ys:instance-type ResourceReservation;
+        require-instance true;
+      }
+    }
+
+    leaf allocate-on-start {
+      description
+       "If 'allocate-on-start' is set to true, the 'planned' allocations will
+       take effect automatically at the reservation 'start' date/time.";
+      type boolean; default false;
+    }
+    
+    ys:instance-list resources {
+      description "Contains list of new ResourceElements that will be allocated";
+      ys:instance-type vim:ResourceElement;
+    }
+
+    leaf priority {
+      description
+        "Reflects current priority level of the allocation according to classification rules";
+      type number;
+      config false;
+    }
+
+    notification allocation-error;
   }
 }
 
