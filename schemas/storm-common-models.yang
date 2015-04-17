@@ -1,0 +1,22 @@
+module storm-common-models {
+  prefix storm;
+
+  include storm-identity;
+  identity controller {
+    description "Base identity from which all controllers are derived.";
+  }
+
+  // STORM data models
+  include storm-service-models;
+  include storm-transport-models;
+  include storm-orchestration-models;
+  include storm-resource-models;
+  include storm-management-models;
+
+  // FCAPS data models
+  include storm-fault-models;
+  include storm-configuration-models;
+  include storm-accounting-models;
+  include storm-performance-models;
+  include storm-security-models;
+}

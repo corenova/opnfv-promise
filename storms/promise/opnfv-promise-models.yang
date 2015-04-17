@@ -1,13 +1,13 @@
-submodule opnfv-promise-models {
+module opnfv-promise-models {
+  prefix opm;
 
-  belongs-to opnfv-vim { prefix vim; }
-  
-  import yang-storm { prefix ys; }
+  import storm-common-models { prefix scm; }
+  import complex-types { prefix ct; }
 
   feature resource-reservation;
   
-  ys:complex-type ResourceReservation {
-    ys:extends vim:ResourceElement;
+  ct:complex-type ResourceReservation {
+    ct:extends scm:ResourceElement;
     
     description
       "Contains the capacities of various resource services being reserved
@@ -16,17 +16,17 @@ submodule opnfv-promise-models {
     
     reference "OPNFV-PROMISE, Section 3.4.1";
     
-    leaf start { type ys:date-and-time; }
-    leaf end   { type ys:date-and-time; }
+    leaf start { type ct:date-and-time; }
+    leaf end   { type ct:date-and-time; }
     leaf expiry {
       description "Duration in seconds from start when unallocated reserved resources will be released back into the pool";
       type number; units "seconds";
     }
-    leaf zone { type instance-identifier { ys:instance-type vim:AvailabilityZone; } }
+    leaf zone { type instance-identifier { ct:instance-type scm:AvailabilityZone; } }
     container capacity {
-      uses vim:compute-capacity;
-      uses vim:networking-capcity;
-      uses vim:storage-capacity;
+      uses scm:compute-capacity;
+      uses scm:networking-capcity;
+      uses scm:storage-capacity;
     }
     leaf-list resources {
       description
@@ -37,7 +37,7 @@ submodule opnfv-promise-models {
          accepted, the ResourceElement(s) listed here will be placed
          into 'protected' mode as to prevent accidental delete.";
       type instance-identifier {
-        ys:instance-type vim:ResourceElement;
+        ct:instance-type scm:ResourceElement;
       }
       // following 'must' statement applies to each element
       must "boolean(/provider/elements/*[@id=id])" {
@@ -54,7 +54,7 @@ submodule opnfv-promise-models {
          will be drawn if used in the context of multi-provider
          environment.";
       type instance-identifier {
-        ys:instance-type vim:ResourceProvider;
+        ct:instance-type scm:ResourceProvider;
         require-instance true;
       }
     }
@@ -66,9 +66,9 @@ submodule opnfv-promise-models {
          reservation based on allocations that took effect utilizing
          this reservation ID as a reference.";
 
-      uses vim:compute-capacity;
-      uses vim:networking-capcity;
-      uses vim:storage-capacity;
+      uses scm:compute-capacity;
+      uses scm:networking-capcity;
+      uses scm:storage-capacity;
     }
 
     leaf-list allocations {
@@ -77,15 +77,14 @@ submodule opnfv-promise-models {
         "Reference to a collection of consumed allocations referencing
          this reservation.";
       type instance-identifier {
-        ys:instance-type ResourceAllocation;
+        ct:instance-type ResourceAllocation;
       }
     }
 
-    notification reservation-error;
   }
 
-  ys:complex-type ResourceAllocation {
-    ys:extends vim:ResourceElement;
+  ct:complex-type ResourceAllocation {
+    ct:extends scm:ResourceElement;
 
     description
        "Contains a list of resources to be allocated with optional reference
@@ -111,7 +110,7 @@ submodule opnfv-promise-models {
       description "Reference to an existing reservation identifier";
       
       type instance-identifier {
-        ys:instance-type ResourceReservation;
+        ct:instance-type ResourceReservation;
         require-instance true;
       }
     }
@@ -123,9 +122,9 @@ submodule opnfv-promise-models {
       type boolean; default false;
     }
     
-    ys:instance-list resources {
+    ct:instance-list resources {
       description "Contains list of new ResourceElements that will be allocated";
-      ys:instance-type vim:ResourceElement;
+      ct:instance-type scm:ResourceElement;
     }
 
     leaf priority {
@@ -134,8 +133,6 @@ submodule opnfv-promise-models {
       type number;
       config false;
     }
-
-    notification allocation-error;
   }
 }
 

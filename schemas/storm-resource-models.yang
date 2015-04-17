@@ -1,0 +1,96 @@
+submodule storm-resource-models {
+
+  belongs-to storm-common-models { prefix storm; }
+
+  include storm-identity;
+  identity provider { base "resource"; }
+  
+  include storm-resource-abstract-models;
+  include storm-resource-identity-models;
+  include storm-resource-compute-models;
+  include storm-resource-network-models;
+  include storm-resource-storage-models;
+
+  grouping resource-capacity {
+    container capacity {
+      container quota { description 'Conceptual container that should be extended'; }
+      container usage { description 'Conceptual container that should be extended'; config false; }
+      container reserved { description 'Conceptual container that should be extended'; config false; }
+      container available { description 'Conceptual container that should be extended'; config false; }
+    }
+  }
+  
+  import complex-types { prefix ct; }
+
+  ct:complex-type ResourceProvider {
+    ct:abstract true;
+    
+    leaf name { type string; mandatory true; }
+
+    ct:instance-list domains { ct:instance-type ResourceDomain; }
+    ct:instance-list projects { ct:instance-type DomainProject; }
+    ct:instance-list users { ct:instance-type DomainUser; }
+    ct:instance-list groups { ct:instance-type DomainGroup; }
+    
+    container auth {
+      description 'Conceptual container that will be extended by explicit provider';
+      // ct:instance-list credentials { ct:instance-type AccessCredential; }
+      // ct:instance-list roles { ct:instance-type AccessRole; }
+      // ct:instance-list policies { ct:instance-type AccessPolicy; }
+    }
+
+    ct:instance-list hosts { ct:instance-type PhysicalHost; }
+    ct:instance-list hypervisors { ct:instance-type Hypervisor; }
+
+    container compute {
+      if-feature has-compute;
+      description "Contains compute related resources";
+
+      ct:instance-list servers { ct:instance-type ServerInstance; }
+      ct:instance-list images { ct:instance-type VirtualMachineImage; }
+      ct:instance-list flavors { ct:instance-type VirtualMachineFlavor; }
+
+      uses resource-capacity {
+        if-feature has-compute-capacity;
+        augment "capacity/quota" { uses compute-capacity; }
+        augment "capacity/usage" { uses compute-capacity; }
+        augment "capacity/reserved" { uses compute-capacity; }
+        augment "capacity/available" { uses compute-capacity; }
+      }
+    }
+
+    container networking {
+      if-feature has-networking;
+      description "Contains networking related resources";
+        
+      ct:instance-list networks { ct:instance-type Network; }
+      ct:instance-list subnets { ct:instance-type SubNetwork; }
+      ct:instance-list ports { ct:instance-type SwitchPort; }
+      ct:instance-list routers { ct:instance-type Router; }
+
+      uses resource-capacity {
+        if-feature has-networking-capacity;
+        augment "capacity/quota" { uses networking-capacity; }
+        augment "capacity/usage" { uses networking-capacity; }
+        augment "capacity/reserved" { uses networking-capacity; }
+        augment "capacity/available" { uses networking-capacity; }
+      }
+    }
+
+    ct:instance-list reservations {
+      if-feature resource-reservation;
+      ct:instance-type ResourceReservation;
+    }
+    
+    rpc list-servers;
+    rpc create-server;
+    rpc destroy-server;
+    rpc reboot-server;
+  }
+  
+  /*********************************************
+   * ResourceElement Models
+   *********************************************/
+
+  
+}

@@ -1,0 +1,67 @@
+submodule storm-management-models {
+
+  belongs-to storm-common-models { prefix storm; }
+  
+  import complex-types { prefix ct; }
+  
+  /*********************************************
+   * Identity Models
+   *********************************************/
+
+  ct:complex-type Identity {
+    ct:extends storm:DataModel;
+    ct:abstract true;
+    
+    description "Identity represents an administrative access model entity";
+    leaf name { type string; mandatory true; }
+    leaf description { type string; }
+    leaf enabled { type boolean; default true; }
+  }
+  
+  ct:complex-type Domain {
+    ct:extends Identity;
+    description
+      "Domain represent a distinct administrative domain across
+       collection of users and groups.";
+    
+    leaf-list users { type instance-identifier { ct:instance-type DomainUser; } }
+    leaf-list groups { type instance-identifer { ct:instance-type DomainGroup; } }
+  }
+
+  ct:complex-type DomainIdentity {
+    ct:abstract true;
+    ct:extends Identity;
+
+    description
+    
+    leaf domain {
+      type instance-identifier { ct:instance-type Domain; }
+      mandatory true;
+    }
+  }
+  
+  ct:complex-type DomainGroup {
+    ct:extends DomainIdentity;
+    
+    leaf-list users { type instance-identifier { ct:instance-type DomainUser; } }
+  }
+  
+  ct:complex-type DomainUser {
+    ct:extends DomainIdentity;
+
+    leaf credential {
+      type instance-identifier { ct:instance-type IdentityCredential; }
+      mandatory true;
+    }
+    
+    container contact {
+      leaf fullName { type string; }
+      leaf email { type email; }
+    }
+
+    leaf-list groups { type instance-identifer { ct:instance-type DomainGroup; } }
+  }
+
+  
+  
+}

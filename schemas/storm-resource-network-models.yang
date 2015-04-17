@@ -1,0 +1,61 @@
+submodule storm-resource-network-models {
+
+  belongs-to storm-common-models { prefix storm; }
+
+  include storm-identity;
+  identity compute { base "resource"; }
+
+  feature has-networking;
+  feature has-networking-capacity;
+
+  grouping networking-capacity {
+    leaf network { type number; }
+    leaf port { type number; }
+    leaf router { type number; }
+    leaf subnet { type number; }
+    leaf address { type number; }
+  }
+
+  /*********************************************
+   * Network Models (Work-in-Progress)
+   *********************************************/
+
+  import complex-types { prefix ct; }
+
+  ct:complex-type NetworkingElement {
+    ct:extends storm:ResourceElement;
+    ct:abstract true;
+
+    
+  }
+
+  ct:complex-type Network {
+    ct:extends NetworkingElement;
+
+    leaf-list subnets {
+      type instance-identifier { ct:instance-type SubNetwork; }
+    }
+  }
+
+  ct:complex-type SubNetwork {
+    ct:extends NetworkingElement;
+
+    leaf network { type instance-identifier { ct:instance-type Network; } }
+
+    leaf-list nameservers { type string; }
+    
+    container dhcp {
+      leaf enabled { type boolean; }
+      list pools {
+        leaf start { type ip-address; }
+        leaf end { type ip-address; }
+      }
+    }
+  }
+
+  ct:complex-type SwitchPort {
+    ct:extends NetworkingElement;
+
+    leaf subnet { type instance-identifier { ct:instance-type SubNetwork; } }
+  }
+}

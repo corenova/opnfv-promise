@@ -1,0 +1,117 @@
+submodule storm-service-models {
+
+  belongs-to storm-common-models { prefix storm; }
+
+  import complex-types { prefix ct; }
+
+  include storm-identity;
+  include storm-service-abstract-models;
+  include storm-service-identity-models;
+  include storm-service-chaining-models;
+  include storm-service-policy-models;
+
+  organization
+    "ClearPath Networks R&D Group";
+
+  contact
+    "Web:  <http://www.clearpathnet.com>
+     Author: Peter K. Lee <mailto:plee@clearpathnet.com>";
+
+  description
+    "Service Abstraction Data Models with complex types and typed instance
+     identifiers representing service-centric Providers, Domains,
+     Groups, and associated configurations.";
+
+  identity provider { base "service"; }
+  identity domain   { base "sevice"; }
+
+  grouping service-policy {
+    
+  }
+
+  ct:complex-type ServiceProvider {
+    ct:abstract true;
+
+    ct:instance-list domains { ct:instance-type ServiceDomain; }
+    ct:instnace-list groups  { ct:instance-type ServiceDomainGroup; }
+
+    container transport {
+      leaf-list providers {
+        type instance-identifier { ct:instance-type storm:TransportProvider; }
+        min-elements 1;
+      }
+    }
+    container orchestration {
+      leaf-list providers {
+        type instance-identifier { ct:instance-type storm:OrchestrationProvider; }
+        min-elements 1;
+      }
+    }
+    container resource {
+      leaf-list providers {
+        type instance-identifier { ct:instance-type storm:ResourceProvider; }
+        min-elements 1;
+      }
+    }
+    container maangement {
+      leaf-list providers {
+        type instance-identifier { ct:instance-type storm:ManagementProvider; }
+        min-elements 1;
+      }
+    }
+  }
+  
+  ct:complex-type ServiceDomain {
+    ct:extends storm:ManagementDomain;
+
+    description "Service Administrative Domain";
+
+    leaf-list users { type instance-identifier { ct:instance-type storm:DomainUser; } }
+    leaf-list groups { type instance-identifer { ct:instance-type storm:DomainGroup; } }
+
+    leaf name { type string; mandatory true; }
+    leaf description { type string; }
+
+    container metapolicy {
+      uses service-policy;
+    }
+
+    // gateways, services, and agents are lists of reference identifiers
+    leaf-list gateways { type instance-identifier { ct:instance-type ServiceGateway; } }
+    leaf-list services { type instance-identifier { ct:instance-type ServiceTemplate; } }
+    leaf-list agents { type instance-identifier { ct:instance-type ServiceAgent; } }
+    
+    ct:instance analyzer { ct:instance-type ServiceAnalyzer; }
+
+    ct:instance-list groups { ct:instance-type ServiceGroup; }
+    ct:instance-list policies { ct:instance-type ServicePolicy; }
+
+    container transport {
+      leaf-list domains {
+        type instance-identifier { ct:instance-type storm:TransportDomain; }
+        min-elements 1;
+      }
+    }
+
+    container orchestration {
+      leaf-list domains {
+        type instance-identifier { ct:instance-type storm:OrchestrationDomain; }
+        min-elements 1;
+      }
+    }
+
+    container resource {
+      leaf-list domains {
+        type instance-identifier { ct:instance-type storm:ResourceDomain; }
+        min-elements 1;
+      }
+    }
+
+    container management {
+      leaf-list domains {
+        type instance-identifier { ct:instance-type storm:ManagementDomain; }
+        min-elements 1;
+      }
+    }
+  }
+}

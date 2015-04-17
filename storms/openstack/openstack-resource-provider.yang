@@ -1,0 +1,68 @@
+module openstack-resource-provider {
+  prefix ostack;
+  
+  import storm-common-models { prefix scm; }
+  import complex-types { prefix ct; }
+
+  ct:complex-type OpenStack {
+    ct:extends scm:ResourceProvider;
+
+    // NOTE: unsure whether services and endpoints are needed
+    ct:instance-list services { ct:instance-type OpenStackService; }
+    ct:instance-list endpoints { ct:instance-type ServiceEndpoint; }
+
+    augment "auth" {
+      ct:instance-list tokens { ct:instance-type scm:AuthorizationToken; }
+    }
+
+    refine "compute/servers" { ct:instance-type OpenStackServerInstance; }
+    refine "networking/networks" { ct:instance-type OpenStackNetwork; }
+  }
+
+  ct:complex-type OpenStackServerInstance {
+    ct:extends scm:ServerInstance;
+
+    leaf zone {
+      if-feature os-availability-zone;
+      type string;
+    }
+
+    container extended-status {
+      if-feature os-extended-status;
+      leaf locked-by;
+      leaf power;
+      leaf task;
+      leaf vm;
+    }
+
+    leaf-list security-groups {
+      type instance-identifier { ct:instance-type SecurityGroup; }
+    }
+    
+    // Various RPC extensions available on the ServerInstance
+
+    rpc resize;
+    rpc reboot;
+    
+    rpc backup;
+    rpc migrate;
+    rpc restore;
+    rpc evacuate;
+    
+    rpc lock;
+    rpc unlock;
+
+    rpc suspend;
+    rpc resume;
+
+    rpc pause;
+    rpc unpause;
+    
+    rpc inject-network;
+    rpc reset-network;
+  }
+
+  container openstack {
+    ct:instance provider { ct:instance-type OpenStack; }
+  }
+}

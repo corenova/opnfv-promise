@@ -1,0 +1,23 @@
+submodule storm-identity {
+
+  identity service {
+    description "Base identity from which all service models are derived.";
+  }
+
+  identity transport {
+    description "Base identity from which all transport models are derived.";
+  }
+
+  identity orchestration {
+    description "Base identity from which all orchestration models are derived.";
+  }
+  
+  identity resource {
+    description "Base identity from which all resource models are derived.";
+  }
+
+  identity management {
+    description "Base identity from which all management models are derived.";
+  }
+  
+}

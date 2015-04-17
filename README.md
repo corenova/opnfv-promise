@@ -21,7 +21,7 @@ Currently planned key services are:
 
 The data model describing the required parameters regarding a resource
 reservation. The schema definition expressed in Yang can be found
-[here](schemas/opnfv-promise-models.yang).
+[here](storms/promise/opnfv-promise-models.yang).
 
 #### Key Elements
 
@@ -32,6 +32,7 @@ end   | ys:date-and-time | Timestamp of when the consumption of reserved resourc
 expiry | number | Duration expressed in seconds since `start` when resource not yet allocated shall be released back to the available zone
 zone | vim:AvailabilityZone | Reference to a zone where the resources will be reserved
 capacity | object | Quantity of resources to be reserved per resource types
+attributes | list | References to resource attributes needed for reservation
 resources | list (vim:ResourceElement) | Reference to a collection of existing resource elements required
 
 #### State Elements (read-only)
@@ -48,7 +49,7 @@ allocations | list (vim:ResourceAllocation) | Reference to a collection of consu
 
 Name | Type | Description
 ---  | ---  | ---
-reservation-error | Error | Subscribers will be notified if the reservation encounters an error and cannot be fulfilled
+reservation-event | Event | Subscribers will be notified if the reservation encounters an error or other events
 
 #### Inherited Elements
 
@@ -77,7 +78,7 @@ accessedOn | ys:date-and-time | Timestamp of when the data model was last access
 
 The data model describing the required parameters regarding a resource
 allocation.  The schema definition expressed in Yang can be found
-[here](schemas/opnfv-promise-models.yang).
+[here](storms/promise/opnfv-promise-models.yang).
 
 #### Key Elements
 
@@ -124,15 +125,24 @@ $ npm install stormforge
 
 * [YANG stormforge Module](src/stormforge.litcoffee)
 
-## YANG Schemas
-* [stormforge](schemas/stormforge.yang)
-* [opnfv-vim](schemas/opnfv-vim.yang)
-  * [opnfv-abstract-models](schemas/opnfv-abstract-models.yang)
-  * [opnfv-identity-models](schemas/opnfv-identity-models.yang)
-  * [opnfv-compute-models](schemas/opnfv-compute-models.yang)
-  * [opnfv-network-models](schemas/opnfv-network-models.yang)
-  * [opnfv-promise-models](schemas/opnfv-promise-models.yang)
-* [openstack-vim](schemas/openstack-vim.yang)
+## StormForge YANG Schemas
+* [storm-common-models](schemas/storm-common-models.yang)
+  * [storm-management-models](schemas/storm-management-models.yang)
+  * [storm-resource-models](schemas/storm-resource-models.yang)
+    * [storm-resource-abstract-models](schemas/storm-resource-abstract-models.yang)
+	* [storm-resource-identity-models](schemas/storm-resource-identity-models.yang)
+	* [storm-resource-compute-models](schemas/storm-resource-compute-models.yang)
+	* [storm-resource-network-models](schemas/storm-resource-network-models.yang)
+  * [storm-service-models](schemas/storm-service-models.yang)
+
+## OPNFV Promise YANG Schemas
+* [opnfv-promise](storms/promise/opnfv-promise.yang)
+  * [opnfv-promise-models](storms/promise/opnfv-promise-models.yang)
+
+## Additional YANG Schemas
+* [multi-vim](storms/multi-vim/multi-vim.yang)
+* [openstack](storms/openstack/openstack-resource-provider.yang)
+
 
 ## License
   [MIT](LICENSE)

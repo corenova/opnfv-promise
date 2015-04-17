@@ -1,31 +1,21 @@
-submodule opnfv-abstract-models {
+submodule resource-abstract-models {
 
-  belongs-to opnfv-vim { prefix vim; }
+  belongs-to storm-common-models { prefix storm; }
   
-  import yang-storm { prefix ys; }
+  import complex-types { prefix ct; }
   
   /*********************************************
    * Abstract Models (must be subclassed)
    *********************************************/
 
-  ys:complex-type AccessIdentity {
-    ys:extends ys:DataModel;
-    ys:abstract true;
-    
-    description "AccessIdentity represents an administrative access model entity";
-    leaf name { type string; mandatory true; }
-    leaf description { type string; }
-    leaf enabled { type boolean; default true; }
-  }
-
-  ys:complex-type ResourceElement {
-    ys:extends ys:DataModel;
-    ys:abstract true;
+  ct:complex-type ResourceElement {
+    ct:extends storm:DataModel;
+    ct:abstract true;
     
     leaf name { type string; mandatory true; }
     leaf enabled { type boolean; default true; }
     leaf protected { type boolean; default false; }
-    leaf owner { type instance-identifier { ys:instance-type AccessIdentity; } }
+    leaf owner { type instance-identifier { ct:instance-type storm:ManagementIdentity; } }
     leaf visibility {
       description "Specify visibility level available from the perspective of 'owner'";
       type enumeration {
@@ -42,14 +32,14 @@ submodule opnfv-abstract-models {
     leaf-list members {
       description "Optionally share with explicit list of members of AccessIdentity complex-type";
       type instance-identifier {
-        ys:instance-type AccessIdentity;
+        ct:instance-type storm:ManagementIdentity;
       }
     }
   }
 
-  ys:complex-type ResourceInstance {
-    ys:extends ResourceElement;
-    ys:abstract true;
+  ct:complex-type ResourceInstance {
+    ct:extends ResourceElement;
+    ct:abstract true;
 
     leaf status {
       type enumeration {

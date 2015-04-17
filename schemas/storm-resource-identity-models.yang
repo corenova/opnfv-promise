@@ -1,0 +1,47 @@
+submodule storm-resource-identity-models {
+
+  belongs-to storm-common-models { prefix storm; }
+  
+  import complex-types { prefix ct; }
+  
+  /*********************************************
+   * AccessIdentity Models
+   *********************************************/
+
+  ct:complex-type ResourceDomain {
+    ct:extends storm:ManagementDomain;
+    description
+      "ResourceDomain represent a distinct administrative domain across including projects.";
+    
+    leaf-list projects { type instance-identifier { ct:instance-type ResourceProject; } }
+  }
+
+  ct:complex-type ResourceProject {
+    ct:extends storm:DomainIdentity;
+    description
+      "DomainProject represent a distinct resource consumption space across
+       collection of users and groups that can reserve and allocate
+       resources.";
+    
+    leaf-list users { type instance-identifier { ct:instance-type storm:ResourceUser; } }
+    leaf-list groups { type instance-identifer { ct:instance-type storm:DomainGroup; } }
+
+    container resource {
+      leaf-list images {
+        if-feature vm-images;
+        type instance-identifier { ct:instance-type storm:VirtualMachineImage; }
+      }
+
+      leaf-list flavors {
+        if-feature compute-flavors;
+        type instance-identifier { ct:instance-type storm:VirtualMachineFlavor; }
+      }
+    }
+  }
+
+  ct:complex-type ResourceUser {
+    ct:extends DomainUser;
+
+    leaf-list projects { type instance-identifier { ct:instance-type ResourceProject; } }
+  }
+}

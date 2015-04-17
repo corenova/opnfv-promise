@@ -1,9 +1,10 @@
 # stormforge module
 
 The `stormforge` module is a Yang schema derived module that is
-compiled by the [yang-storm](http://github.com/stormstack/yang-storm)
-compiler to produce STORM data model driven complex-types and
-instances.
+compiled by the
+[yang-compiler](http://github.com/stormstack/yang-compiler) using the
+[yang-storm](http://github.com/stormstack/yang-storm) extension to
+produce STORM data model driven complex-types and instances.
 
 This module presents collection of Virtualized Infrastructure Manager
 resource entity data models as defined under guidance of [OPNFV
@@ -15,13 +16,10 @@ details about this module.
 
 ## Compiling the new stormforge module
 
-    path = require 'path'
-    schemas = (path.resolve __dirname, '../schemas')
-
-    compiler = require 'yang-compiler'
-    compiler.merge (require 'yang-storm')
+    compiler = (require 'yang-compiler').configure ->
+      @use (require 'yang-storm')
+      @set 'schemadir', (require 'path').resolve __dirname, '../schemas'
       
-    schema = (require 'fs').readFileSync (path.join schemas, 'stormforge.yang'), 'utf-8'
-    output = compiler.compile schema, sourcedir: schemas
+    output = compiler.compile (compiler.readSchema 'stormforge.yang')
 
     module.exports = output
