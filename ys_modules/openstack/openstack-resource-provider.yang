@@ -1,18 +1,26 @@
-module openstack-resource-provider {
+module openstack {
   prefix ostack;
   
-  import storm-common-models { prefix scm; }
+  import stormstack { prefix storm; }
   import complex-types { prefix ct; }
 
+  identity openstack { base "storm:resource-provider"; }
+  identity release { base "openstack"; }
+  identity distro { base "openstack"; }
+  
   ct:complex-type OpenStack {
-    ct:extends scm:ResourceProvider;
+    ct:extends storm:ResourceProvider;
 
+    leaf release { type identityref { base "release"; } }
+    leaf distro  { type identityref { base "distro"; } }
+    
+    
     // NOTE: unsure whether services and endpoints are needed
     ct:instance-list services { ct:instance-type OpenStackService; }
     ct:instance-list endpoints { ct:instance-type ServiceEndpoint; }
 
     augment "auth" {
-      ct:instance-list tokens { ct:instance-type scm:AuthorizationToken; }
+      ct:instance-list tokens { ct:instance-type storm:AuthorizationToken; }
     }
 
     refine "compute/servers" { ct:instance-type OpenStackServerInstance; }
@@ -20,7 +28,7 @@ module openstack-resource-provider {
   }
 
   ct:complex-type OpenStackServerInstance {
-    ct:extends scm:ServerInstance;
+    ct:extends storm:ServerInstance;
 
     leaf zone {
       if-feature os-availability-zone;
@@ -63,6 +71,6 @@ module openstack-resource-provider {
   }
 
   container openstack {
-    ct:instance provider { ct:instance-type OpenStack; }
+    ct:instance provider { ct:instance-type ResourceProvider; }
   }
 }

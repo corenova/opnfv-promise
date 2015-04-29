@@ -1,0 +1,51 @@
+module stormkeep {
+  prefix sk;
+
+  import stormstack { prefix storm; }
+  import mount { prefix mnt; }
+
+
+  feature stormkeep-mgmt {
+    description
+      "Provide additional capabilities to manage storage backend, authorized signers, etc.";
+    
+    // @enable 'stormkeep-mgmt'
+  }
+
+  container origin {
+    if-feature storm:origin;
+    uses storm:origin;
+  }
+
+  container repository {
+    choice target-origin-type {
+      mandatory true;
+      case remote {
+        mnt:mountpoint "storms" {
+          mnt:target "/origin";
+          mnt:subtree "/repository/storms";
+        }
+      }
+    }
+  }
+
+  rpc register {
+    
+  }
+  rpc unregister {
+    
+  }
+
+  // OPTIONAL if used as a service
+  container stormkeep-mgmt {
+    if-feature stormkeep-mgmt;
+    container storage {
+      
+    }
+    container signers {
+      list signer {
+        // public keys of stormforge?
+      }
+    }
+  }
+}
