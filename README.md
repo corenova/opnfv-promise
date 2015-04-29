@@ -43,11 +43,12 @@ Eventually these modules will be split into their own respective
 project repositories but for the time being they will be hosted
 together with the `stormforge` module.
 
-| module | description | status |
-| [opnfv-promise](ys_modules/opnfv-promise) | provide resource | reservation and capacity management | modeling complete |
-| [openstack](ys_modules/openstack) | openstack specific VIM extension | modeling incomplete |
-| [hp-helion](ys_modules/hp-helion) | hp-helion specific VIM extension | planned for future |
-| [multi-vim](ys_modules/multi-vim) | multiple VIM abstraction layer | planned for future |
+module | description | status
+--- | --- | ---
+[opnfv-promise](ys_modules/opnfv-promise) | provide resource | reservation and capacity management | modeling complete
+[openstack](ys_modules/openstack) | openstack specific VIM extension | modeling incomplete
+[hp-helion](ys_modules/hp-helion) | hp-helion specific VIM extension | planned for future
+[multi-vim](ys_modules/multi-vim) | multiple VIM abstraction layer | planned for future
 
 ## License
   [MIT](LICENSE)
