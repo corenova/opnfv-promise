@@ -81,11 +81,6 @@ submodule storm-resource-models {
       if-feature resource-reservation;
       ct:instance-type ResourceReservation;
     }
-    
-    rpc list-servers;
-    rpc create-server;
-    rpc destroy-server;
-    rpc reboot-server;
   }
   
   /*********************************************

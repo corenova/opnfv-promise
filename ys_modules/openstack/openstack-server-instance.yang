@@ -1,0 +1,61 @@
+submodule openstack-server-instance {
+
+  belongs-to openstack-resource-provider { prefix os; }
+
+  import storm-resource-models { prefix srm; }
+  import complex-types { prefix ct; }
+  
+  ct:complex-type OpenStackServerInstance {
+    ct:extends srm:ServerInstance;
+
+    leaf zone {
+      if-feature os:availability-zone;
+      type string;
+    }
+
+    container extended-status {
+      if-feature os:extended-status;
+      leaf locked-by;
+      leaf power;
+      leaf task;
+      leaf vm;
+    }
+
+    leaf-list security-groups {
+      if-feature os:security-groups;
+      type instance-identifier { ct:instance-type os:SecurityGroup; }
+    }
+  }
+  
+  // Various RPC extensions available on the openstack-server-instance
+
+  rpc resize-server {
+    input {
+      leaf server { type instance-type { ct:instance-type OpenStackServerInstance; } }
+      // some other params to govern how resize takes place
+    }
+    output {
+      // some response 
+    }
+  }
+  rpc reboot-server;
+  rpc destroy-server;
+    
+  rpc backup-server;
+  rpc migrate-server;
+  rpc restore-server;
+  rpc evacuate-server;
+    
+  rpc lock-server;
+  rpc unlock-server;
+
+  rpc suspend-server;
+  rpc resume-server;
+
+  rpc pause-server;
+  rpc unpause-server;
+    
+  rpc inject-network;
+  rpc reset-network;
+
+}

@@ -1,15 +1,29 @@
-module openstack {
-  prefix ostack;
-  
-  import stormstack { prefix storm; }
+module openstack-resource-provider {
+
+  belongs-to openstack { prefix os; }
+
+  import storm-management-models { prefix smm; }
+  import storm-resource-models { prefix srm; }
   import complex-types { prefix ct; }
 
-  identity openstack { base "storm:resource-provider"; }
+  include openstack-server-instance;
+  
+  identity openstack { base "srm:resource-provider"; }
   identity release { base "openstack"; }
   identity distro { base "openstack"; }
+
+  feature availability-zone {
+    description "Specifies whether availability zone functionality is available.";
+  }
+  feature extended-status {
+    description "Specifies whether extended status functionality is available.";
+  }
+  feature security-groups {
+    description "Specifies whether security groups functionality is available.";
+  }
   
-  ct:complex-type OpenStack {
-    ct:extends storm:ResourceProvider;
+  ct:complex-type OpenStackResourceProvider {
+    ct:extends srm:ResourceProvider;
 
     leaf release { type identityref { base "release"; } }
     leaf distro  { type identityref { base "distro"; } }
@@ -20,57 +34,23 @@ module openstack {
     ct:instance-list endpoints { ct:instance-type ServiceEndpoint; }
 
     augment "auth" {
-      ct:instance-list tokens { ct:instance-type storm:AuthorizationToken; }
+      ct:instance-list tokens { ct:instance-type smm:AuthorizationToken; }
     }
 
     refine "compute/servers" { ct:instance-type OpenStackServerInstance; }
     refine "networking/networks" { ct:instance-type OpenStackNetwork; }
   }
 
-  ct:complex-type OpenStackServerInstance {
-    ct:extends storm:ServerInstance;
-
-    leaf zone {
-      if-feature os-availability-zone;
-      type string;
+  // Various RPC extensions available on the openstack-resource-provider
+    
+  rpc list-servers {
+    input {
+      leaf provider { type instance-type { ct:instance-type OpenStackResourceProvider; } }
     }
-
-    container extended-status {
-      if-feature os-extended-status;
-      leaf locked-by;
-      leaf power;
-      leaf task;
-      leaf vm;
+    output {
+      ct:instance-list servers { ct:instance-type OpenStackServerInstance; }
     }
-
-    leaf-list security-groups {
-      type instance-identifier { ct:instance-type SecurityGroup; }
-    }
-    
-    // Various RPC extensions available on the ServerInstance
-
-    rpc resize;
-    rpc reboot;
-    
-    rpc backup;
-    rpc migrate;
-    rpc restore;
-    rpc evacuate;
-    
-    rpc lock;
-    rpc unlock;
-
-    rpc suspend;
-    rpc resume;
-
-    rpc pause;
-    rpc unpause;
-    
-    rpc inject-network;
-    rpc reset-network;
   }
-
-  container openstack {
-    ct:instance provider { ct:instance-type ResourceProvider; }
-  }
+  rpc create-server;
+  
 }

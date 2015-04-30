@@ -1,0 +1,13 @@
+module openstack {
+  prefix os;
+
+  include openstack-resource-provider;
+
+  container openstack {
+    ct:instance provider { ct:instance-type OpenStackResourceProvider; }
+  }
+
+  
+  
+
+}
