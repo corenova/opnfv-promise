@@ -1,8 +1,6 @@
-submodule storm-resource-compute-models {
+submodule vim-compute-models {
 
-  belongs-to storm-common-models { prefix storm; }
-
-  include storm-identity;
+  belongs-to opnfv-promise-vim { prefix vim; }
 
   organization
     "ClearPath Networks R&D Group";
@@ -16,14 +14,7 @@ submodule storm-resource-compute-models {
   identity vm-flavor { base "compute"; }
 
   feature has-compute;
-  feature has-compute-capacity;
 
-  grouping compute-capacity {
-    leaf cores { type number; }
-    leaf ram { type number; }
-    leaf instances { type number; }
-  }
-  
   /*********************************************
    * Compute Models
    *********************************************/
@@ -31,7 +22,7 @@ submodule storm-resource-compute-models {
   import complex-types { prefix ct; }
 
   ct:complex-type ComputeElement {
-    ct:extends storm:ResourceElement;
+    ct:extends vim:ResourceElement;
     ct:abstract true;
 
     container constraint {
@@ -43,7 +34,7 @@ submodule storm-resource-compute-models {
     leaf-list instances {
       description "State info about instances currently using this resource element";
       type instance-identifier {
-        ct:instance-type storm:ResourceInstance;
+        ct:instance-type vim:ResourceInstance;
       }
       config false;
     }
@@ -66,13 +57,6 @@ submodule storm-resource-compute-models {
         }
       }
     }
-
-    rpc upload {
-      description "uploads binary image data";
-    }
-    rpc download {
-      description "downloads binary image data";
-    }
   }
 
   ct:complex-type VirtualMachineFlavor {
@@ -80,10 +64,10 @@ submodule storm-resource-compute-models {
   }
 
   ct:complex-type ServerInstance {
-    ct:extends storm:ResourceInstance;
+    ct:extends vim:ResourceInstance;
 
     leaf project {
-      type instance-identifier { ct:instance-type storm:DomainProject; }
+      type instance-identifier { ct:instance-type vim:DomainProject; }
       mandatory true;
     }
     leaf flavor {
@@ -105,12 +89,12 @@ submodule storm-resource-compute-models {
         "References to collection of NetworkingElement class objects such as
          Network, Subnet, Port, Router that this ServerInstance is
          connected with.";
-      type instance-identifier { ct:instance-type storm:NetworkElement; }
+      type instance-identifier { ct:instance-type vim:NetworkElement; }
     }
   }
 
   ct:complex-type PhysicalHost {
-    ct:extends ResourceElement;
+    ct:extends vim:ResourceElement;
 
     leaf type { type string; }
     leaf version { type string; }
@@ -131,10 +115,6 @@ submodule storm-resource-compute-models {
     }
 
     leaf-list hypervisors { type instance-identifier { ct:instance-type Hypervisor; } }
-
-    rpc reboot;
-    rpc shutdown;
-    rpc startup;
   }
   
   ct:complex-type Hypervisor {
@@ -150,7 +130,18 @@ submodule storm-resource-compute-models {
       leaf free { type number; }
     }
     leaf-list servers { type instance-identifier { ct:instance-type ServerInstance; } }
-
-    rpc evacuate;
   }
+
+  rpc image-upload {
+    description "uploads binary image data";
+  }
+  rpc image-download {
+    description "downloads binary image data";
+  }
+  
+  rpc host-reboot;
+  rpc host-shutdown;
+  rpc host-startup;
+
+  rpc hypervisor-evacuate;
 }

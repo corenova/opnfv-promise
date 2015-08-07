@@ -1,7 +1,5 @@
-submodule storm-management-models {
+module opnfv-management-models {
 
-  belongs-to storm-common-models { prefix storm; }
-  
   import complex-types { prefix ct; }
   
   /*********************************************
@@ -9,7 +7,6 @@ submodule storm-management-models {
    *********************************************/
 
   ct:complex-type Identity {
-    ct:extends storm:DataModel;
     ct:abstract true;
     
     description "Identity represents an administrative access model entity";
@@ -32,8 +29,6 @@ submodule storm-management-models {
     ct:abstract true;
     ct:extends Identity;
 
-    description
-    
     leaf domain {
       type instance-identifier { ct:instance-type Domain; }
       mandatory true;
@@ -50,7 +45,8 @@ submodule storm-management-models {
     ct:extends DomainIdentity;
 
     leaf credential {
-      type instance-identifier { ct:instance-type IdentityCredential; }
+      //type instance-identifier { ct:instance-type IdentityCredential; }
+      type string;
       mandatory true;
     }
     
@@ -61,7 +57,4 @@ submodule storm-management-models {
 
     leaf-list groups { type instance-identifer { ct:instance-type DomainGroup; } }
   }
-
-  
-  
 }

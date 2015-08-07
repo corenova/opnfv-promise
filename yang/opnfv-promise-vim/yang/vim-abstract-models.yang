@@ -1,7 +1,8 @@
-submodule resource-abstract-models {
+submodule vim-abstract-models {
 
-  belongs-to storm-common-models { prefix storm; }
+  belongs-to opnfv-promise-vim { prefix vim; }
   
+  import opnfv-management-models { prefix mgmt; }
   import complex-types { prefix ct; }
   
   /*********************************************
@@ -9,13 +10,12 @@ submodule resource-abstract-models {
    *********************************************/
 
   ct:complex-type ResourceElement {
-    ct:extends storm:DataModel;
     ct:abstract true;
     
     leaf name { type string; mandatory true; }
     leaf enabled { type boolean; default true; }
     leaf protected { type boolean; default false; }
-    leaf owner { type instance-identifier { ct:instance-type storm:ManagementIdentity; } }
+    leaf owner { type instance-identifier { ct:instance-type mgmt:Identity; } }
     leaf visibility {
       description "Specify visibility level available from the perspective of 'owner'";
       type enumeration {
@@ -32,7 +32,7 @@ submodule resource-abstract-models {
     leaf-list members {
       description "Optionally share with explicit list of members of AccessIdentity complex-type";
       type instance-identifier {
-        ct:instance-type storm:ManagementIdentity;
+        ct:instance-type mgmt:Identity;
       }
     }
   }

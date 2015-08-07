@@ -1,36 +1,47 @@
 {
-  "name": "stormforge",
-  "description": "Framework to create and run new STORM modules",
-  "version": "0.3.0",
+  "version": "0.4.0",
+  "name": "@yang/opnfv-promise",
+  "description": "Resource Management for Virtualized Infrastructure",
+  "keywords": [
+    "opnfv",
+    "promise",
+    "vim",
+    "infrastructure",
+    "openstack",
+    "nbi",
+    "yangforge",
+    "resource",
+    "reservation",
+    "capacity",
+    "allocation"
+  ],
   "author": "Peter K. Lee <peter@intercloud.net>",
-  "homepage": "http://stormstack.org",
-  "license": "MIT",
+  "homepage": "http://wiki.opnfv.org/promise#readme",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/stormstack/stormforge.git"
+    "url": "git://github.com/opnfv/promise.git"
   },
+  "bugs": {
+    "url": "https://github.com/opnfv/promise/issues"
+  },
+  "main": "lib/promise.js",
+  "bin": "bin/cli",
+  "schema": "opnfv-promise.yang",
   "dependencies": {
-    "promise": "^6.0.1",
-		"yang-compiler": "^0.3.1",
-    "yang-storm": "^0.3.16"
-  },
-  "devDependencies": {
-    "chai": "^1.10.0",
-    "coffee-script": ">=1.8.0",
-    "mocha": "^2.0.1",
-    "sinon": "^1.12.1",
-		"stormify": ">=0.5.3"
+    "@yang/opnfv-promise-vim": "file:yang/opnfv-promise-vim"
   },
   "optionalDependencies": {},
-  "engines": {
-    "node": ">=1.0.x"
-  },
-  "main": "./lib/stormforge",
+  "bundledDependencies": [
+    "@yang/opnfv-promise-vim"
+  ],
   "scripts": {
-		"prepublish": "mkdir -p lib; coffee -o lib -c src",
-    "test": "mocha test --recursive"
+    "prepublish": "mkdir -p lib; coffee -o lib -c src",
+    "start": "bin/cli run"
   },
-  "contributors": [
-		"Ravi Chunduru"
-  ]
+  "engines": {
+    "node": ">=0.10.3",
+    "npm": ">=2.0",
+    "yangforge": ">=0.9"
+  }
 }

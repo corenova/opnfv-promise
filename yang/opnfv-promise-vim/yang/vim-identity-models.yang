@@ -1,7 +1,8 @@
-submodule storm-resource-identity-models {
+submodule vim-identity-models {
 
-  belongs-to storm-common-models { prefix storm; }
+  belongs-to opnfv-promise-vim { prefix vim; }
   
+  import opnfv-management-models { prefix mgmt; }
   import complex-types { prefix ct; }
   
   /*********************************************
@@ -9,7 +10,7 @@ submodule storm-resource-identity-models {
    *********************************************/
 
   ct:complex-type ResourceDomain {
-    ct:extends storm:ManagementDomain;
+    ct:extends mgmt:Domain;
     description
       "ResourceDomain represent a distinct administrative domain across including projects.";
     
@@ -17,30 +18,30 @@ submodule storm-resource-identity-models {
   }
 
   ct:complex-type ResourceProject {
-    ct:extends storm:DomainIdentity;
+    ct:extends mgmt:DomainIdentity;
     description
       "DomainProject represent a distinct resource consumption space across
        collection of users and groups that can reserve and allocate
        resources.";
     
-    leaf-list users { type instance-identifier { ct:instance-type storm:ResourceUser; } }
-    leaf-list groups { type instance-identifer { ct:instance-type storm:DomainGroup; } }
+    leaf-list users { type instance-identifier { ct:instance-type ResourceUser; } }
+    leaf-list groups { type instance-identifer { ct:instance-type mgmt:DomainGroup; } }
 
     container resource {
       leaf-list images {
         if-feature vm-images;
-        type instance-identifier { ct:instance-type storm:VirtualMachineImage; }
+        type instance-identifier { ct:instance-type vim:VirtualMachineImage; }
       }
 
       leaf-list flavors {
         if-feature compute-flavors;
-        type instance-identifier { ct:instance-type storm:VirtualMachineFlavor; }
+        type instance-identifier { ct:instance-type vim:VirtualMachineFlavor; }
       }
     }
   }
 
   ct:complex-type ResourceUser {
-    ct:extends DomainUser;
+    ct:extends mgmt:DomainUser;
 
     leaf-list projects { type instance-identifier { ct:instance-type ResourceProject; } }
   }

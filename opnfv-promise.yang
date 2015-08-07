@@ -1,13 +1,82 @@
-module opnfv-promise-models {
-  prefix opm;
+module opnfv-promise {
+  namespace "urn:opnfv:vim:promise";
+  prefix promise;
 
-  import storm-common-models { prefix scm; }
   import complex-types { prefix ct; }
+  import opnfv-promise-vim { prefix vim; }
 
-  feature resource-reservation;
+  feature multi-provider {
+    description "";
+  }
+  
+  description
+    "OPNFV Promise Resource Reservation/Allocation controller module";
+  
+  revision 2015-04-16 {
+    description "Initial revision.";
+  }
+
+  revision 2015-08-06 {
+    description "Updated to incorporate YangForge framework";
+  }
+
+  grouping resource-capacity {
+    container capacity {
+      container quota { description 'Conceptual container that should be extended'; }
+      container usage { description 'Conceptual container that should be extended'; config false; }
+      container reserved { description 'Conceptual container that should be extended'; config false; }
+      container available { description 'Conceptual container that should be extended'; config false; }
+    }
+  }
+
+  grouping compute-capacity {
+    leaf cores { type number; }
+    leaf ram { type number; }
+    leaf instances { type number; }
+  }
+
+  grouping networking-capacity {
+    leaf network { type number; }
+    leaf port { type number; }
+    leaf router { type number; }
+    leaf subnet { type number; }
+    leaf address { type number; }
+  }
+
+  ct:complext-type ResourceProvider {
+    ct:extends vim:ResourceProvider;
+
+    // augment compute container with capacity elements
+    augment "compute" {
+      uses resource-capacity {
+        augment "capacity/quota" { uses compute-capacity; }
+        augment "capacity/usage" { uses compute-capacity; }
+        augment "capacity/reserved" { uses compute-capacity; }
+        augment "capacity/available" { uses compute-capacity; }
+      }
+    }
+
+    // augment networking container with capacity elements
+    augment "networking" {
+      uses resource-capacity {
+        if-feature has-networking-capacity;
+        augment "capacity/quota" { uses networking-capacity; }
+        augment "capacity/usage" { uses networking-capacity; }
+        augment "capacity/reserved" { uses networking-capacity; }
+        augment "capacity/available" { uses networking-capacity; }
+      }
+    }
+    
+    // track references to reservations for this resource provider
+    leaf-list reservations {
+      type instance-identifier {
+        ct:instance-type ResourceReservation;
+      }
+    }
+  }
   
   ct:complex-type ResourceReservation {
-    ct:extends scm:ResourceElement;
+    ct:extends vim:ResourceElement;
     
     description
       "Contains the capacities of various resource services being reserved
@@ -16,17 +85,17 @@ module opnfv-promise-models {
     
     reference "OPNFV-PROMISE, Section 3.4.1";
     
-    leaf start { type ct:date-and-time; }
-    leaf end   { type ct:date-and-time; }
+    leaf start { type date-and-time; }
+    leaf end   { type date-and-time; }
     leaf expiry {
       description "Duration in seconds from start when unallocated reserved resources will be released back into the pool";
       type number; units "seconds";
     }
-    leaf zone { type instance-identifier { ct:instance-type scm:AvailabilityZone; } }
+    leaf zone { type instance-identifier { ct:instance-type vim:AvailabilityZone; } }
     container capacity {
-      uses scm:compute-capacity;
-      uses scm:networking-capcity;
-      uses scm:storage-capacity;
+      uses vim:compute-capacity;
+      uses vim:networking-capcity;
+      uses vim:storage-capacity;
     }
     leaf-list resources {
       description
@@ -37,7 +106,7 @@ module opnfv-promise-models {
          accepted, the ResourceElement(s) listed here will be placed
          into 'protected' mode as to prevent accidental delete.";
       type instance-identifier {
-        ct:instance-type scm:ResourceElement;
+        ct:instance-type vim:ResourceElement;
       }
       // following 'must' statement applies to each element
       must "boolean(/provider/elements/*[@id=id])" {
@@ -54,7 +123,7 @@ module opnfv-promise-models {
          will be drawn if used in the context of multi-provider
          environment.";
       type instance-identifier {
-        ct:instance-type scm:ResourceProvider;
+        ct:instance-type vim:ResourceProvider;
         require-instance true;
       }
     }
@@ -66,9 +135,9 @@ module opnfv-promise-models {
          reservation based on allocations that took effect utilizing
          this reservation ID as a reference.";
 
-      uses scm:compute-capacity;
-      uses scm:networking-capcity;
-      uses scm:storage-capacity;
+      uses vim:compute-capacity;
+      uses vim:networking-capcity;
+      uses vim:storage-capacity;
     }
 
     leaf-list allocations {
@@ -80,11 +149,10 @@ module opnfv-promise-models {
         ct:instance-type ResourceAllocation;
       }
     }
-
   }
 
   ct:complex-type ResourceAllocation {
-    ct:extends scm:ResourceElement;
+    ct:extends vim:ResourceElement;
 
     description
        "Contains a list of resources to be allocated with optional reference
@@ -124,7 +192,7 @@ module opnfv-promise-models {
     
     ct:instance-list resources {
       description "Contains list of new ResourceElements that will be allocated";
-      ct:instance-type scm:ResourceElement;
+      ct:instance-type vim:ResourceElement;
     }
 
     leaf priority {
@@ -134,5 +202,39 @@ module opnfv-promise-models {
       config false;
     }
   }
-}
+  
+  // MAIN CONTAINER
+  container promise {
+    ct:instance-list providers {
+      description "Aggregate collection of all registered ResourceProvider instances";
+      ct:instance-type ResourceProvider;
+      config false;
+    }
+    ct:instance-list reservations {
+      description "Aggregate collection of all registered ResourceReservation instances";
+      ct:instance-type ResourceReservation;
+    }
 
+    ct:instance-list allocations {
+      description "Aggregate collection of all active ResourceAllocation instances";
+      ct:instance-type ResourceAllocation;
+    }
+  }
+
+  rpc list-providers;
+  rpc add-provider;
+  rpc remove-provider;
+  rpc check-capacity;
+  
+  rpc list-reservations;
+  rpc create-reservation;
+  rpc update-reservation;
+  rpc cancel-reservation;
+
+  rpc list-allocations;
+  rpc create-allocation;
+
+  notification reservation-event;
+  notification capacity-event;
+  notification allocation-event;
+}
