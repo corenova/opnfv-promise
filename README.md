@@ -2,12 +2,11 @@
 
 This module presents collection of Virtualized Infrastructure Manager
 resource entity data models as defined under guidance of [OPNFV
-Promise](http://wiki.opnfv.org/promise) project. You can refer to the
-[stormforge YANG schema](../schemas/stormforge.yang) for additional
-details about this module.
+Promise](http://wiki.opnfv.org/promise) project.
 
-* [OPNFV Promise Models](./opnfv-promise-models.yang)
+* [OPNFV Promise Schema](./opnfv-promise.yang)
 
+**This documentation is OUT-OF-DATE and needs to be revised**
 
 A YANG-STORM module for building and signing new YS modules with STORM
 abstraction data models.
@@ -17,7 +16,7 @@ abstraction data models.
 
 ## Installation
 ```bash
-$ npm install stormforge
+$ npm install 
 ```
 ## Documentation
 

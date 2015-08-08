@@ -1,5 +1,5 @@
 module opnfv-promise {
-  namespace "urn:opnfv:vim:promise";
+  namespace "urn:opnfv:promise";
   prefix promise;
 
   import complex-types { prefix ct; }
@@ -43,38 +43,6 @@ module opnfv-promise {
     leaf address { type number; }
   }
 
-  ct:complext-type ResourceProvider {
-    ct:extends vim:ResourceProvider;
-
-    // augment compute container with capacity elements
-    augment "compute" {
-      uses resource-capacity {
-        augment "capacity/quota" { uses compute-capacity; }
-        augment "capacity/usage" { uses compute-capacity; }
-        augment "capacity/reserved" { uses compute-capacity; }
-        augment "capacity/available" { uses compute-capacity; }
-      }
-    }
-
-    // augment networking container with capacity elements
-    augment "networking" {
-      uses resource-capacity {
-        if-feature has-networking-capacity;
-        augment "capacity/quota" { uses networking-capacity; }
-        augment "capacity/usage" { uses networking-capacity; }
-        augment "capacity/reserved" { uses networking-capacity; }
-        augment "capacity/available" { uses networking-capacity; }
-      }
-    }
-    
-    // track references to reservations for this resource provider
-    leaf-list reservations {
-      type instance-identifier {
-        ct:instance-type ResourceReservation;
-      }
-    }
-  }
-  
   ct:complex-type ResourceReservation {
     ct:extends vim:ResourceElement;
     
@@ -207,9 +175,38 @@ module opnfv-promise {
   container promise {
     ct:instance-list providers {
       description "Aggregate collection of all registered ResourceProvider instances";
-      ct:instance-type ResourceProvider;
+      ct:instance-type vim:ResourceProvider;
       config false;
+
+     // augment compute container with capacity elements
+     augment "compute" {
+       uses resource-capacity {
+         augment "capacity/quota" { uses compute-capacity; }
+         augment "capacity/usage" { uses compute-capacity; }
+         augment "capacity/reserved" { uses compute-capacity; }
+         augment "capacity/available" { uses compute-capacity; }
+       }
+     }
+
+     // augment networking container with capacity elements
+     augment "networking" {
+       uses resource-capacity {
+         if-feature has-networking-capacity;
+         augment "capacity/quota" { uses networking-capacity; }
+         augment "capacity/usage" { uses networking-capacity; }
+         augment "capacity/reserved" { uses networking-capacity; }
+         augment "capacity/available" { uses networking-capacity; }
+       }
+     }
+
+     // track references to reservations for this resource provider
+     leaf-list reservations {
+       type instance-identifier {
+         ct:instance-type ResourceReservation;
+       }
+     }
     }
+    
     ct:instance-list reservations {
       description "Aggregate collection of all registered ResourceReservation instances";
       ct:instance-type ResourceReservation;

@@ -1,5 +1,5 @@
 {
-  "version": "0.4.0",
+  "version": "0.4.1",
   "name": "@yang/opnfv-promise",
   "description": "Resource Management for Virtualized Infrastructure",
   "keywords": [
@@ -42,6 +42,6 @@
   "engines": {
     "node": ">=0.10.3",
     "npm": ">=2.0",
-    "yangforge": ">=0.9"
+    "yangforge": ">=0.9.10"
   }
 }
