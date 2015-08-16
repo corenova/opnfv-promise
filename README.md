@@ -8,15 +8,12 @@ Promise](http://wiki.opnfv.org/promise) project.
 
 **This documentation is OUT-OF-DATE and needs to be revised**
 
-A YANG-STORM module for building and signing new YS modules with STORM
-abstraction data models.
-
   [![NPM Version][npm-image]][npm-url]
   [![NPM Downloads][downloads-image]][downloads-url]
 
 ## Installation
 ```bash
-$ npm install 
+$ yfc install opnfv-promise
 ```
 ## Documentation
 
@@ -174,6 +171,6 @@ module | description | status
   [MIT](LICENSE)
 
 [npm-image]: https://img.shields.io/npm/v/stormforge.svg
-[npm-url]: https://npmjs.org/package/stormforge
+[npm-url]: https://npmjs.org/package/@yang/opnfv-promise
 [downloads-image]: https://img.shields.io/npm/dm/stormforge.svg
-[downloads-url]: https://npmjs.org/package/stormforge
+[downloads-url]: https://npmjs.org/package/@yang/opnfv-promise

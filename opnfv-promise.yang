@@ -219,7 +219,14 @@ module opnfv-promise {
   }
 
   rpc list-providers;
-  rpc add-provider;
+  rpc add-provider {
+    description "This operation allows you to register a new ResourceProvider into promise management service";
+    input {
+      leaf endpoint { type url;
+        description "The target URL endpoint for the resource provider";
+      }
+    }
+  }
   rpc remove-provider;
   rpc check-capacity;
   

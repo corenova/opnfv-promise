@@ -11,7 +11,9 @@ submodule vim-abstract-models {
 
   ct:complex-type ResourceElement {
     ct:abstract true;
-    
+
+    key "id";
+    leaf id { type uuid; mandatory true; default auto; }
     leaf name { type string; mandatory true; }
     leaf enabled { type boolean; default true; }
     leaf protected { type boolean; default false; }
