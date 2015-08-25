@@ -4,39 +4,41 @@ This module presents collection of Virtualized Infrastructure Manager
 resource entity data models as defined under guidance of [OPNFV
 Promise](http://wiki.opnfv.org/promise) project.
 
-* [OPNFV Promise Schema](./opnfv-promise.yang)
+`opnfv-promise` is built on top of the
+[YangForge](http://github.com/opnfv/yangforge) data modeling
+framework. You will need to first install `yangforge` and use the
+provided `yfc` command line utility to run this module.
 
-**This documentation is OUT-OF-DATE and needs to be revised**
+The following are the key features provided by this module:
 
-  [![NPM Version][npm-image]][npm-url]
-  [![NPM Downloads][downloads-image]][downloads-url]
+* Resource Capacity Management
+* Resource Reservation
+* Resource Allocation
 
 ## Installation
 ```bash
-$ yfc install opnfv-promise
+$ yfc install -g opnfv-promise
 ```
-## Documentation
+Please note the use of `yfc` command line utility for installing this
+module. 
 
-* [stormforge schema](./stormforge.yang)
-* [stormforge module](./stormforge.litcoffee)
+## Usage
+```bash
+$ yfc run opnfv-promise
+```
+The `yfc run` command will instantiate the opnfv-promise module and
+run REST/JSON interface by default listening on port 5000.
+
+### Registering a new Resource Provider
 
 
-A YS module providing various OPNFV requirements driven virtualized
-infrastructure management services.
+## Promise Information Models
 
-This module is maintained under direction of
-[OPNFV Promise](http://wiki.opnfv.org/promise) project.
-
-* Resource Capacity Management Service
-* Resource Reservation Service
-
-## Information Elements
-
-### Resource Reservation
+### ResourceReservation
 
 The data model describing the required parameters regarding a resource
 reservation. The schema definition expressed in Yang can be found
-[here](./opnfv-promise-models.yang).
+[here](./opnfv-promise.yang).
 
 #### Key Elements
 
@@ -68,7 +70,7 @@ reservation-event | Event | Subscribers will be notified if the reservation enco
 
 #### Inherited Elements
 
-##### Extended from vim:ResourceElement
+##### Extended from [vim:ResourceElement](./yang/opnfv-promise-vim)
 
 Name | Type | Description
 ---  | ---  | ---
@@ -154,11 +156,6 @@ generates STORM data model class hierarchy (based on `data-storm` module).
   * [yang-compiler](http://github.com/stormstack/yang-compiler)
     * [yang-parser](https://www.npmjs.com/package/yang-parser)
 
-## Additional YS modules
-
-Eventually these modules will be split into their own respective
-project repositories but for the time being they will be hosted
-together with the `stormforge` module.
 
 module | description | status
 --- | --- | ---
@@ -168,9 +165,4 @@ module | description | status
 [multi-vim](ys_modules/multi-vim) | multiple VIM abstraction layer | planned for future
 
 ## License
-  [MIT](LICENSE)
-
-[npm-image]: https://img.shields.io/npm/v/stormforge.svg
-[npm-url]: https://npmjs.org/package/@yang/opnfv-promise
-[downloads-image]: https://img.shields.io/npm/dm/stormforge.svg
-[downloads-url]: https://npmjs.org/package/@yang/opnfv-promise
+  [Apache-2.0](LICENSE)
