@@ -1,0 +1,57 @@
+module opnfv-management-models {
+
+  import complex-types { prefix ct; }
+  
+  /*********************************************
+   * Identity Models
+   *********************************************/
+
+  ct:complex-type Identity {
+    ct:abstract true;
+    
+    description "Identity represents an administrative access model entity";
+    leaf name { type string; mandatory true; }
+    leaf description { type string; }
+    leaf enabled { type boolean; default true; }
+  }
+
+  ct:complex-type User {
+    ct:extends Identity;
+
+    leaf credential {
+      //type instance-identifier { ct:instance-type IdentityCredential; }
+      type string;
+      mandatory true;
+    }
+    
+    container contact {
+      leaf fullName { type string; }
+      leaf email { type email; }
+    }
+
+    leaf-list groups { type instance-identifer { ct:instance-type Group; } }
+    leaf domain { type instance-identifier { ct:instance-type Domain; } }
+  }
+
+  ct:complex-type Group {
+    ct:extends Identity;
+    
+    leaf-list users { type instance-identifier { ct:instance-type User; } }
+    leaf domain { type instance-identifier { ct:instance-type Domain; } }
+  }
+
+  ct:complex-type Domain {
+    ct:extends Identity;
+    description
+      "Domain represent a distinct administrative domain across
+       collection of users and groups.";
+
+    ct:instance-list users { ct:instance-type User; }
+    ct:instance-list groups { ct:instance-type Group; }
+
+    rpc create-user;
+    rpc remove-user;
+    rpc create-group;
+    rpc remove-group;
+  }
+}

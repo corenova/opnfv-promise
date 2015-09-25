@@ -1,0 +1,77 @@
+module openstack {
+  prefix ostack;
+
+  import nfv-infrastructure { prefix nfvi; }
+  import nfv-mano { prefix mano; }
+
+  import openstack-identity { prefix os-id; }
+  import openstack-compute { prefix os-com; }
+  import openstack-network { prefix os-net; }
+  import openstack-storage { prefix os-sto; }
+  import complex-types { prefix ct; }
+
+  import opnfv-promise { prefix promise; }
+  
+  feature simulator {
+    description "When enabled, provides simulation of an OpenStack endpoint";
+  }
+
+  feature promise-reservation {
+    description "Specifies whether promise reservation functionality is available.";
+  }
+
+  identity openstack { base mano:vim; }
+  identity release { base openstack; }
+  identity distro { base openstack; }
+
+  ct:complex-type VirtualInfrastructureManager {
+    ct:extends mano:VirtualInfrastructureManager;
+
+    description
+      "Extended VirtualInfrastructureManager data model capturing OpenStack
+      specific entity models";
+
+    leaf release { type identityref { base release; } }
+    leaf distro  { type identityref { base distro; } }
+    
+    // NOTE: unsure whether services and endpoints are needed
+    ct:instance-list services { ct:instance-type OpenStackService; }
+    ct:instance-list endpoints { ct:instance-type ServiceEndpoint; }
+
+    ct:instance-list domains { ct:instance-type os-id:Domain; }
+    ct:instance-list projects { ct:instance-type os-id:Project; }
+    ct:instance-list users { ct:instance-type os-id:User; }
+    ct:instance-list groups { ct:instance-type os-id:Group; }
+
+    augment "auth" {
+      ct:instance-list tokens { ct:instance-type os-id:Token; }
+    }
+
+    refine "compute/servers" { ct:instance-type os-com:ServerInstance; }
+
+    ct:instance-list reservations {
+      if-feature promise-reservation;
+      ct:instance-type promise:ResourceReservation;
+    }
+  }
+
+  // Runtime controller for managing OpenStack instances
+  container controller {
+    ct:instance-list instances { ct:instance-type VirtualInfrastructureManager; }
+  }
+
+  container identity {
+    choice version {
+      case v3 {
+        container auth {
+          
+        }
+      }
+    }
+  }
+
+  rpc add-provider {
+    input  { uses nfvi:add-provider-input; }
+    output { uses nfvi:add-provider-output; }
+  }
+}

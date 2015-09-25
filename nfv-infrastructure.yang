@@ -1,0 +1,237 @@
+module nfv-infrastructure {
+  namespace "urn:opnfv:promise:nfv:infrastructure";
+  prefix nfvi;
+
+  import access-control-models { prefix acm; }
+  import ietf-yang-types { prefix yang; }
+  import complex-types { prefix ct; }
+
+  description
+    "NFV Infrastructure Data Models with complex types and typed instance
+     identifiers representing the various ResourceElements available
+     in the infrastructure across compute, network, and storage.";
+  
+  revision 2015-08-07 {
+    description
+      "This YANG module is modeled using 'yangforge' which natively provides
+       complex types and typed instance identifiers.  This module
+       provides various collections of resource management data models
+       for instance based management";
+  }
+
+  /*********************************************
+   * Abstract Models (top-level)
+   *********************************************/
+
+  ct:complex-type ResourceElement {
+    ct:abstract true;
+
+    key "id";
+    leaf id { type yang:uuid; mandatory true; default auto; }
+    leaf name { type string; mandatory true; }
+    leaf enabled { type boolean; default true; }
+    leaf protected { type boolean; default false; }
+    leaf owner { type instance-identifier { ct:instance-type acm:Identity; } }
+    leaf visibility {
+      description "Specify visibility level available from the perspective of 'owner'";
+      type enumeration {
+        enum public;
+        enum domain;
+        enum project;
+        enum group;
+        enum user;
+      }
+      default user;
+    }
+    leaf-list tags { type string; }
+    
+    leaf-list members {
+      description "Optionally share with explicit list of members of AccessIdentity complex-type";
+      type instance-identifier {
+        ct:instance-type acm:Identity;
+      }
+    }
+  }
+
+  ct:complex-type ResourceInstance {
+    ct:extends ResourceElement;
+    ct:abstract true;
+
+    leaf status {
+      type enumeration {
+        enum active;
+        enum inactive;
+        enum pending;
+      }
+    }
+    leaf progress { type number; default 0; }
+  }
+
+  /*********************************************
+   * Compute Models
+   *********************************************/
+
+  ct:complex-type PhysicalHost {
+    ct:extends ResourceElement;
+
+    leaf type { type string; }
+    leaf version { type string; }
+
+    leaf cpu { type number; }
+    leaf workload { type number; default 0; }
+    leaf uptime { type string; }
+
+    container ram {
+      leaf total { type number; units 'MB'; }
+      leaf used { type number; units 'MB'; }
+      leaf free { type number; units 'MB'; }
+    }
+    container disk {
+      leaf total { type number; units 'GB'; }
+      leaf used { type number; units 'GB'; }
+      leaf free { type number; units 'GB'; }
+    }
+
+    leaf-list hypervisors { type instance-identifier { ct:instance-type Hypervisor; } }
+
+    rpc reboot;
+    rpc shutdown;
+    rpc startup;
+  }
+  
+  ct:complex-type Hypervisor {
+    ct:extends PhysicalHost;
+
+    leaf host {
+      type instance-identifier { ct:instance-type PhysicalHost; }
+      mandatory true;
+    }
+    container vcpu {
+      leaf total { type number; }
+      leaf used { type number; }
+      leaf free { type number; }
+    }
+    leaf-list servers { type instance-identifier { ct:instance-type ServerInstance; } }
+    
+    rpc evacuate;
+  }
+
+  ct:complex-type ComputeElement {
+    ct:extends ResourceElement;
+    ct:abstract true;
+
+    container constraint {
+      leaf disk { type number; units 'GB'; default 0; }
+      leaf ram { type number; units 'MB'; default 0; }
+      leaf vcpu { type number; default 0; }
+    }
+
+    leaf-list instances {
+      description "State info about instances currently using this resource element";
+      type instance-identifier {
+        ct:instance-type ResourceInstance;
+      }
+      config false;
+    }
+  }
+
+  ct:complex-type VirtualMachineImage {
+    ct:extends ComputeElement;
+
+    container data {
+      leaf checksum { type string; mandatory true; }
+      leaf size { type number; units 'Bytes'; mandatory true; }
+      
+      container format {
+        leaf container {
+          type enumeration { enum ami; enum ari; enum aki; enum bare; enum ovf; }
+          default bare;
+        }
+        leaf disk {
+          type enumeration { enum ami; enum ari; enum aki; enum vhd; enum vmdk; enum raw; enum qcow2; enum vdi; enum iso; }
+        }
+      }
+    }
+    rpc upload {
+      description "uploads binary image data";
+    }
+    rpc download {
+      description "downloads binary image data";
+    }
+  }
+
+  ct:complex-type VirtualMachineFlavor {
+    ct:extends ComputeElement;
+  }
+
+  ct:complex-type ServerInstance {
+    ct:extends ResourceInstance;
+
+    leaf flavor {
+      type instance-identifier { ct:instance-type VirtualMachineFlavor; }
+      mandatory true;
+    }
+    leaf image {
+      type instance-identifier { ct:instance-type VirtualMachineImage; }
+      mandatory true;
+    }
+    
+    //ct:instance metadata { ct:instance-type MetaData; }
+
+    leaf host {
+      type instance-identifier { ct:instance-type PhysicalHost; }
+    }
+
+    leaf-list connections {
+      description
+        "References to collection of NetworkingElement class objects such as
+         Network, Subnet, Port, Router that this ServerInstance is
+         connected with.";
+      type instance-identifier { ct:instance-type NetworkElement; }
+    }
+
+    rpc reboot;
+    rpc destroy;
+  }
+
+  /*********************************************
+   * Network Models (Work-in-Progress)
+   *********************************************/
+
+  import complex-types { prefix ct; }
+
+  ct:complex-type NetworkElement {
+    ct:extends ResourceElement;
+    ct:abstract true;
+  }
+
+  ct:complex-type Network {
+    ct:extends NetworkElement;
+
+    leaf-list subnets {
+      type instance-identifier { ct:instance-type SubNetwork; }
+    }
+  }
+
+  ct:complex-type SubNetwork {
+    ct:extends NetworkElement;
+
+    leaf network { type instance-identifier { ct:instance-type Network; } }
+
+    leaf-list nameservers { type string; }
+    
+    container dhcp {
+      leaf enabled { type boolean; }
+      list pools {
+        leaf start { type ip-address; }
+        leaf end { type ip-address; }
+      }
+    }
+  }
+
+  ct:complex-type SwitchPort {
+    ct:extends NetworkElement;
+
+    leaf subnet { type instance-identifier { ct:instance-type SubNetwork; } }
+  }
+}

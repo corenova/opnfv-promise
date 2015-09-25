@@ -3,24 +3,19 @@ module opnfv-promise {
   prefix promise;
 
   import complex-types { prefix ct; }
-  import iana-crypt-hash { prefix ianach; }
-  import ietf-inet-types { prefix inet; }
   import ietf-yang-types { prefix yang; }
-  import opnfv-promise-vim { prefix vim; }
+  import nfv-infrastructure { prefix nfvi; }
+  import nfv-mano { prefix mano; }
 
-  feature multi-provider {
-    description "";
-  }
-  
   description
     "OPNFV Promise Resource Reservation/Allocation controller module";
   
-  revision 2015-04-16 {
-    description "Initial revision.";
-  }
-
   revision 2015-08-06 {
     description "Updated to incorporate YangForge framework";
+  }
+
+  revision 2015-04-16 {
+    description "Initial revision.";
   }
 
   grouping resource-capacity {
@@ -47,7 +42,7 @@ module opnfv-promise {
   }
 
   ct:complex-type ResourceReservation {
-    ct:extends vim:ResourceElement;
+    ct:extends nfvi:ResourceElement;
     
     description
       "Contains the capacities of various resource services being reserved
@@ -62,11 +57,13 @@ module opnfv-promise {
       description "Duration in seconds from start when unallocated reserved resources will be released back into the pool";
       type number; units "seconds";
     }
-    leaf zone { type instance-identifier { ct:instance-type vim:AvailabilityZone; } }
+    leaf zone {
+      description "Optional identifier";
+      type instance-identifier { ct:instance-type nfvi:AvailabilityZone; } }
     container capacity {
-      uses vim:compute-capacity;
-      uses vim:networking-capcity;
-      uses vim:storage-capacity;
+      uses compute-capacity;
+      uses networking-capcity;
+      uses storage-capacity;
     }
     leaf-list resources {
       description
@@ -77,28 +74,13 @@ module opnfv-promise {
          accepted, the ResourceElement(s) listed here will be placed
          into 'protected' mode as to prevent accidental delete.";
       type instance-identifier {
-        ct:instance-type vim:ResourceElement;
+        ct:instance-type nfvi:ResourceElement;
       }
       // following 'must' statement applies to each element
       must "boolean(/provider/elements/*[@id=id])" {
         error-message "One or more of the ResourceElement(s) does not exist in the provider to be reserved";
       }
     }
-
-    leaf provider {
-      if-feature multi-provider;
-      config false;
-      
-      description
-        "Reference to a specified existing provider from which this reservation
-         will be drawn if used in the context of multi-provider
-         environment.";
-      type instance-identifier {
-        ct:instance-type vim:ResourceProvider;
-        require-instance true;
-      }
-    }
-
     container remaining {
       config false;
       description
@@ -106,11 +88,10 @@ module opnfv-promise {
          reservation based on allocations that took effect utilizing
          this reservation ID as a reference.";
 
-      uses vim:compute-capacity;
-      uses vim:networking-capcity;
-      uses vim:storage-capacity;
+      uses compute-capacity;
+      uses networking-capcity;
+      uses storage-capacity;
     }
-
     leaf-list allocations {
       config false;
       description
@@ -123,7 +104,7 @@ module opnfv-promise {
   }
 
   ct:complex-type ResourceAllocation {
-    ct:extends vim:ResourceElement;
+    ct:extends nfvi:ResourceElement;
 
     description
        "Contains a list of resources to be allocated with optional reference
@@ -163,7 +144,7 @@ module opnfv-promise {
     
     ct:instance-list resources {
       description "Contains list of new ResourceElements that will be allocated";
-      ct:instance-type vim:ResourceElement;
+      ct:instance-type nfvi:ResourceElement;
     }
 
     leaf priority {
@@ -176,42 +157,15 @@ module opnfv-promise {
   
   // MAIN CONTAINER
   container promise {
-    ct:instance-list providers {
-      description "Aggregate collection of all registered ResourceProvider instances";
-      ct:instance-type vim:ResourceProvider;
-      config false;
-
-     // augment compute container with capacity elements
-     augment "compute" {
-       uses resource-capacity {
-         augment "capacity/quota" { uses compute-capacity; }
-         augment "capacity/usage" { uses compute-capacity; }
-         augment "capacity/reserved" { uses compute-capacity; }
-         augment "capacity/available" { uses compute-capacity; }
-       }
-     }
-
-     // augment networking container with capacity elements
-     augment "networking" {
-       uses resource-capacity {
-         if-feature has-networking-capacity;
-         augment "capacity/quota" { uses networking-capacity; }
-         augment "capacity/usage" { uses networking-capacity; }
-         augment "capacity/reserved" { uses networking-capacity; }
-         augment "capacity/available" { uses networking-capacity; }
-       }
-     }
-
-     // track references to reservations for this resource provider
-     leaf-list reservations {
-       type instance-identifier {
-         ct:instance-type ResourceReservation;
-       }
-     }
+    leaf-list providers {
+      description "Aggregate collection of all registered ResourceProvider instances for Promise resource management service";
+      type instance-identifier {
+        ct:instance-type mano:VirtualInfrastructureManager;
+      }
     }
-    
+
     ct:instance-list reservations {
-      description "Aggregate collection of all registered ResourceReservation instances";
+      description "Aggregate collection of all active ResourceReservation instances";
       ct:instance-type ResourceReservation;
     }
 
@@ -221,53 +175,45 @@ module opnfv-promise {
     }
   }
 
-  rpc add-provider {
-    description "This operation allows you to register a new ResourceProvider into promise management service";
+  rpc create-reservation {
     input {
       leaf provider {
-        description "Select a specific resource provider";
-        mandatory true;
-        type enumeration {
-          enum openstack;
-          enum hp;
-          enum rackspace;
-          enum amazon {
-            status planned;
-          }
-          enum joyent {
-            status planned;
-          }
-          enum azure {
-            status planned;
-          }
-        }
-      }
-      leaf username {
-        type string;
+        type instance-identifier { ct:instance-type nfvi:ResourceProvider; }
         mandatory true;
       }
-      leaf password {
-        type ianach:crypt-hash;
-        mandatory true;
+      ct:instance request { ct:instance-type ResourceReservation; }
+    }
+    output {
+      leaf reservation-id {
+        type instance-identifier { ct:instance-type ResourceReservation; }
       }
-      leaf endpoint {
-        type inet:uri;
-        description "The target URL endpoint for the resource provider";
-        mandatory true;
+    }
+  }
+
+  
+  
+    leaf provider {
+      description
+        "Reference to a specified existing provider from which this reservation
+         will be drawn if used in the context of multi-provider
+         environment.";
+      type instance-identifier {
+        ct:instance-type nfvi:ResourceProvider;
+        require-instance true;
       }
-      leaf region {
-        type string;
-        description "Optional specified regsion for the provider";
+    }
+
+
+  rpc register-resource-pool {
+    description "This operation allows you to register a ResourcePool into Promise resource management service";
+    input {
+      leaf provider {
+        type instance-identifier { ct:instance-type nfvi:ResourceProvider; }
+        mandatory true;
       }
     }
     output {
-      leaf id {
-        description "Unique identifier for the newly added provider found in /promise/providers";
-        type instance-identifier {
-          ct:instance-type ResourceProvider;
-        }
-      }
-      leaf result {
+      leaf register-result {
         type enumeration {
           enum success;
           enum error;
@@ -275,15 +221,47 @@ module opnfv-promise {
       }
     }
   }
-  rpc remove-provider;
-  rpc list-providers;
+  rpc unregister-provider {
+    description "This operation allows you to unregister a ResourceProvider from Promise resource management service";
+    
+  }
   
-  rpc check-capacity;
+  rpc query-capacity {
+    input {
+      leaf-list providers { type instance-identifier { ct:instance-type nfvi:ResourceProvider; } }
+      // additional parameters for query
+    }
+    output {
+      ct:instance-list providers {
+        ct:instance-type nfvi:ResourceProvider;
+        // augment compute container with capacity elements
+        augment "compute" {
+          uses resource-capacity {
+            augment "capacity/quota" { uses compute-capacity; }
+            augment "capacity/usage" { uses compute-capacity; }
+            augment "capacity/reserved" { uses compute-capacity; }
+            augment "capacity/available" { uses compute-capacity; }
+          }
+        }
+
+        // augment networking container with capacity elements
+        augment "networking" {
+          uses resource-capacity {
+            if-feature has-networking-capacity;
+            augment "capacity/quota" { uses networking-capacity; }
+            augment "capacity/usage" { uses networking-capacity; }
+            augment "capacity/reserved" { uses networking-capacity; }
+            augment "capacity/available" { uses networking-capacity; }
+          }
+        }
+      }
+    }
+  }
   
+  // BULK operations
   rpc list-reservations;
-  rpc create-reservation;
-  rpc update-reservation;
-  rpc cancel-reservation;
+  rpc update-reservations;
+  rpc cancel-reservations;
 
   rpc list-allocations;
   rpc create-allocation;

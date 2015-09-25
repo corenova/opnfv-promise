@@ -1,0 +1,26 @@
+name: opnfv-promise
+description: Resource Management for Virtualized Infrastructure
+author: Peter K. Lee <peter@intercloud.net>
+license: Apache-2.0
+homepage: http://wiki.opnfv.org/promise
+repository: git://github.com/opnfv/promise.git
+keywords:
+  - opnfv
+  - promise
+  - vim
+  - nfvi
+  - infrastructure
+  - openstack
+  - nbi
+  - yangforge
+  - resource
+  - reservation
+  - capacity
+  - allocation
+
+schema: !yang/schema opnfv-promise.yang
+config: !json        opnfv-promise.json
+
+dependencies:
+  nfv-infrastructure: !yang/schema nfv-infrastructure.yang
+  nfv-mano:           !yang/schema nfv-mano.yang
