@@ -24,3 +24,22 @@ schema: !yang/schema opnfv-promise.yang
 dependencies:
   nfv-infrastructure: !yang/schema nfv-infrastructure.yang
   nfv-mano:           !yang/schema nfv-mano.yang
+
+#RPC definitions
+rpc:
+  create-reservation: !coffee/function |
+    (input, output, done) ->
+      # first will need to check if reservation is OK
+      capacity  = input.get 'capacity'
+      resources = input.get 'resources'
+      for attr, value of capacity when value?
+        hasCapacity = true
+      if (not hasCapacity) and (resources.length is 0)
+        output.set 'result', 2
+        output.set 'message', 'cannot make a reservation without any attributes being requested'
+        done()
+        return
+      (@access 'promise.reservations').push input.get()
+      output.set 'result', 0
+      output.set 'message', 'request accepted'
+      done()

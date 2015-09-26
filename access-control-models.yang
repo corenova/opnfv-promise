@@ -1,4 +1,4 @@
-module opnfv-management-models {
+module access-control-models {
 
   import complex-types { prefix ct; }
   
