@@ -19,7 +19,7 @@ keywords:
   - allocation
 
 schema: !yang/schema opnfv-promise.yang
-config: !json        opnfv-promise.json
+#config: !json        opnfv-promise.json
 
 dependencies:
   nfv-infrastructure: !yang/schema nfv-infrastructure.yang

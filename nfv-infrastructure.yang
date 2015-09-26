@@ -71,6 +71,10 @@ module nfv-infrastructure {
    * Compute Models
    *********************************************/
 
+  ct:complex-type AvailabilityZone {
+    ct:extends ResourceElement;
+  }
+  
   ct:complex-type PhysicalHost {
     ct:extends ResourceElement;
 
