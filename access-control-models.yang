@@ -26,7 +26,7 @@ module access-control-models {
     
     container contact {
       leaf fullName { type string; }
-      leaf email { type email; }
+      leaf email { type string; }
     }
 
     leaf-list groups { type instance-identifer { ct:instance-type Group; } }

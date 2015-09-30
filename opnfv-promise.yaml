@@ -25,21 +25,36 @@ dependencies:
   nfv-infrastructure: !yang/schema nfv-infrastructure.yang
   nfv-mano:           !yang/schema nfv-mano.yang
 
+model:
+  ResourceReservation:
+    validate: !coffee/function |
+      (value, options) ->
+        # first will need to check if reservation is OK
+        for k, v of value.capacity when v?
+          hasCapacity = true
+        if (not hasCapacity) and value.resources.length is 0
+          return false
+        return true
+
 #RPC definitions
 rpc:
   create-reservation: !coffee/function |
     (input, output, done) ->
-      # first will need to check if reservation is OK
-      capacity  = input.get 'capacity'
-      resources = input.get 'resources'
-      for attr, value of capacity when value?
-        hasCapacity = true
-      if (not hasCapacity) and (resources.length is 0)
-        output.set 'result', 2
-        output.set 'message', 'cannot make a reservation without any attributes being requested'
+      try
+        reservation = @create 'ResourceReservation', input.get()
+        # here we need to access the reservation-service feature and check to see if OK
+
+      catch e
+        output.set 'result', 'error'
+        output.set 'message', e
+        return done e
+
+      # assume reservation successful
+      reservation.save()
+      .then =>
+        (@access 'promise.reservations').push reservation
+        output.set 'result', 'ok'
+        output.set 'message', 'request accepted'
+        output.set 'reservation-id', (reservation.get 'id')
         done()
-        return
-      (@access 'promise.reservations').push input.get()
-      output.set 'result', 0
-      output.set 'message', 'request accepted'
-      done()
+      .catch (e) -> done e

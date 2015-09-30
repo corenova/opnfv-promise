@@ -3,6 +3,7 @@ module nfv-infrastructure {
   prefix nfvi;
 
   import access-control-models { prefix acm; }
+  import ietf-inet-types { prefix inet; }
   import ietf-yang-types { prefix yang; }
   import complex-types { prefix ct; }
 
@@ -27,8 +28,8 @@ module nfv-infrastructure {
     ct:abstract true;
 
     key "id";
-    leaf id { type yang:uuid; mandatory true; default auto; }
-    leaf name { type string; mandatory true; }
+    leaf id { type yang:uuid; mandatory true; }
+    leaf name { type string; }
     leaf enabled { type boolean; default true; }
     leaf protected { type boolean; default false; }
     leaf owner { type instance-identifier { ct:instance-type acm:Identity; } }
@@ -64,7 +65,10 @@ module nfv-infrastructure {
         enum pending;
       }
     }
-    leaf progress { type number; default 0; }
+    leaf progress {
+      type uint8 { range 0..100; }
+      default 0;
+    }
   }
 
   /*********************************************
@@ -81,19 +85,19 @@ module nfv-infrastructure {
     leaf type { type string; }
     leaf version { type string; }
 
-    leaf cpu { type number; }
-    leaf workload { type number; default 0; }
+    leaf cpu { type uint8; }
+    leaf workload { type uint8; default 0; }
     leaf uptime { type string; }
 
     container ram {
-      leaf total { type number; units 'MB'; }
-      leaf used { type number; units 'MB'; }
-      leaf free { type number; units 'MB'; }
+      leaf total { type uint32; units 'MB'; }
+      leaf used { type uint32; units 'MB'; }
+      leaf free { type uint32; units 'MB'; }
     }
     container disk {
-      leaf total { type number; units 'GB'; }
-      leaf used { type number; units 'GB'; }
-      leaf free { type number; units 'GB'; }
+      leaf total { type uint32; units 'GB'; }
+      leaf used { type uint32; units 'GB'; }
+      leaf free { type uint32; units 'GB'; }
     }
 
     leaf-list hypervisors { type instance-identifier { ct:instance-type Hypervisor; } }
@@ -111,9 +115,9 @@ module nfv-infrastructure {
       mandatory true;
     }
     container vcpu {
-      leaf total { type number; }
-      leaf used { type number; }
-      leaf free { type number; }
+      leaf total { type uint16; }
+      leaf used { type uint16; }
+      leaf free { type uint16; }
     }
     leaf-list servers { type instance-identifier { ct:instance-type ServerInstance; } }
     
@@ -125,9 +129,9 @@ module nfv-infrastructure {
     ct:abstract true;
 
     container constraint {
-      leaf disk { type number; units 'GB'; default 0; }
-      leaf ram { type number; units 'MB'; default 0; }
-      leaf vcpu { type number; default 0; }
+      leaf disk { type uint32; units 'GB'; default 0; }
+      leaf ram { type uint32; units 'MB'; default 0; }
+      leaf vcpu { type uint16; default 0; }
     }
 
     leaf-list instances {
@@ -144,7 +148,7 @@ module nfv-infrastructure {
 
     container data {
       leaf checksum { type string; mandatory true; }
-      leaf size { type number; units 'Bytes'; mandatory true; }
+      leaf size { type uint32; units 'Bytes'; mandatory true; }
       
       container format {
         leaf container {
@@ -227,8 +231,8 @@ module nfv-infrastructure {
     container dhcp {
       leaf enabled { type boolean; }
       list pools {
-        leaf start { type ip-address; }
-        leaf end { type ip-address; }
+        leaf start { type inet:ip-address; }
+        leaf end   { type inet:ip-address; }
       }
     }
   }

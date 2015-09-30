@@ -18,8 +18,8 @@ module opnfv-promise {
     description "Initial revision.";
   }
 
-  feature promise-service {
-    description "When enabled, provides stand-alone Promise service across multiple VIMs";
+  feature reservation-service {
+    description "When enabled, provides resource reservation service";
   }
   
   grouping resource-capacity {
@@ -32,17 +32,17 @@ module opnfv-promise {
   }
 
   grouping compute-capacity {
-    leaf cores { type number; }
-    leaf ram { type number; }
-    leaf instances { type number; }
+    leaf cores { type uint16; }
+    leaf ram   { type uint32; }
+    leaf instances { type uint16; }
   }
 
   grouping network-capacity {
-    leaf network { type number; }
-    leaf port { type number; }
-    leaf router { type number; }
-    leaf subnet { type number; }
-    leaf address { type number; }
+    leaf network { type uint16; }
+    leaf port { type uint16; }
+    leaf router { type uint16; }
+    leaf subnet { type uint16; }
+    leaf address { type uint32; }
   }
 
   grouping storage-capacity {
@@ -59,7 +59,7 @@ module opnfv-promise {
     leaf end   { type yang:date-and-time; }
     leaf expiry {
       description "Duration in seconds from start when unallocated reserved resources will be released back into the pool";
-      type number; units "seconds";
+      type uint32; units "seconds";
     }
     leaf zone {
       description "Optional identifier to an Availability Zone";
@@ -199,15 +199,13 @@ module opnfv-promise {
     leaf priority {
       description
         "Reflects current priority level of the allocation according to classification rules";
-      type number;
+      type uint8;
       config false;
     }
   }
   
   // MAIN CONTAINER
   container promise {
-    if-feature promise-service;
-    
     leaf-list providers {
       description "Aggregate collection of all registered ResourceProvider instances for Promise resource management service";
       type instance-identifier {
@@ -216,6 +214,7 @@ module opnfv-promise {
     }
 
     ct:instance-list reservations {
+      if-feature reservation-service;
       description "Aggregate collection of all active ResourceReservation instances";
       ct:instance-type ResourceReservation;
     }
@@ -232,7 +231,7 @@ module opnfv-promise {
 
   // RESERVATION INTENTS
   rpc create-reservation {
-    if-feature promise-service;
+    if-feature reservation-service;
     description "Make a request to the reservation system to reserve resources";
     input {
       uses reservation-request;
@@ -264,17 +263,17 @@ module opnfv-promise {
   }
   
   rpc query-reservation {
-    if-feature promise-service;
+    if-feature reservation-service;
     description "Query the reservation system to return matching reservation(s)";
     input {
       leaf zone { type instance-identifier { ct:instance-type nfvi:AvailabilityZone; } }
       container start {
         leaf after  { type yang:date-and-time; }
-        leaf before { type yang:data-and-time; }
+        leaf before { type yang:date-and-time; }
       }
       container end {
         leaf after  { type yang:date-and-time; }
-        leaf before { type yang:data-and-time; }
+        leaf before { type yang:date-and-time; }
       }
       container capacity {
         container less-than {
