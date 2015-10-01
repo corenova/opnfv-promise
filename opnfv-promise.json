@@ -1,0 +1,13 @@
+{
+  "opnfv-promise": {
+    "promise": {
+      "capacity": {
+        "quota": {
+          "cores": 100,
+          "ram": 262144,
+          "instances": 500
+        }
+      }
+    }
+  }
+}

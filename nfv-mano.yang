@@ -2,6 +2,7 @@ module nfv-mano {
   namespace "urn:opnfv:promise:nfv:mano";
   prefix mano;
 
+  import access-control-models { prefix acm; }
   import nfv-infrastructure { prefix nfvi; }
   import complex-types { prefix ct; }
   import ietf-inet-types { prefix inet; }
@@ -40,21 +41,25 @@ module nfv-mano {
   }
 
   ct:complex-type ServiceOrchestrator {
+    ct:extends acm:Domain;
     ct:abstract true;
     // TBD
   }
 
   ct:complex-type ResourceOrchestrator {
+    ct:extends acm:Domain;
     ct:abstract true;
     // TBD
   }
 
   ct:complex-type VirtualNetworkFunctionManager {
+    ct:extends acm:Domain;
     ct:abstract true;
     // TBD
   }
   
   ct:complex-type VirtualInfrastructureManager {
+    ct:extends acm:Domain;
     ct:abstract true;
     
     leaf name { type string; mandatory true; }

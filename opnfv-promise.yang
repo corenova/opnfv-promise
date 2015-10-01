@@ -24,29 +24,31 @@ module opnfv-promise {
   
   grouping resource-capacity {
     container capacity {
-      container quota { description 'Conceptual container that should be extended'; }
-      container usage { description 'Conceptual container that should be extended'; config false; }
-      container reserved { description 'Conceptual container that should be extended'; config false; }
+      container quota     { description 'Conceptual container that should be extended'; }
+      container usage     { description 'Conceptual container that should be extended'; config false; }
+      container reserved  { description 'Conceptual container that should be extended'; config false; }
       container available { description 'Conceptual container that should be extended'; config false; }
     }
   }
 
   grouping compute-capacity {
-    leaf cores { type uint16; }
-    leaf ram   { type uint32; }
+    leaf cores     { type uint16; }
+    leaf ram       { type uint32; units 'MB'; }
     leaf instances { type uint16; }
   }
 
   grouping network-capacity {
     leaf network { type uint16; }
-    leaf port { type uint16; }
-    leaf router { type uint16; }
-    leaf subnet { type uint16; }
+    leaf port    { type uint16; }
+    leaf router  { type uint16; }
+    leaf subnet  { type uint16; }
     leaf address { type uint32; }
   }
 
   grouping storage-capacity {
-    // TBD
+    leaf gigabytes { type uint32; units 'GB'; }
+    leaf snapshots { type uint16; }
+    leaf volumes   { type uint16; }
   }
 
   grouping reservation-request {
@@ -140,6 +142,9 @@ module opnfv-promise {
       }
     }
 
+    leaf created-on  { type yang:date-and-time; }
+    leaf modified-on { type yang:date-and-time; }
+    
     leaf provider {
       if-feature multi-provider;
       type instance-identifier {
@@ -207,9 +212,34 @@ module opnfv-promise {
   // MAIN CONTAINER
   container promise {
     leaf-list providers {
+      if-feature multi-provider;
+      
       description "Aggregate collection of all registered ResourceProvider instances for Promise resource management service";
       type instance-identifier {
         ct:instance-type mano:VirtualInfrastructureManager;
+      }
+    }
+
+    uses resource-capacity {
+      augment "capacity/quota" {
+        uses compute-capacity;
+        uses network-capacity;
+        uses storage-capacity;
+      }
+      augment "capacity/usage" {
+        uses compute-capacity;
+        uses network-capacity;
+        uses storage-capacity;
+      }
+      augment "capacity/reserved" {
+        uses compute-capacity;
+        uses network-capacity;
+        uses storage-capacity;
+      }
+      augment "capacity/available" {
+        uses compute-capacity;
+        uses network-capacity;
+        uses storage-capacity;
       }
     }
 

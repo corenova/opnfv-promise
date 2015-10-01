@@ -1,6 +1,8 @@
 module access-control-models {
+  namespace "urn:opnfv:promise:acm";
 
   import complex-types { prefix ct; }
+  import ietf-yang-types { prefix yang; }
   
   /*********************************************
    * Identity Models
@@ -8,8 +10,10 @@ module access-control-models {
 
   ct:complex-type Identity {
     ct:abstract true;
-    
     description "Identity represents an administrative access model entity";
+
+    key "id";
+    leaf id { type yang:uuid; mandatory true; }
     leaf name { type string; mandatory true; }
     leaf description { type string; }
     leaf enabled { type boolean; default true; }

@@ -19,42 +19,139 @@ keywords:
   - allocation
 
 schema: !yang/schema opnfv-promise.yang
-#config: !json        opnfv-promise.json
+
+# below config provides default parameters
+config: !json opnfv-promise.json
 
 dependencies:
   nfv-infrastructure: !yang/schema nfv-infrastructure.yang
   nfv-mano:           !yang/schema nfv-mano.yang
 
-model:
+module:
+  opnfv-promise:
+    # rebind to be a computed property
+    promise.capacity.reserved: !coffee/function |
+      (prev) -> @computed (->
+        combine = (a, b) ->
+          for k, v of b.capacity when v?
+            a[k] ?= 0
+            a[k] += v
+          return a
+        (@parent.get 'reservations').reduce combine, {}
+      ), type: prev
+    # rebind to be a computed property
+    promise.capacity.available: !coffee/function |
+      (prev) -> @computed (-> 
+        quota = @get 'quota'
+        reserved = @get 'reserved'
+        usage = @get 'usage'
+        for k, v of quota when v?
+          quota[k] -= reserved[k] if reserved[k]?
+          quota[k] -= usage[k] if usage[k]?
+        quota
+      ), type: prev
+
+complex-type:
   ResourceReservation:
     validate: !coffee/function |
-      (value, options) ->
-        # first will need to check if reservation is OK
-        for k, v of value.capacity when v?
+      (prev) -> (value=@get(), resolve, reject) ->
+        # validate that request contains sufficient data
+        for k, v of value.capacity when v? and !!v
           hasCapacity = true
         if (not hasCapacity) and value.resources.length is 0
-          return false
-        return true
+          return reject "unable to validate reservation record without anything being reserved"
+
+        resolve this
+    save: !coffee/function |
+      (prev) -> (resolve, reject) ->
+        @invoke 'validate', @get()
+        .then (res) ->
+          # should do something about this reservation record...
+          now = (new Date()).toJSON()
+          unless (res.get 'created-on')?
+            res.set 'created-on', now 
+          res.set 'modified-on', now
+          resolve res
+        .catch (e) -> reject e
 
 #RPC definitions
 rpc:
   create-reservation: !coffee/function |
     (input, output, done) ->
-      try
-        reservation = @create 'ResourceReservation', input.get()
-        # here we need to access the reservation-service feature and check to see if OK
+      # first verify that requested capacity is available
+      requested = input.get 'capacity'
+      available = @get 'promise.capacity.available'
+      for k, v of requested when v?
+        unless !!available[k] and (v <= available[k])
+          output.set 'result', 'conflict'
+          output.set 'message', "requested #{k}=#{v} exceeds available #{available[k]}"
+          return done()
 
-      catch e
-        output.set 'result', 'error'
-        output.set 'message', e
-        return done e
+      # then verify that the requested resource identifiers are available
+      # TODO...
 
-      # assume reservation successful
+      # create the reservation record and try to save it
+      reservation = @create 'ResourceReservation', input.get()
       reservation.save()
       .then =>
+        # TODO currently an issue with instance-list making a new instance due to instanceof check issue
         (@access 'promise.reservations').push reservation
         output.set 'result', 'ok'
         output.set 'message', 'request accepted'
-        output.set 'reservation-id', (reservation.get 'id')
+        output.set 'reservation-id', reservation.id
         done()
-      .catch (e) -> done e
+      .catch (e) ->
+        output.set 'result', 'error'
+        output.set 'message', e
+        done()
+
+  update-reservation: !coffee/function |
+    (input, output, done) ->
+      reservation = @find 'ResourceReservation', input.get 'reservation-id'
+      requested = input.get 'capacity'
+      reserved  = reservation.get 'capacity'
+      available = @get 'promise.capacity.available'
+      for k, v of requested when v?
+        current = reserved[k] ? 0
+        unless !!available[k] and requested[k] <= (available[k] + current)
+          output.set 'result', 'conflict'
+          output.set 'message', "requested #{k}=#{v} exceeds #{available[k] + current}"
+          return done()
+
+      reservation.invoke 'validate', input.get()
+      .then (res) ->
+        res.set input.get()
+        res.save()
+        .then ->
+          output.set 'result', 'ok'
+          output.set 'message', 'update accepted'
+          done()
+        .catch (e) ->
+          output.set 'result', 'error'
+          output.set 'message', e
+          done()
+
+  cancel-reservation: !coffee/function |
+    (input, output, done) ->
+      reservation = @find 'ResourceReservation', input.get 'reservation-id'
+      reservation.destroy()
+      .then =>
+        (@access 'promise.reservations').remove reservation.id
+        output.set 'result', 'ok'
+        output.set 'message', 'reservation canceled'
+        done()
+      .catch (e) ->
+        output.set 'result', 'error'
+        output.set 'message', e
+        done()
+
+  # TEMPORARY
+  add-provider: !coffee/function |
+    (input, output, done) ->
+      @using 'mano', ->
+        @invoke 'add-provider', (input.get 'endpoint', 'region', 'username', 'password')
+        .then (res) =>
+          (@access 'promise.providers').push res
+          output.set 'result', 'ok'
+          output.set 'provider-id', res.id
+          done()
