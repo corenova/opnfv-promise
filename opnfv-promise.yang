@@ -32,23 +32,23 @@ module opnfv-promise {
   }
 
   grouping compute-capacity {
-    leaf cores     { type uint16; }
-    leaf ram       { type uint32; units 'MB'; }
-    leaf instances { type uint16; }
+    leaf cores     { type uint16; default 0; }
+    leaf ram       { type uint32; default 0; units 'MB'; }
+    leaf instances { type uint16; default 0; }
   }
 
   grouping network-capacity {
-    leaf network { type uint16; }
-    leaf port    { type uint16; }
-    leaf router  { type uint16; }
-    leaf subnet  { type uint16; }
-    leaf address { type uint32; }
+    leaf network { type uint16; default 0; }
+    leaf port    { type uint16; default 0; }
+    leaf router  { type uint16; default 0; }
+    leaf subnet  { type uint16; default 0; }
+    leaf address { type uint32; default 0; }
   }
 
   grouping storage-capacity {
-    leaf gigabytes { type uint32; units 'GB'; }
-    leaf snapshots { type uint16; }
-    leaf volumes   { type uint16; }
+    leaf gigabytes { type uint32; default 0; units 'GB'; }
+    leaf snapshots { type uint16; default 0; }
+    leaf volumes   { type uint16; default 0; }
   }
 
   grouping reservation-request {

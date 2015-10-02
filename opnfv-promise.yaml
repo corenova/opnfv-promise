@@ -60,7 +60,16 @@ complex-type:
           hasCapacity = true
         if (not hasCapacity) and value.resources.length is 0
           return reject "unable to validate reservation record without anything being reserved"
-
+        # time range verifications
+        now = new Date()
+        start = (new Date value.start) if value.start?
+        end   = (new Date value.end) if value.end?
+        if start? and start < now
+          return reject "requested start time #{value.start} cannot be in the past"
+        if end? and end < now
+          return reject "requested end time #{value.end} cannot be in the past"
+        if start? and end? and start > end
+          retun reject "requested start time must be earlier than end time"
         resolve this
     save: !coffee/function |
       (prev) -> (resolve, reject) ->
@@ -82,7 +91,7 @@ rpc:
       requested = input.get 'capacity'
       available = @get 'promise.capacity.available'
       for k, v of requested when v?
-        unless !!available[k] and (v <= available[k])
+        unless v <= available[k]
           output.set 'result', 'conflict'
           output.set 'message', "requested #{k}=#{v} exceeds available #{available[k]}"
           return done()
@@ -112,10 +121,9 @@ rpc:
       reserved  = reservation.get 'capacity'
       available = @get 'promise.capacity.available'
       for k, v of requested when v?
-        current = reserved[k] ? 0
-        unless !!available[k] and requested[k] <= (available[k] + current)
+        unless requested[k] <= (available[k] + reserved[k])
           output.set 'result', 'conflict'
-          output.set 'message', "requested #{k}=#{v} exceeds #{available[k] + current}"
+          output.set 'message', "requested #{k}=#{v} exceeds #{available[k] + reserved[k]}"
           return done()
 
       reservation.invoke 'validate', input.get()
