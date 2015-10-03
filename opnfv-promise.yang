@@ -21,6 +21,10 @@ module opnfv-promise {
   feature reservation-service {
     description "When enabled, provides resource reservation service";
   }
+
+  feature multi-provider {
+    description "When enabled, provides resource reservation across many providers";
+  }
   
   grouping resource-capacity {
     container capacity {
@@ -59,10 +63,6 @@ module opnfv-promise {
     
     leaf start { type yang:date-and-time; }
     leaf end   { type yang:date-and-time; }
-    leaf expiry {
-      description "Duration in seconds from start when unallocated reserved resources will be released back into the pool";
-      type uint32; units "seconds";
-    }
     leaf zone {
       description "Optional identifier to an Availability Zone";
       type instance-identifier { ct:instance-type nfvi:AvailabilityZone; }
@@ -142,8 +142,15 @@ module opnfv-promise {
       }
     }
 
-    leaf created-on  { type yang:date-and-time; }
-    leaf modified-on { type yang:date-and-time; }
+    leaf active {
+      config false;
+      description
+        "Provides current state of this reservation whether it is enabled and
+         within specified start/end time";
+      type boolean;
+    }
+    leaf created-on  { type yang:date-and-time; config false; }
+    leaf modified-on { type yang:date-and-time; config false; }
     
     leaf provider {
       if-feature multi-provider;
@@ -252,6 +259,37 @@ module opnfv-promise {
     ct:instance-list allocations {
       description "Aggregate collection of all active ResourceAllocation instances";
       ct:instance-type ResourceAllocation;
+    }
+
+    container policy {
+      container reservation {
+        leaf max-future-start-range {
+          description
+            "Enforce reservation request 'start' time is within allowed range from now";
+          type uint16 { range 0..365; }
+          units "days";
+        }
+        leaf max-future-end-range {
+          description
+            "Enforce reservation request 'end' time is within allowed range from now";
+          type uint16 { range 0..365; }
+          units "days";
+        }
+        leaf max-duration {
+          description
+            "Enforce reservation duration (end-start) does not exceed specified threshold";
+          type uint16;
+          units "hours";
+          default 8760; // for now cap it at max one year as default
+        }
+        leaf expiry {
+          description
+            "Duration in minutes from start when unallocated reserved resources
+             will be released back into the pool";
+          type uint32;
+          units "minutes";
+        }
+      }
     }
   }
 

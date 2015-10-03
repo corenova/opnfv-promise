@@ -27,6 +27,7 @@ dependencies:
   nfv-infrastructure: !yang/schema nfv-infrastructure.yang
   nfv-mano:           !yang/schema nfv-mano.yang
 
+# MODULE model active bindings
 module:
   opnfv-promise:
     # rebind to be a computed property
@@ -37,35 +38,65 @@ module:
             a[k] ?= 0
             a[k] += v
           return a
-        (@parent.get 'reservations').reduce combine, {}
+        (@parent.get 'reservations')
+        .filter (entry) -> entry.active is true
+        .reduce combine, {}
       ), type: prev
     # rebind to be a computed property
     promise.capacity.available: !coffee/function |
       (prev) -> @computed (-> 
-        quota = @get 'quota'
+        total = @get 'quota'
         reserved = @get 'reserved'
         usage = @get 'usage'
-        for k, v of quota when v?
-          quota[k] -= reserved[k] if reserved[k]?
-          quota[k] -= usage[k] if usage[k]?
-        quota
+        for k, v of total when v?
+          total[k] -= reserved[k] if reserved[k]?
+          total[k] -= usage[k] if usage[k]?
+        total
       ), type: prev
 
+# COMPLEX-TYPE model active bindings
 complex-type:
   ResourceReservation:
+    # private properties (NOT in YANG schema)
+    max-duration: !coffee/function |
+      () -> @computed (->
+        # hackish... yes
+        (@seek name: 'opnfv-promise').get 'promise.policy.reservation.max-duration'
+      ), type: 'number', private: true
+
+    # properties
+    start: !coffee/function |
+      (prev) -> prev.set 'default', -> (new Date).toJSON()
+
+    end: !coffee/function |
+      (prev) -> prev.set 'default', ->
+        end = (new Date @get 'start')
+        max = @get 'max-duration'
+        end.setTime (end.getTime() + (max*60*60*1000))
+        end.toJSON()
+
+    active: !coffee/function |
+      (prev) -> @computed (->
+        now = new Date
+        start = new Date (@get 'start')
+        end   = new Date (@get 'end')
+        (@get 'enabled') and (start <= now <= end)
+      ), type: prev
+
+    # methods
     validate: !coffee/function |
-      (prev) -> (value=@get(), resolve, reject) ->
+      (prev) -> (value={}, resolve, reject) ->
         # validate that request contains sufficient data
         for k, v of value.capacity when v? and !!v
           hasCapacity = true
         if (not hasCapacity) and value.resources.length is 0
           return reject "unable to validate reservation record without anything being reserved"
         # time range verifications
-        now = new Date()
+        now = new Date
         start = (new Date value.start) if value.start?
         end   = (new Date value.end) if value.end?
-        if start? and start < now
-          return reject "requested start time #{value.start} cannot be in the past"
+        # if start? and start < now
+        #   return reject "requested start time #{value.start} cannot be in the past"
         if end? and end < now
           return reject "requested end time #{value.end} cannot be in the past"
         if start? and end? and start > end
@@ -76,14 +107,14 @@ complex-type:
         @invoke 'validate', @get()
         .then (res) ->
           # should do something about this reservation record...
-          now = (new Date()).toJSON()
+          now = (new Date).toJSON()
           unless (res.get 'created-on')?
             res.set 'created-on', now 
           res.set 'modified-on', now
           resolve res
         .catch (e) -> reject e
 
-#RPC definitions
+# RPC definitions
 rpc:
   create-reservation: !coffee/function |
     (input, output, done) ->
