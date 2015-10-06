@@ -1,13 +1,26 @@
 {
   "opnfv-promise": {
     "promise": {
-      "capacity": {
-        "quota": {
-          "cores": 100,
-          "ram": 262144,
-          "instances": 500
+      "pools": [
+        {
+          "ResourcePool": {
+            "name": "A sample resource pool",
+            "capacity": {
+              "cores": 100,
+              "ram": 262144,
+              "instances": 500,
+              "networks": 10,
+              "ports": 100,
+              "routers": 3,
+              "subnets": 1000,
+              "addresses": 50,
+              "gigabytes": 1000,
+              "snapshots": 100,
+              "volumes": 10
+            }
+          }
         }
-      }
+      ]
     }
   }
 }

@@ -9,6 +9,10 @@ module opnfv-promise {
 
   description
     "OPNFV Promise Resource Reservation/Allocation controller module";
+
+  revision 2015-10-05 {
+    description "Complete coverage of reservation related intents";
+  }
   
   revision 2015-08-06 {
     description "Updated to incorporate YangForge framework";
@@ -28,7 +32,7 @@ module opnfv-promise {
   
   grouping resource-capacity {
     container capacity {
-      container quota     { description 'Conceptual container that should be extended'; }
+      container total     { description 'Conceptual container that should be extended'; }
       container usage     { description 'Conceptual container that should be extended'; config false; }
       container reserved  { description 'Conceptual container that should be extended'; config false; }
       container available { description 'Conceptual container that should be extended'; config false; }
@@ -36,29 +40,29 @@ module opnfv-promise {
   }
 
   grouping compute-capacity {
-    leaf cores     { type uint16; default 0; }
-    leaf ram       { type uint32; default 0; units 'MB'; }
-    leaf instances { type uint16; default 0; }
+    leaf cores     { type int16; default 0; }
+    leaf ram       { type int32; default 0; units 'MB'; }
+    leaf instances { type int16; default 0; }
   }
 
   grouping network-capacity {
-    leaf network { type uint16; default 0; }
-    leaf port    { type uint16; default 0; }
-    leaf router  { type uint16; default 0; }
-    leaf subnet  { type uint16; default 0; }
-    leaf address { type uint32; default 0; }
+    leaf networks  { type int16; default 0; }
+    leaf ports     { type int16; default 0; }
+    leaf routers   { type int16; default 0; }
+    leaf subnets   { type int16; default 0; }
+    leaf addresses { type int32; default 0; }
   }
 
   grouping storage-capacity {
-    leaf gigabytes { type uint32; default 0; units 'GB'; }
-    leaf snapshots { type uint16; default 0; }
-    leaf volumes   { type uint16; default 0; }
+    leaf gigabytes { type int32; default 0; units 'GB'; }
+    leaf snapshots { type int16; default 0; }
+    leaf volumes   { type int16; default 0; }
   }
 
-  grouping reservation-request {
+  grouping resource-usage-request {
     description
       "Information model capturing available parameters to make a resource
-       reservation request.";
+       usage request.";
     reference "OPNFV-PROMISE, Section 3.4.1";
     
     leaf start { type yang:date-and-time; }
@@ -75,7 +79,7 @@ module opnfv-promise {
     leaf-list resources {
       description
         "Reference to a collection of 'pre-existing' resource elements required
-         by this reservation. It can contain any instance derived from
+         by this request. It can contain any instance derived from
          ResourceElement, such as ServerInstances or even other
          ResourceReservations. If the ResourceReservation request is
          accepted, the ResourceElement(s) listed here will be placed
@@ -118,21 +122,35 @@ module opnfv-promise {
       ct:instance-type nfvi:ResourceElement;
     }
   }
+
+  grouping query-start-end-window {
+    container window {
+      description "Matches entries that are within the specified start/end time window";
+      leaf start { type yang:date-and-time; }
+      leaf end   { type yang:date-and-time; }
+      leaf scope {
+        type enumeration {
+          enum "exclusive" {
+            description "Matches entries that start AND end within the window";
+          }
+          enum "inclusive" {
+            description "Matches entries that start OR end within the window";
+          }
+        }
+        default "inclusive";
+      }
+    }
+  }
   
-  ct:complex-type ResourceReservation {
+  ct:complex-type ResourcePool {
     ct:extends nfvi:ResourceElement;
-    
+
     description
-      "Describes an instance of an active ResourceReservation record, created
-       usually as a result of 'create-reservation' request. 
+      "Describes an instance of an active ResourcePool record, which
+       represents a grouping of capacity and elements available during
+       a given window in time from a specific source 'provider'.";
 
-       Contains the capacities of various resource services being
-       reserved along with any resource elements needed to be
-       available at the time of allocation(s).";
-    
-    reference "OPNFV-PROMISE, Section 3.4.1";
-
-    uses reservation-request {
+    uses resource-usage-request {
       refine resources {
         // following 'must' statement applies to each element
         // NOTE: just a non-working example for now...
@@ -145,13 +163,11 @@ module opnfv-promise {
     leaf active {
       config false;
       description
-        "Provides current state of this reservation whether it is enabled and
-         within specified start/end time";
+        "Provides current state of this record whether it is enabled and within
+         specified start/end time";
       type boolean;
     }
-    leaf created-on  { type yang:date-and-time; config false; }
-    leaf modified-on { type yang:date-and-time; config false; }
-    
+
     leaf provider {
       if-feature multi-provider;
       type instance-identifier {
@@ -159,6 +175,27 @@ module opnfv-promise {
         require-instance true;
       }
     }
+  }
+
+  ct:complex-type ResourceReservation {
+    ct:extends ResourcePool;
+    
+    description
+      "Describes an instance of an active ResourceReservation record, created
+       usually as a result of 'create-reservation' request. 
+
+       A ResourceReservation is a derived instance of a generic
+       ResourcePool which has additional parameters to track
+       allocations.
+
+       Contains the capacities of various resource services being
+       reserved along with any resource elements needed to be
+       available at the time of allocation(s).";
+    
+    reference "OPNFV-PROMISE, Section 3.4.1";
+
+    leaf created-on  { type yang:date-and-time; config false; }
+    leaf modified-on { type yang:date-and-time; config false; }
     
     container remaining {
       config false;
@@ -184,7 +221,7 @@ module opnfv-promise {
   }
 
   ct:complex-type ResourceAllocation {
-    ct:extends nfvi:ResourceElement;
+    ct:extends ResourcePool;
 
     description
       "Contains a list of resources to be allocated with optional reference
@@ -218,17 +255,11 @@ module opnfv-promise {
   
   // MAIN CONTAINER
   container promise {
-    leaf-list providers {
-      if-feature multi-provider;
-      
-      description "Aggregate collection of all registered ResourceProvider instances for Promise resource management service";
-      type instance-identifier {
-        ct:instance-type mano:VirtualInfrastructureManager;
-      }
-    }
-
+    
     uses resource-capacity {
-      augment "capacity/quota" {
+      description "Describes current state info about capacity utilization info";
+      
+      augment "capacity/total" {
         uses compute-capacity;
         uses network-capacity;
         uses storage-capacity;
@@ -250,14 +281,29 @@ module opnfv-promise {
       }
     }
 
+    leaf-list providers {
+      if-feature multi-provider;
+      
+      description "Aggregate collection of all registered ResourceProvider instances for Promise resource management service";
+      type instance-identifier {
+        ct:instance-type mano:VirtualInfrastructureManager;
+      }
+    }
+
+    ct:instance-list pools {
+      if-feature reservation-service;
+      description "Aggregate collection of all ResourcePool instances";
+      ct:instance-type ResourcePool;
+    }
+    
     ct:instance-list reservations {
       if-feature reservation-service;
-      description "Aggregate collection of all active ResourceReservation instances";
+      description "Aggregate collection of all ResourceReservation instances";
       ct:instance-type ResourceReservation;
     }
 
     ct:instance-list allocations {
-      description "Aggregate collection of all active ResourceAllocation instances";
+      description "Aggregate collection of all ResourceAllocation instances";
       ct:instance-type ResourceAllocation;
     }
 
@@ -302,7 +348,7 @@ module opnfv-promise {
     if-feature reservation-service;
     description "Make a request to the reservation system to reserve resources";
     input {
-      uses reservation-request;
+      uses resource-usage-request;
       leaf provider {
         if-feature multi-provider;
         description
@@ -335,38 +381,10 @@ module opnfv-promise {
     description "Query the reservation system to return matching reservation(s)";
     input {
       leaf zone { type instance-identifier { ct:instance-type nfvi:AvailabilityZone; } }
-      container start {
-        leaf after  { type yang:date-and-time; }
-        leaf before { type yang:date-and-time; }
+      uses query-start-end-window {
+        description "Match for reservations that are within the specified start/end time window";
       }
-      container end {
-        leaf after  { type yang:date-and-time; }
-        leaf before { type yang:date-and-time; }
-      }
-      container capacity {
-        container less-than {
-          uses compute-capacity;
-          uses network-capacity;
-          uses storage-capacity;
-        }
-        container greater-than {
-          uses compute-capacity;
-          uses network-capacity;
-          uses storage-capacity;
-        }
-      }
-      container remaining {
-        container less-than {
-          uses compute-capacity;
-          uses network-capacity;
-          uses storage-capacity;
-        }
-        container greater-than {
-          uses compute-capacity;
-          uses network-capacity;
-          uses storage-capacity;
-        }
-      }
+      leaf show-utilization { type boolean; default true; }
       container resources {
         leaf-list some {
           description "Query for Reservation(s) that contain some or more of these element(s)";
@@ -379,18 +397,28 @@ module opnfv-promise {
       }
     }
     output {
-      ct:instance-list reservations { ct:instance-type ResourceReservation; }
+      leaf-list reservations { type instance-identifier { ct:instance-type ResourceReservation; } }
+      list utilization {
+        key 'timestamp';
+        leaf timestamp { type yang:date-and-time; }
+        leaf count { type int16; }
+        container capacity {
+          uses compute-capacity;
+          uses network-capacity;
+          uses storage-capacity;
+        }
+      }
     }
   }
   
   rpc update-reservation {
     description "Update reservation details for an existing reservation";
     input {
-      uses reservation-request;
       leaf reservation-id {
         type instance-identifier { ct:instance-type ResourceReservation; }
         mandatory true;
       }
+      uses resource-usage-request;
     }
     output {
       leaf result {
@@ -426,21 +454,18 @@ module opnfv-promise {
 
   // CAPACITY INTENTS
   rpc query-capacity {
-    description "Check available capacity information about a given VIM";
+    description "Check available capacity information from the registered resource pool(s)";
     input {
-      leaf provider {
-        if-feature multi-provider;
-        type instance-identifier { ct:instance-type mano:VirtualInfrastructureManager; }
+      leaf zone { type instance-identifier { ct:instance-type nfvi:AvailabilityZone; } }
+      uses query-start-end-window {
+        description "Match for capacity pool(s) that are within the specified start/end time window";
       }
-      leaf zone {
-        description "Optional identifier to an Availability Zone";
-        type instance-identifier { ct:instance-type nfvi:AvailabilityZone; }
-      }
+      leaf show-utilization { type boolean; default true; }
       // additional parameters for query
     }
     output {
       uses resource-capacity {
-        augment "capacity/quota" {
+        augment "capacity/total" {
           uses compute-capacity;
           uses network-capacity;
         }
@@ -455,30 +480,6 @@ module opnfv-promise {
         augment "capacity/available" {
           uses compute-capacity;
           uses network-capacity;
-        }
-      }
-    }
-  }
-
-  rpc query-future-capacity {
-    description "Provides a view of capacity snapshot based on reservations for a future date range";
-    input {
-      leaf start { type yang:date-and-time; }
-      leaf end   { type yang:date-and-time; }
-      leaf interval {
-        type enumeration {
-          enum "daily";
-          enum "weekly";
-          enum "monthly";
-        }
-      }
-    }
-    output {
-      list results {
-        container reserved {
-          uses compute-capacity;
-          uses network-capacity;
-          uses storage-capacity;
         }
       }
     }
