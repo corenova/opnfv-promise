@@ -66,11 +66,22 @@ module:
         total
       ), type: prev
 
-# COMPLEX-TYPE model active bindings
+# COMPLEX-TYPE model active bindings (controller logic)
 complex-type:
   ResourcePool:
+    # properties
+    start: !coffee/function |
+      (prev) -> prev.set 'default', -> (new Date).toJSON()
+
     active: !coffee/function |
-      (prev) -> @computed (-> true ), type: prev
+      (prev) -> @computed (->
+        now = new Date
+        start = new Date (@get 'start')
+        end = switch
+          when (@get 'end')? then new Date (@get 'end')
+          else now
+        (@get 'enabled') and (start <= now <= end)
+      ), type: prev
 
   ResourceReservation:
     # private properties (NOT in YANG schema)
@@ -163,46 +174,14 @@ rpc:
 
   query-reservation: !coffee/function |
     (input, output, done) ->
-      # 1) we gather up all reservations that match the specified window
-      window = input.get 'window'
-      reservations = (@get 'promise.reservations').where
-        start: (value) -> (not window.end?)   or (new Date value) <= (new Date window.end)
-        end:   (value) -> (not window.start?) or (new Date value) >= (new Date window.start)
-      if window.scope is 'exlusive'
-        # yes, we CAN query filter in one shot above but this makes logic cleaner...
-        reservations = reservations.where
-          start: (value) -> (not window.start?) or (new Date value) >= (new Date window.start)
-          end:   (value) -> (not window.end?) or (new Date value) <= (new Date window.end)
-
-      # 2) we calculate the deltas based on start/end times of each reservation
-      deltas = reservations.reduce ((a, b) ->
-        [ skey, ekey ] = [ (b.start.split 'T')[0], (b.end.split 'T')[0] ]
-        a[skey] ?= count: 0, capacity: {}
-        a[ekey] ?= count: 0, capacity: {}
-        a[skey].count += 1
-        a[ekey].count -= 1
-        for k, v of b.capacity when v?
-          a[skey].capacity[k] ?= 0
-          a[skey].capacity[k] += v
-          a[ekey].capacity[k] ?= 0
-          a[ekey].capacity[k] -= v
-        return a
-      ), {}
-
-      # 3) we then sort the timestamps and aggregate the deltas
-      last = count: 0, capacity: {}
-      usages = for timestamp in Object.keys(deltas).sort()
-        entry = deltas[timestamp]
-        entry.timestamp = (new Date timestamp).toJSON()
-        entry.count += last.count
-        for k, v of entry.capacity
-          entry.capacity[k] += (last.capacity[k] ? 0)
-        last = entry
-        entry
-
-      output.set 'reservations', reservations.map (e) -> e.id
-      output.set 'utilization', usages
-      done()
+      query = input.get()
+      query.type = 'ResourceReservation'
+      @invoke 'query-capacity', query
+      .then (res) ->
+        output.set 'reservations', res.get 'collections'
+        output.set 'utilization', res.get 'utilization'
+        done()
+      .catch (e) -> done e
 
   update-reservation: !coffee/function |
     (input, output, done) ->
@@ -242,6 +221,53 @@ rpc:
         output.set 'result', 'error'
         output.set 'message', e
         done()
+
+  query-capacity: !coffee/function |
+    (input, output, done) ->
+      # 1) we gather up all reservations that match the specified window
+      window = input.get 'window'
+      matches = @find (input.get 'type'),
+        start: (value) -> (not window.end?)   or (new Date value) <= (new Date window.end)
+        end:   (value) -> (not window.start?) or (new Date value) >= (new Date window.start)
+      if window.scope is 'exlusive'
+        # yes, we CAN query filter in one shot above but this makes logic cleaner...
+        matches = matches.where
+          start: (value) -> (not window.start?) or (new Date value) >= (new Date window.start)
+          end:   (value) -> (not window.end?) or (new Date value) <= (new Date window.end)
+
+      output.set 'collections', matches
+      unless (input.get 'show-utilization') is true
+        return done()
+
+      # 2) we calculate the deltas based on start/end times of each match item
+      deltas = matches.reduce ((a, b) ->
+        b = b.get()
+        [ skey, ekey ] = [ (b.start.split 'T')[0], (b.end.split 'T')[0] ]
+        a[skey] ?= count: 0, capacity: {}
+        a[ekey] ?= count: 0, capacity: {}
+        a[skey].count += 1
+        a[ekey].count -= 1
+        for k, v of b.capacity when v?
+          a[skey].capacity[k] ?= 0
+          a[skey].capacity[k] += v
+          a[ekey].capacity[k] ?= 0
+          a[ekey].capacity[k] -= v
+        return a
+      ), {}
+
+      # 3) we then sort the timestamps and aggregate the deltas
+      last = count: 0, capacity: {}
+      usages = for timestamp in Object.keys(deltas).sort()
+        entry = deltas[timestamp]
+        entry.timestamp = (new Date timestamp).toJSON()
+        entry.count += last.count
+        for k, v of entry.capacity
+          entry.capacity[k] += (last.capacity[k] ? 0)
+        last = entry
+        entry
+
+      output.set 'utilization', usages
+      done()
 
   register-pool: !coffee/function |
     (input, output, done) ->

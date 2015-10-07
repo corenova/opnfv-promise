@@ -141,14 +141,46 @@ module opnfv-promise {
       }
     }
   }
+
+  grouping query-resource-collection {
+    uses query-start-end-window {
+      description "Match for ResourceCollection(s) that are within the specified start/end time window";
+    }
+    leaf show-utilization { type boolean; default true; }
+    container resources {
+      leaf-list some {
+        description "Query for ResourceCollection(s) that contain some or more of these element(s)";
+        type instance-identifier { ct:instance-type nfvi:ResourceElement; }
+      }
+      leaf-list every {
+        description "Query for ResourceCollection(s) that contain all of these element(s)";
+        type instance-identifier { ct:instance-type nfvi:ResourceElement; }
+      }
+    }
+  }
   
-  ct:complex-type ResourcePool {
+  grouping utilization-output {
+    list utilization {
+      key 'timestamp';
+      leaf timestamp { type yang:date-and-time; }
+      leaf count { type int16; }
+      container capacity {
+        uses compute-capacity;
+        uses network-capacity;
+        uses storage-capacity;
+      }
+    }
+  }
+
+  ct:complex-type ResourceCollection {
     ct:extends nfvi:ResourceElement;
+    ct:abstract true;
 
     description
-      "Describes an instance of an active ResourcePool record, which
-       represents a grouping of capacity and elements available during
-       a given window in time from a specific source 'provider'.";
+      "Describes an abstract ResourceCollection data model, which represents
+       a grouping of capacity and elements available during a given
+       window in time which must be extended by other resource
+       collection related models";
 
     uses resource-usage-request {
       refine resources {
@@ -177,15 +209,24 @@ module opnfv-promise {
     }
   }
 
+  ct:complex-type ResourcePool {
+    ct:extends ResourceCollection;
+
+    description
+      "Describes an instance of an active ResourcePool record, which
+       represents total available capacity and elements about a
+       specific provider.";
+  }
+
   ct:complex-type ResourceReservation {
-    ct:extends ResourcePool;
+    ct:extends ResourceCollection;
     
     description
       "Describes an instance of an active ResourceReservation record, created
        usually as a result of 'create-reservation' request. 
 
        A ResourceReservation is a derived instance of a generic
-       ResourcePool which has additional parameters to track
+       ResourceCollection which has additional parameters to track
        allocations.
 
        Contains the capacities of various resource services being
@@ -221,7 +262,7 @@ module opnfv-promise {
   }
 
   ct:complex-type ResourceAllocation {
-    ct:extends ResourcePool;
+    ct:extends ResourceCollection;
 
     description
       "Contains a list of resources to be allocated with optional reference
@@ -381,33 +422,11 @@ module opnfv-promise {
     description "Query the reservation system to return matching reservation(s)";
     input {
       leaf zone { type instance-identifier { ct:instance-type nfvi:AvailabilityZone; } }
-      uses query-start-end-window {
-        description "Match for reservations that are within the specified start/end time window";
-      }
-      leaf show-utilization { type boolean; default true; }
-      container resources {
-        leaf-list some {
-          description "Query for Reservation(s) that contain some or more of these element(s)";
-          type instance-identifier { ct:instance-type nfvi:ResourceElement; }
-        }
-        leaf-list every {
-          description "Query for Reservation(s) that contain all of these element(s)";
-          type instance-identifier { ct:instance-type nfvi:ResourceElement; }
-        }
-      }
+      uses query-resource-collection;
     }
     output {
       leaf-list reservations { type instance-identifier { ct:instance-type ResourceReservation; } }
-      list utilization {
-        key 'timestamp';
-        leaf timestamp { type yang:date-and-time; }
-        leaf count { type int16; }
-        container capacity {
-          uses compute-capacity;
-          uses network-capacity;
-          uses storage-capacity;
-        }
-      }
+      uses utilization-output;
     }
   }
   
@@ -454,34 +473,23 @@ module opnfv-promise {
 
   // CAPACITY INTENTS
   rpc query-capacity {
-    description "Check available capacity information from the registered resource pool(s)";
+    description "Check available capacity information about a specified resource collection";
     input {
-      leaf zone { type instance-identifier { ct:instance-type nfvi:AvailabilityZone; } }
-      uses query-start-end-window {
-        description "Match for capacity pool(s) that are within the specified start/end time window";
+      leaf type {
+        type enumeration {
+          enum 'ResourcePool';
+          enum 'ResourceReservation';
+          enum 'ResourceAllocation';
+        }
+        default 'ResourcePool';
       }
-      leaf show-utilization { type boolean; default true; }
-      // additional parameters for query
+      leaf zone { type instance-identifier { ct:instance-type nfvi:AvailabilityZone; } }
+      uses query-resource-collection;
+      // TBD: additional parameters for query-capacity
     }
     output {
-      uses resource-capacity {
-        augment "capacity/total" {
-          uses compute-capacity;
-          uses network-capacity;
-        }
-        augment "capacity/usage" {
-          uses compute-capacity;
-          uses network-capacity;
-        }
-        augment "capacity/reserved" {
-          uses compute-capacity;
-          uses network-capacity;
-        }
-        augment "capacity/available" {
-          uses compute-capacity;
-          uses network-capacity;
-        }
-      }
+      leaf-list collections { type instance-identifier { ct:instance-type ResourceCollection; } }
+      uses utilization-output;
     }
   }
 
