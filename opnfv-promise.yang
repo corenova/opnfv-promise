@@ -475,13 +475,14 @@ module opnfv-promise {
   rpc query-capacity {
     description "Check available capacity information about a specified resource collection";
     input {
-      leaf type {
+      leaf capacity {
         type enumeration {
-          enum 'ResourcePool';
-          enum 'ResourceReservation';
-          enum 'ResourceAllocation';
+          enum 'total';
+          enum 'reserved';
+          enum 'usage';
+          enum 'available';
         }
-        default 'ResourcePool';
+        default 'total';
       }
       leaf zone { type instance-identifier { ct:instance-type nfvi:AvailabilityZone; } }
       uses query-resource-collection;

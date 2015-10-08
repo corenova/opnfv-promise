@@ -18,14 +18,14 @@ keywords:
   - capacity
   - allocation
 
-schema: !yang/schema opnfv-promise.yang
+schema: !yang opnfv-promise.yang
 
 # below config provides default parameters
 config: !json opnfv-promise.json
 
 dependencies:
-  nfv-infrastructure: !yang/schema nfv-infrastructure.yang
-  nfv-mano:           !yang/schema nfv-mano.yang
+  nfv-infrastructure: !yang nfv-infrastructure.yang
+  nfv-mano:           !yang nfv-mano.yang
 
 # MODULE model active bindings
 module:
@@ -68,6 +68,11 @@ module:
 
 # COMPLEX-TYPE model active bindings (controller logic)
 complex-type:
+  ResourceElement:
+    #properties
+    id: !coffee/function |
+      (prev) -> prev.set 'default', -> @uuid()
+
   ResourcePool:
     # properties
     start: !coffee/function |
@@ -145,29 +150,60 @@ complex-type:
 rpc:
   create-reservation: !coffee/function |
     (input, output, done) ->
-      # first verify that requested capacity is available
-      requested = input.get 'capacity'
-      available = @get 'promise.capacity.available'
-      for k, v of requested when v?
-        unless v <= available[k]
-          output.set 'result', 'conflict'
-          output.set 'message', "requested #{k}=#{v} exceeds available #{available[k]}"
+      # 1. create the reservation record
+      reservation = @create 'ResourceReservation', input.get()
+      requested = reservation.get 'capacity'
+      for k, v of requested
+        delete requested[k] unless v? and !!v
+
+      reservations = @access 'promise.reservations'
+
+      # 2. verify that requested capacity is available
+      @invoke 'query-capacity',
+        start: reservation.get 'start'
+        end:   reservation.get 'end'
+        capacity: 'available'
+      .then (res) ->
+        unless (res.get 'collections').length > 0
+          output.set 'result', 'error'
+          output.set 'message', 'no resource capacity available during requested start/end time'
           return done()
 
-      # then verify that the requested resource identifiers are available
-      # TODO...
+        entries = res.get 'utilization'
+        start = new Date reservation.get 'start'
+        end   = new Date reservation.get 'end'
+        for x in [0..entries.length-1]
+          t1 = new Date entries[x].timestamp
+          break unless t1 < end
 
-      # create the reservation record and try to save it
-      reservation = @create 'ResourceReservation', input.get()
-      reservation.save()
-      .then =>
-        # TODO currently an issue with instance-list making a new instance due to instanceof check issue
-        (@access 'promise.reservations').push reservation
-        output.set 'result', 'ok'
-        output.set 'message', 'request accepted'
-        output.set 'reservation-id', reservation.id
-        done()
-      .catch (e) ->
+          if x < entries.length-1
+            t2 = new Date entries[x+1].timestamp
+            continue unless t2 > start
+
+          available = entries[x].capacity
+          for k, v of requested
+            unless available[k] >= v
+              output.set 'result', 'conflict'
+              output.set 'message', "requested #{k}=#{v} exceeds available #{available[k]} between #{t1} and #{t2}"
+              return done()
+
+        # 3. verify that the requested resource identifiers are available
+        # TODO...
+
+        # 4. save the reservation record
+        reservation.save()
+        .then ->
+          reservations.push reservation
+          output.set 'result', 'ok'
+          output.set 'message', 'request accepted'
+          output.set 'reservation-id', reservation.id
+          done()
+        .catch (e) ->
+          output.set 'result', 'error'
+          output.set 'message', e
+          done()
+
+      .catch (err) ->
         output.set 'result', 'error'
         output.set 'message', e
         done()
@@ -175,7 +211,7 @@ rpc:
   query-reservation: !coffee/function |
     (input, output, done) ->
       query = input.get()
-      query.type = 'ResourceReservation'
+      query.capacity = 'reserved'
       @invoke 'query-capacity', query
       .then (res) ->
         output.set 'reservations', res.get 'collections'
@@ -224,12 +260,23 @@ rpc:
 
   query-capacity: !coffee/function |
     (input, output, done) ->
-      # 1) we gather up all reservations that match the specified window
+      # 1. we gather up all collections that match the specified window
       window = input.get 'window'
-      matches = @find (input.get 'type'),
-        start: (value) -> (not window.end?)   or (new Date value) <= (new Date window.end)
-        end:   (value) -> (not window.start?) or (new Date value) >= (new Date window.start)
-      if window.scope is 'exlusive'
+
+      collections = switch (input.get 'capacity')
+        when 'total'     then [ 'ResourcePool' ]
+        when 'reserved'  then [ 'ResourceReservation' ]
+        when 'used'      then [ 'ResourceAllocation' ]
+        when 'available' then [ 'ResourcePool', 'ResourceReservation', 'ResourceAllocation' ]
+
+      matches = collections.reduce ((a, name) =>
+        res = @find name,
+          start: (value) -> (not window.end?)   or (new Date value) <= (new Date window.end)
+          end:   (value) -> (not window.start?) or (new Date value) >= (new Date window.start)
+        a.concat res...
+      ), []
+
+      if window.scope is 'exclusive'
         # yes, we CAN query filter in one shot above but this makes logic cleaner...
         matches = matches.where
           start: (value) -> (not window.start?) or (new Date value) >= (new Date window.start)
@@ -239,9 +286,10 @@ rpc:
       unless (input.get 'show-utilization') is true
         return done()
 
-      # 2) we calculate the deltas based on start/end times of each match item
-      deltas = matches.reduce ((a, b) ->
-        b = b.get()
+      # 2. we calculate the deltas based on start/end times of each match item
+      deltas = matches.reduce ((a, entry) ->
+        b = entry.get()
+        b.end ?= 'infiniteT'
         [ skey, ekey ] = [ (b.start.split 'T')[0], (b.end.split 'T')[0] ]
         a[skey] ?= count: 0, capacity: {}
         a[ekey] ?= count: 0, capacity: {}
@@ -249,15 +297,19 @@ rpc:
         a[ekey].count -= 1
         for k, v of b.capacity when v?
           a[skey].capacity[k] ?= 0
-          a[skey].capacity[k] += v
           a[ekey].capacity[k] ?= 0
-          a[ekey].capacity[k] -= v
+          if entry.name is 'ResourcePool'
+            a[skey].capacity[k] += v
+            a[ekey].capacity[k] -= v
+          else
+            a[skey].capacity[k] -= v
+            a[ekey].capacity[k] += v
         return a
       ), {}
 
-      # 3) we then sort the timestamps and aggregate the deltas
+      # 3. we then sort the timestamps and aggregate the deltas
       last = count: 0, capacity: {}
-      usages = for timestamp in Object.keys(deltas).sort()
+      usages = for timestamp in Object.keys(deltas).sort() when timestamp isnt 'infinite'
         entry = deltas[timestamp]
         entry.timestamp = (new Date timestamp).toJSON()
         entry.count += last.count
