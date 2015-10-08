@@ -91,6 +91,7 @@ module opnfv-promise {
       
       type instance-identifier {
         ct:instance-type nfvi:ResourceElement;
+        require-instance true;
       }
     }
   }
@@ -145,6 +146,10 @@ module opnfv-promise {
   grouping query-resource-collection {
     uses query-start-end-window {
       description "Match for ResourceCollection(s) that are within the specified start/end time window";
+    }
+    leaf-list without {
+      description "Excludes specified collection identifiers from the result";
+      type instance-identifier { ct:instance-type ResourceCollection; }
     }
     leaf show-utilization { type boolean; default true; }
     container resources {
@@ -257,6 +262,7 @@ module opnfv-promise {
          this reservation.";
       type instance-identifier {
         ct:instance-type ResourceAllocation;
+        require-instance true;
       }
     }
   }
@@ -434,7 +440,10 @@ module opnfv-promise {
     description "Update reservation details for an existing reservation";
     input {
       leaf reservation-id {
-        type instance-identifier { ct:instance-type ResourceReservation; }
+        type instance-identifier {
+          ct:instance-type ResourceReservation;
+          require-instance true;
+        }
         mandatory true;
       }
       uses resource-usage-request;
