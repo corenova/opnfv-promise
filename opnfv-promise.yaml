@@ -141,9 +141,6 @@ complex-type:
         req.end   ?= @get 'end'
 
         # TODO: should validate here...
-        console.log "updating reservation #{@id}"
-        console.log this
-
         @parent.invoke 'query-capacity',
           start: req.start
           end: req.end
