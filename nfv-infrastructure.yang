@@ -101,10 +101,6 @@ module nfv-infrastructure {
     }
 
     leaf-list hypervisors { type instance-identifier { ct:instance-type Hypervisor; } }
-
-    rpc reboot;
-    rpc shutdown;
-    rpc startup;
   }
   
   ct:complex-type Hypervisor {
@@ -120,8 +116,6 @@ module nfv-infrastructure {
       leaf free { type uint16; }
     }
     leaf-list servers { type instance-identifier { ct:instance-type ServerInstance; } }
-    
-    rpc evacuate;
   }
 
   ct:complex-type ComputeElement {
@@ -159,12 +153,10 @@ module nfv-infrastructure {
           type enumeration { enum ami; enum ari; enum aki; enum vhd; enum vmdk; enum raw; enum qcow2; enum vdi; enum iso; }
         }
       }
-    }
-    rpc upload {
-      description "uploads binary image data";
-    }
-    rpc download {
-      description "downloads binary image data";
+      leaf content {
+        description "should be a 'private' property so only direct access retrieves content";
+        type binary;
+      }
     }
   }
 
@@ -197,9 +189,6 @@ module nfv-infrastructure {
          connected with.";
       type instance-identifier { ct:instance-type NetworkElement; }
     }
-
-    rpc reboot;
-    rpc destroy;
   }
 
   /*********************************************
@@ -242,4 +231,8 @@ module nfv-infrastructure {
 
     leaf subnet { type instance-identifier { ct:instance-type SubNetwork; } }
   }
+
+  rpc startup;
+  rpc reboot;
+  rpc shutdown;
 }

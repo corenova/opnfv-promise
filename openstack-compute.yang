@@ -42,25 +42,6 @@ module openstack-compute {
       type instance-identifier { ct:instance-type SecurityGroup; }
     }
 
-    // OpenStack Nova specific RPC calls
-    rpc resize {
-      input {
-        leaf server { type instance-type { ct:instance-type ServerInstance; } }
-        // other params for resize
-      }
-    }
-    rpc backup;
-    rpc migrate;
-    rpc restore;
-    rpc evacuate;
-    rpc lock;
-    rpc unlock;
-    rpc suspend;
-    rpc resume;
-    rpc pause;
-    rpc unpause;
-    rpc inject-network;
-    rpc reset-network;
   }
 
   choice version {
@@ -69,6 +50,23 @@ module openstack-compute {
     }
   }
 
-  
-
+  // OpenStack Nova specific RPC calls
+  rpc resize {
+    input {
+      leaf server { type instance-type { ct:instance-type ServerInstance; } }
+      // other params for resize
+    }
+  }
+  rpc backup;
+  rpc migrate;
+  rpc restore;
+  rpc evacuate;
+  rpc lock;
+  rpc unlock;
+  rpc suspend;
+  rpc resume;
+  rpc pause;
+  rpc unpause;
+  rpc inject-network;
+  rpc reset-network;
 }

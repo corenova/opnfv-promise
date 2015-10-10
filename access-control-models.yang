@@ -52,10 +52,10 @@ module access-control-models {
 
     ct:instance-list users { ct:instance-type User; }
     ct:instance-list groups { ct:instance-type Group; }
-
-    rpc create-user;
-    rpc remove-user;
-    rpc create-group;
-    rpc remove-group;
   }
+
+  rpc create-user;
+  rpc remove-user;
+  rpc create-group;
+  rpc remove-group;
 }

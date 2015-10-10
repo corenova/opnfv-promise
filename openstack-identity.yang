@@ -71,13 +71,14 @@ module openstack-identity {
       "OpenStack Domain represent a distinct administrative domain including projects.";
     
     ct:instance-list projects { ct:instance-type Project; }
-
-    rpc create-project;
-    rpc remove-project;
   }
 
   ct:complex-type Token {
     leaf key { type yang:uuid; }
     leaf identity { type instance-identifier { ct:instance-type Identity; } }
   }
+
+
+  rpc create-project;
+  rpc remove-project;
 }
