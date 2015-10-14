@@ -115,6 +115,11 @@ complex-type:
         (@get 'enabled') and (start <= now <= end)
       ), type: prev
 
+    remaining: !coffee/function |
+      (prev) -> @computed (->
+        
+      ), type: prev
+
     # methods
     validate: !coffee/function |
       (prev) -> (value={}, resolve, reject) ->
@@ -147,8 +152,12 @@ complex-type:
           capacity: 'available'
           without: @id
         .then (res) =>
-          unless (res.get 'collections').length > 0
+          collections = res.get 'collections'
+          unless collections.length > 0
             return reject 'no resource capacity available during requested start/end time'
+
+          pools = collections.filter (e) -> /^ResourcePool/.test e
+          # should do some policy or check to see if more than one pool acceptable to reservee
 
           entries = res.get 'utilization'
           start = new Date req.start
@@ -165,7 +174,9 @@ complex-type:
             for k, v of req.capacity when v? and !!v
               unless available[k] >= v
                 return reject "requested #{k}=#{v} exceeds available #{available[k]} between #{t1} and #{t2}"
+
           @set req
+          @set 'pools', pools
           resolve this
         .catch (err) -> reject err
 
@@ -269,17 +280,19 @@ rpc:
     (input, output, done) ->
       # 1. we gather up all collections that match the specified window
       window = input.get 'window'
+      metric = input.get 'capacity'
 
-      collections = switch (input.get 'capacity')
+      collections = switch metric
         when 'total'     then [ 'ResourcePool' ]
         when 'reserved'  then [ 'ResourceReservation' ]
-        when 'used'      then [ 'ResourceAllocation' ]
+        when 'usage'     then [ 'ResourceAllocation' ]
         when 'available' then [ 'ResourcePool', 'ResourceReservation', 'ResourceAllocation' ]
 
       matches = collections.reduce ((a, name) =>
         res = @find name,
           start: (value) -> (not window.end?)   or (new Date value) <= (new Date window.end)
           end:   (value) -> (not window.start?) or (new Date value) >= (new Date window.start)
+          enabled: true
         a.concat res...
       ), []
 
@@ -291,6 +304,10 @@ rpc:
 
       # exclude any identifiers specified
       matches = matches.without id: (input.get 'without')
+
+      if metric is 'available'
+        # excludes allocations with reservation property set (to prevent double count)
+        matches = matches.without reservation: (v) -> v?
 
       output.set 'collections', matches
       unless (input.get 'show-utilization') is true
@@ -305,6 +322,7 @@ rpc:
         a[ekey] ?= count: 0, capacity: {}
         a[skey].count += 1
         a[ekey].count -= 1
+
         for k, v of b.capacity when v?
           a[skey].capacity[k] ?= 0
           a[ekey].capacity[k] ?= 0
@@ -331,7 +349,7 @@ rpc:
       output.set 'utilization', usages
       done()
 
-  register-pool: !coffee/function |
+  increase-capacity: !coffee/function |
     (input, output, done) ->
       
 

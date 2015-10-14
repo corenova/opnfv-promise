@@ -11,6 +11,11 @@ module nfv-infrastructure {
     "NFV Infrastructure Data Models with complex types and typed instance
      identifiers representing the various ResourceElements available
      in the infrastructure across compute, network, and storage.";
+
+  revision 2015-10-13 {
+    description
+      "Introduce capacity and element collection into NFVI models";
+  }
   
   revision 2015-08-07 {
     description
@@ -20,6 +25,46 @@ module nfv-infrastructure {
        for instance based management";
   }
 
+  grouping compute-capacity {
+    leaf cores     { type int16; default 0; }
+    leaf ram       { type int32; default 0; units 'MB'; }
+    leaf instances { type int16; default 0; }
+  }
+
+  grouping network-capacity {
+    leaf networks  { type int16; default 0; }
+    leaf ports     { type int16; default 0; }
+    leaf routers   { type int16; default 0; }
+    leaf subnets   { type int16; default 0; }
+    leaf addresses { type int32; default 0; }
+  }
+
+  grouping storage-capacity {
+    leaf gigabytes { type int32; default 0; units 'GB'; }
+    leaf snapshots { type int16; default 0; }
+    leaf volumes   { type int16; default 0; }
+  }
+
+  grouping resource-capacity {
+    uses compute-capacity;
+    uses network-capacity;
+    uses storage-capacity;
+  }
+  
+  grouping resource-collection {
+    description
+      "Information model capturing parameters for describing a collection of
+       resource capacity and resource elements";
+    
+    container capacity { uses resource-capacity; }
+    leaf-list elements {
+      type instance-identifier {
+        ct:instance-type nfvi:ResourceElement;
+        require-instance true;
+      }
+    }
+  }
+  
   /*********************************************
    * Abstract Models (top-level)
    *********************************************/
@@ -69,6 +114,17 @@ module nfv-infrastructure {
       type uint8 { range 0..100; }
       default 0;
     }
+  }
+
+  ct:complex-type ResourceContainer {
+    ct:extends ResourceInstance;
+    ct:abstract true;
+
+    description
+      "An abstract resource instance which contains a collection of capacity
+       and elements.";
+
+    uses resource-collection;
   }
 
   /*********************************************
