@@ -117,7 +117,14 @@ complex-type:
 
     remaining: !coffee/function |
       (prev) -> @computed (->
-        
+        total = @get 'capacity'
+        # TODO: should use (@access 'allocations.*')
+        records = @access 'allocations.*'
+        for entry in records
+          usage = entry.get 'capacity'
+          for k, v of usage
+            total[k] -= v
+        total
       ), type: prev
 
     # methods
@@ -351,7 +358,32 @@ rpc:
 
   increase-capacity: !coffee/function |
     (input, output, done) ->
-      
+      pool = @create 'ResourcePool', input.get()
+      pool.save()
+      .then (res) =>
+        (@access 'promise.pools').push res
+        output.set result: 'ok', message: 'capacity increase successful'
+        output.set 'pool-id', res.id
+        done()
+      .catch (e) ->
+        output.set result: 'error', message: e
+        done()
+
+  decrease-capacity: !coffee/function |
+    (input, output, done) ->
+      request = input.get()
+      for k, v of request.capacity
+        request.capacity[k] = -v
+      pool = @create 'ResourcePool', request
+      pool.save()
+      .then (res) =>
+        (@access 'promise.pools').push res
+        output.set result: 'ok', message: 'capacity decrease successful'
+        output.set 'pool-id', res.id
+        done()
+      .catch (e) ->
+        output.set result: 'error', message: e
+        done()
 
   # TEMPORARY
   add-provider: !coffee/function |
