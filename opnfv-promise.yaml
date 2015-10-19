@@ -118,7 +118,6 @@ complex-type:
     remaining: !coffee/function |
       (prev) -> @computed (->
         total = @get 'capacity'
-        # TODO: should use (@access 'allocations.*')
         records = @access 'allocations.*'
         for entry in records
           usage = entry.get 'capacity'
