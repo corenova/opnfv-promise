@@ -132,7 +132,7 @@ complex-type:
         # validate that request contains sufficient data
         for k, v of value.capacity when v? and !!v
           hasCapacity = true
-        if (not hasCapacity) and value.resources.length is 0
+        if (not hasCapacity) and value.elements.length is 0
           return reject "unable to validate reservation record without anything being reserved"
         # time range verifications
         now = new Date
