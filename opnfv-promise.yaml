@@ -55,6 +55,18 @@ module:
         .reduce combine, {}
       ), type: prev
     # rebind to be a computed property
+    promise.capacity.usage: !coffee/function |
+      (prev) -> @computed (->
+        combine = (a, b) ->
+          for k, v of b.capacity when v?
+            a[k] ?= 0
+            a[k] += v
+          return a
+        (@parent.get 'allocations')
+        .filter (entry) -> entry.active is true
+        .reduce combine, {}
+      ), type: prev
+    # rebind to be a computed property
     promise.capacity.available: !coffee/function |
       (prev) -> @computed (-> 
         total = @get 'total'
@@ -73,7 +85,7 @@ complex-type:
     id: !coffee/function |
       (prev) -> prev.set 'default', -> @uuid()
 
-  ResourcePool:
+  ResourceCollection:
     # properties
     start: !coffee/function |
       (prev) -> prev.set 'default', -> (new Date).toJSON()
@@ -89,31 +101,21 @@ complex-type:
       ), type: prev
 
   ResourceReservation:
-    # private properties (NOT in YANG schema)
-    max-duration: !coffee/function |
-      () -> @computed (->
-        # hackish... yes
-        (@seek name: 'opnfv-promise').get 'promise.policy.reservation.max-duration'
-      ), type: 'number', private: true
-
-    # properties
-    start: !coffee/function |
-      (prev) -> prev.set 'default', -> (new Date).toJSON()
-
     end: !coffee/function |
       (prev) -> prev.set 'default', ->
         end = (new Date @get 'start')
-        max = @get 'max-duration'
+        max = @parent.get 'promise.policy.reservation.max-duration'
+        return unless max?
         end.setTime (end.getTime() + (max*60*60*1000))
         end.toJSON()
 
-    active: !coffee/function |
-      (prev) -> @computed (->
-        now = new Date
-        start = new Date (@get 'start')
-        end   = new Date (@get 'end')
-        (@get 'enabled') and (start <= now <= end)
-      ), type: prev
+    # TODO: find ways to convert has-many into computed?
+    # allocations: !coffee/function |
+    #   (prev) -> @computed (->
+    #     res = (@store.find 'ResourceAllocation', reservation: @id)
+    #     console.log res
+    #     res
+    #   ), type: prev
 
     remaining: !coffee/function |
       (prev) -> @computed (->
@@ -168,6 +170,7 @@ complex-type:
           entries = res.get 'utilization'
           start = new Date req.start
           end   = new Date req.end
+
           for x in [0..entries.length-1]
             t1 = new Date entries[x].timestamp
             break unless t1 < end
@@ -197,6 +200,17 @@ complex-type:
           res.set 'modified-on', now
           resolve res
         .catch (e) -> reject e
+
+  ResourceAllocation:
+    # properties
+    priority: !coffee/function |
+      (prev) -> @computed (->
+        { reservation, active } = [ (@get 'reservation'), (@get 'active') ]
+        switch
+          when not reservation? then 3
+          when not active then 2
+          else 1
+      ), type: prev
 
 # RPC definitions (INTENT interfaces)
 rpc:
@@ -382,6 +396,62 @@ rpc:
         done()
       .catch (e) ->
         output.set result: 'error', message: e
+        done()
+
+  create-instance: !coffee/function |
+    (input, output, done) ->
+      rid = input.get 'reservation-id'
+      if rid?
+        reservation = @find 'ResourceReservation', rid
+        unless reservation?
+          output.set result: 'error', message: 'no reservation found for specified identifier'
+          return done()
+        unless (reservation.get 'active') is true
+          output.set result: 'error', message: "reservation is currently not active"
+          return done()
+        available = reservation.get 'remaining'
+      else
+        available = @get 'promise.capacity.available'
+
+      request = input.get 'capacity'
+      for k, v of request when v? and !!v
+        unless available[k] >= v
+          output.set result: 'conflict', message: "requested #{k}=#{v} exceeds available #{available[k]}"
+          return done()
+
+      allocations = @access 'promise.allocations'
+      instance = @create 'ResourceAllocation', 
+        reservation: rid
+        capacity: request
+      instance.save()
+      .then (res) -> 
+        allocations.push instance
+        (reservation?.access 'allocations')?.push instance.id
+        output.set result: 'ok', message: 'create-instance request accepted'
+        output.set 'instance-id', instance.id
+        done()
+      .catch (err) ->
+        output.set result: 'error', mesage: err
+        done()
+
+  destroy-instance: !coffee/function |
+    (input, output, done) ->
+      # 1. find the instance
+      instance = @find 'ResourceAllocation', input.get 'instance-id'
+      unless instance?
+        output.set result: 'error', message: 'no allocation found for specified identifier'
+        return done()
+
+      # 2. destroy all traces of this instance
+      instance.destroy()
+      .then =>
+        (@access 'promise.allocations').remove instance.id
+        output.set 'result', 'ok'
+        output.set 'message', 'reservation canceled'
+        done()
+      .catch (e) ->
+        output.set 'result', 'error'
+        output.set 'message', e
         done()
 
   # TEMPORARY

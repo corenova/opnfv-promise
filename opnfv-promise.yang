@@ -281,7 +281,6 @@ module opnfv-promise {
         ct:instance-type ResourcePool;
         require-instance true;
       }
-      mandatory true;
     }
 
     leaf priority {
@@ -386,19 +385,6 @@ module opnfv-promise {
     }
   }
   
-  rpc query-reservation {
-    if-feature reservation-service;
-    description "Query the reservation system to return matching reservation(s)";
-    input {
-      leaf zone { type instance-identifier { ct:instance-type nfvi:AvailabilityZone; } }
-      uses query-resource-collection;
-    }
-    output {
-      leaf-list reservations { type instance-identifier { ct:instance-type ResourceReservation; } }
-      uses utilization-output;
-    }
-  }
-  
   rpc update-reservation {
     description "Update reservation details for an existing reservation";
     input {
@@ -429,29 +415,20 @@ module opnfv-promise {
     }
   }
 
-  // CAPACITY INTENTS
-  rpc query-capacity {
-    description "Check available capacity information about a specified resource collection";
+  rpc query-reservation {
+    if-feature reservation-service;
+    description "Query the reservation system to return matching reservation(s)";
     input {
-      leaf capacity {
-        type enumeration {
-          enum 'total';
-          enum 'reserved';
-          enum 'usage';
-          enum 'available';
-        }
-        default 'total';
-      }
       leaf zone { type instance-identifier { ct:instance-type nfvi:AvailabilityZone; } }
       uses query-resource-collection;
-      // TBD: additional parameters for query-capacity
     }
     output {
-      leaf-list collections { type instance-identifier { ct:instance-type ResourceCollection; } }
+      leaf-list reservations { type instance-identifier { ct:instance-type ResourceReservation; } }
       uses utilization-output;
     }
   }
-
+  
+  // CAPACITY INTENTS
   rpc increase-capacity {
     description "Increase total capacity for the reservation system between a window in time";
     input {
@@ -488,6 +465,63 @@ module opnfv-promise {
     }
   }
 
+  rpc query-capacity {
+    description "Check available capacity information about a specified resource collection";
+    input {
+      leaf capacity {
+        type enumeration {
+          enum 'total';
+          enum 'reserved';
+          enum 'usage';
+          enum 'available';
+        }
+        default 'available';
+      }
+      leaf zone { type instance-identifier { ct:instance-type nfvi:AvailabilityZone; } }
+      uses query-resource-collection;
+      // TBD: additional parameters for query-capacity
+    }
+    output {
+      leaf-list collections { type instance-identifier { ct:instance-type ResourceCollection; } }
+      uses utilization-output;
+    }
+  }
+
+  // ALLOCATION INTENTS
+  rpc create-instance {
+    description "Create an instance of specified resource(s) utilizing capacity from the pool";
+    input {
+      leaf reservation-id {
+        type instance-identifier { ct:instance-type ResourceReservation; require-instance true; }
+      }
+      uses nfvi:resource-collection {
+        refine "capacity/instances" {
+          description "This intent will always use one instance";
+          config false;
+          default 1;
+        }
+      }
+    }
+    output {
+      uses common-intent-output;
+      leaf instance-id {
+        type instance-identifier { ct:instance-type ResourceAllocation; }
+      }
+    }
+  }
+
+  rpc destroy-instance {
+    description "Destroy an instance of resource utilization and release it back to the pool";
+    input {
+      leaf instance-id {
+        type instance-identifier { ct:instance-type ResourceAllocation; require-instance true; }
+      }
+    }
+    output {
+      uses common-intent-output;
+    }
+  }
+  
   // TODO...
   notification reservation-event;
   notification capacity-event;
