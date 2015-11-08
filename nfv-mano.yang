@@ -31,7 +31,7 @@ module nfv-mano {
       mandatory true;
     }
     leaf password {
-      type ianach:crypt-hash;
+      type acm:password;
       mandatory true;
     }
     leaf region {

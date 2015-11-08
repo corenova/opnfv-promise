@@ -212,6 +212,36 @@ complex-type:
           else 1
       ), type: prev
 
+  ResourceProvider:
+    # properties
+    token: !coffee/function |
+      (prev) -> prev.set 'private', true
+
+    # methods
+    update: !coffee/function |
+      (prev) -> (services=[], resolve, reject) ->
+        return reject "unable to update provider without list of services" unless services.length
+        request = @store.parent.require 'superagent'
+        services.forEach (service) =>
+          switch service.type
+            when 'compute'
+              request.get "#{service.endpoints[0].publicURL}/limits"
+                .set 'X-Auth-Token', @get 'token'
+                .set 'Accept', 'application/json'
+                .end (err, res) =>
+                  if err? or !res.ok then return
+                  capacity = res.body.limits?.absolute
+                  (@access 'capacity').set {
+                    cores: capacity.maxTotalCores
+                    ram: capacity.maxTotalRAMSize
+                    instances: capacity.maxTotalInstances
+                    addresses: capacity.maxTotalFloatingIps
+                  }
+                  console.log @get()
+
+        # should update do promise.all?
+        resolve this
+
 # RPC definitions (INTENT interfaces)
 rpc:
   create-reservation: !coffee/function |
@@ -454,13 +484,53 @@ rpc:
         output.set 'message', e
         done()
 
-  # TEMPORARY
+  # TEMPORARY (should go into VIM-specific module)
   add-provider: !coffee/function |
     (input, output, done) ->
-      @using 'mano', ->
-        @invoke 'add-provider', (input.get 'endpoint', 'region', 'username', 'password')
-        .then (res) =>
-          (@access 'promise.providers').push res
-          output.set 'result', 'ok'
-          output.set 'provider-id', res.id
-          done()
+      app = @parent
+      request = app.require 'superagent'
+
+      payload = switch input.get 'provider-type'
+        when 'openstack'
+          auth:
+            tenantId: input.get 'tenant.id'
+            tenantName: input.get 'tenant.name'
+            passwordCredentials: input.get 'username', 'password'
+
+      unless payload?
+        return done 'Sorry, only openstack supported at this time'
+
+      providers = @access 'promise.providers'
+      request
+        .post input.get 'endpoint'
+        .send payload
+        .set 'Accept', 'application/json'
+        .end (err, res) =>
+          if err? or !res.ok then return done err
+          console.log JSON.stringify res.body, null, 2
+          access = res.body.access
+          provider = @create 'ResourceProvider',
+            token: access?.token?.id
+            name: access?.token?.tenant?.name
+          provider.invoke 'update', access.serviceCatalog
+          .then (res) ->
+            res.save()
+            .then ->
+              providers.push res
+              output.set 'result', 'ok'
+              output.set 'provider-id', res.id
+              done()
+            .catch (err) ->
+              output.set 'error', message: err
+              done()
+          .catch (err) -> 
+            output.set 'error', message: err
+            done()
+      
+      # @using 'mano', ->
+      #   @invoke 'add-provider', (input.get 'endpoint', 'region', 'username', 'password')
+      #   .then (res) =>
+      #     (@access 'promise.providers').push res
+      #     output.set 'result', 'ok'
+      #     output.set 'provider-id', res.id
+      #     done()
