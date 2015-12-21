@@ -23,12 +23,12 @@ a need to perform an `install` of this module. You simply need to
 
 ## Usage
 ```bash
-$ yfc run github:opnfv/master/opnfv-promise.yaml
+$ yfc run github:opnfv/promise/master
 ```
 
 The `yfc run` command will download/retrieve the primary application
 package from the Github repository along with any other dependency
-files/assets referenced within the YAML manifest and instantiate the
+files/assets referenced within the `package.yaml` manifest and instantiate the
 opnfv-promise module and run REST/JSON interface by default listening
 on port 5000.
 
