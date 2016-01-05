@@ -1,6 +1,5 @@
-module 'opnfv-promise', ->
-
-  rebind 'promise.capacity.total', (prev) ->
+module.exports =
+  '/opnfv-promise/promise/capacity/total': (prev) ->
     @computed (->
       combine = (a, b) ->
         for k, v of b.capacity when v?
@@ -11,8 +10,8 @@ module 'opnfv-promise', ->
       .filter (entry) -> entry.active is true
       .reduce combine, {}
     ), type: prev
-    
-  rebind 'promise.capacity.reserved', (prev) ->
+
+  '/opnfv-promise/promise/capacity/reserved', (prev) ->
     @computed (->
       combine = (a, b) ->
         for k, v of b.capacity when v?
@@ -23,32 +22,33 @@ module 'opnfv-promise', ->
       .filter (entry) -> entry.active is true
       .reduce combine, {}
     ), type: prev
-    
-    # rebind to be a computed property
-    promise.capacity.usage: (prev) ->
-      @computed (->
-        combine = (a, b) ->
-          for k, v of b.capacity when v?
-            a[k] ?= 0
-            a[k] += v
-          return a
-        (@parent.get 'allocations')
-        .filter (entry) -> entry.active is true
-        .reduce combine, {}
-      ), type: prev
-    # rebind to be a computed property
-    promise.capacity.available: (prev) ->
-      @computed (-> 
-        total = @get 'total'
-        reserved = @get 'reserved'
-        usage = @get 'usage'
-        for k, v of total when v?
-          total[k] -= reserved[k] if reserved[k]?
-          total[k] -= usage[k] if usage[k]?
-        total
-      ), type: prev
 
-  bind 'create-reservation', ->
+  # rebind to be a computed property
+  '/opnfv-promise/promise/capacity/usage': (prev) ->
+    @computed (->
+      combine = (a, b) ->
+        for k, v of b.capacity when v?
+          a[k] ?= 0
+          a[k] += v
+        return a
+      (@parent.get 'allocations')
+      .filter (entry) -> entry.active is true
+      .reduce combine, {}
+    ), type: prev
+
+  # rebind to be a computed property
+  '/opnfv-promise/promise/capacity/available': (prev) ->
+    @computed (->
+      total = @get 'total'
+      reserved = @get 'reserved'
+      usage = @get 'usage'
+      for k, v of total when v?
+        total[k] -= reserved[k] if reserved[k]?
+        total[k] -= usage[k] if usage[k]?
+      total
+    ), type: prev
+
+  '/opnfv-promise/create-reservation':
     (input, output, done) ->
       # 1. create the reservation record (empty)
       reservation = @create 'ResourceReservation'
@@ -67,6 +67,6 @@ module 'opnfv-promise', ->
         .catch (err) ->
           output.set result: 'error', message: err
           done()
-      .catch (err) -> 
+      .catch (err) ->
         output.set result: 'conflict', message: err
         done()

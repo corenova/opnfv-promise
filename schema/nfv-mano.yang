@@ -80,7 +80,7 @@ module nfv-mano {
 
       ct:instance-list servers { ct:instance-type nfvi:ServerInstance; }
       ct:instance-list images { ct:instance-type nfvi:VirtualMachineImage; }
-      ct:instance-list flavors { ct:instance-type nfvi:VirtualMachineFlavor; }
+      ct:instance-list flavors { ct:instance-type nfvi:ComputeFlavor; }
     }
 
     container network {

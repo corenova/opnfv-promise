@@ -4,6 +4,7 @@ author: Peter K. Lee <peter@intercloud.net>
 license: Apache-2.0
 homepage: http://wiki.opnfv.org/promise
 repository: git://github.com/opnfv/promise.git
+yangforge: "0.11.x"
 keywords:
   - opnfv
   - promise
@@ -18,14 +19,15 @@ keywords:
   - capacity
   - allocation
 
-schema: !yang opnfv-promise.yang
+schema: !yang schema/opnfv-promise.yang
 
 # below config provides default parameters
 config: !json promise-demo.json
 
 dependencies:
-  nfv-infrastructure: !yang nfv-infrastructure.yang
-  nfv-mano:           !yang nfv-mano.yang
+  access-control-models: !yang schema/access-control-models.yang
+  nfv-infrastructure: !yang schema/nfv-infrastructure.yang
+  nfv-mano:           !yang schema/nfv-mano.yang
 
 # MODULE model active bindings
 module:
