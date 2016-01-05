@@ -16,14 +16,14 @@
             "cores": 100,
             "ram": 262144,
             "instances": 500,
-            "networks": 10,
+            "networks": 100,
             "ports": 100,
             "routers": 30,
             "subnets": 1000,
-            "addresses": 50,
-            "gigabytes": 1000,
+            "addresses": 500,
+            "gigabytes": 10000,
             "snapshots": 100,
-            "volumes": 10
+            "volumes": 100
           }
         }
       ],

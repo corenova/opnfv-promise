@@ -46,7 +46,7 @@ module:
     promise.capacity.reserved: !coffee/function |
       (prev) -> @computed (->
         combine = (a, b) ->
-          for k, v of b.capacity when v?
+          for k, v of b.remaining when v?
             a[k] ?= 0
             a[k] += v
           return a
@@ -68,7 +68,7 @@ module:
       ), type: prev
     # rebind to be a computed property
     promise.capacity.available: !coffee/function |
-      (prev) -> @computed (-> 
+      (prev) -> @computed (->
         total = @get 'total'
         reserved = @get 'reserved'
         usage = @get 'usage'
@@ -195,7 +195,7 @@ complex-type:
           # should do something about this reservation record...
           now = (new Date).toJSON()
           unless (res.get 'created-on')?
-            res.set 'created-on', now 
+            res.set 'created-on', now
           res.set 'modified-on', now
           resolve res
         .catch (e) -> reject e
@@ -287,7 +287,7 @@ rpc:
         .catch (err) ->
           output.set result: 'error', message: err
           done()
-      .catch (err) -> 
+      .catch (err) ->
         output.set result: 'conflict', message: err
         done()
 
@@ -482,11 +482,11 @@ rpc:
           return done()
 
       allocations = @access 'promise.allocations'
-      instance = @create 'ResourceAllocation', 
+      instance = @create 'ResourceAllocation',
         reservation: rid
         capacity: required
       instance.save()
-      .then (res) -> 
+      .then (res) ->
         allocations.push instance
         # reservation.allocations is auto-computed property
         #(reservation?.access 'allocations')?.push instance.id
@@ -510,7 +510,7 @@ rpc:
       .then =>
         (@access 'promise.allocations').remove instance.id
         output.set 'result', 'ok'
-        output.set 'message', 'reservation canceled'
+        output.set 'message', 'instance destroyed and resource released back to pool'
         done()
       .catch (e) ->
         output.set 'result', 'error'
@@ -556,10 +556,10 @@ rpc:
             .catch (err) ->
               output.set 'error', message: err
               done()
-          .catch (err) -> 
+          .catch (err) ->
             output.set 'error', message: err
             done()
-      
+
       # @using 'mano', ->
       #   @invoke 'add-provider', (input.get 'endpoint', 'region', 'username', 'password')
       #   .then (res) =>
