@@ -176,6 +176,7 @@ module opnfv-promise {
         ct:instance-type nfvi:ResourceContainer;
         require-instance true;
       }
+      mandatory true;
     }
 
     refine elements {
@@ -301,7 +302,16 @@ module opnfv-promise {
   ct:complex-type ResourceProvider {
     ct:extends nfvi:ResourceContainer;
 
+    key "name";
     leaf token { type string; mandatory true; }
+    
+    container services { // read-only
+      config false;
+      container compute {
+        leaf endpoint { type inet:uri; }
+        ct:instance-list flavors { ct:instance-type nfvi:ComputeFlavor; }
+      }
+    }
     
     leaf-list pools {
       config false;
@@ -327,14 +337,10 @@ module opnfv-promise {
       augment "capacity/available" { uses nfvi:resource-capacity; }
     }
 
-    leaf-list providers {
-      config false;
+    ct:instance-list providers {
       if-feature multi-provider;
-      
       description "Aggregate collection of all registered ResourceProvider instances for Promise resource management service";
-      type instance-identifier {
-        ct:instance-type ResourceProvider;
-      }
+      ct:instance-type ResourceProvider;
     }
 
     ct:instance-list pools {
@@ -507,19 +513,31 @@ module opnfv-promise {
     }
   }
 
-  // ALLOCATION INTENTS
+  // ALLOCATION INTENTS (should go into VIM module in the future)
   rpc create-instance {
     description "Create an instance of specified resource(s) utilizing capacity from the pool";
     input {
+      leaf provider-id {
+        if-feature multi-provider;
+        type instance-identifier { ct:instance-type ResourceProvider; require-instance true; }
+      }
+      leaf name   { type string; mandatory true; }
+      leaf image  {
+        type union {
+          type yang:uuid;
+          type inet:uri;
+        }
+        mandatory true;
+      }
+      leaf flavor {
+        type union {
+          type yang:uuid;
+          type inet:uri;
+        }
+        mandatory true;
+      }
       leaf reservation-id {
         type instance-identifier { ct:instance-type ResourceReservation; require-instance true; }
-      }
-      uses nfvi:resource-collection {
-        refine "capacity/instances" {
-          description "This intent will always use one instance";
-          config false;
-          default 1;
-        }
       }
     }
     output {
@@ -542,7 +560,7 @@ module opnfv-promise {
     }
   }
 
-  // PROVIDER INTENTS
+  // PROVIDER INTENTS (should go into VIM module in the future)
   rpc add-provider {
     description "Register a new resource provider into reservation system";
     input {
@@ -567,10 +585,7 @@ module opnfv-promise {
       }
       uses mano:provider-credentials {
         refine endpoint {
-          default "http://vhub4.intercloud.net:5000/v2.0/tokens";
-        }
-        refine "tenant/id" {
-          default "62a2d90992114994977fd6707bac5758";
+          default "http://localhost:5000/v2.0/tokens";
         }
       }
       container tenant {

@@ -21,7 +21,7 @@ keywords:
 schema: !yang opnfv-promise.yang
 
 # below config provides default parameters
-config: !json opnfv-promise.json
+config: !json promise-demo.json
 
 dependencies:
   nfv-infrastructure: !yang nfv-infrastructure.yang
@@ -109,18 +109,17 @@ complex-type:
         end.setTime (end.getTime() + (max*60*60*1000))
         end.toJSON()
 
-    # TODO: find ways to convert has-many into computed?
-    # allocations: !coffee/function |
-    #   (prev) -> @computed (->
-    #     res = (@store.find 'ResourceAllocation', reservation: @id)
-    #     console.log res
-    #     res
-    #   ), type: prev
+    allocations: !coffee/function |
+      (prev) -> @computed (->
+        res = (@store.find 'ResourceAllocation', reservation: @id)
+        res.map (x) -> x.get 'id'
+      ), type: 'array'
 
     remaining: !coffee/function |
       (prev) -> @computed (->
         total = @get 'capacity'
-        records = @access 'allocations.*'
+        #records = @access 'allocations.*'
+        records = @store.find 'ResourceAllocation', id: (@get 'allocations')
         for entry in records
           usage = entry.get 'capacity'
           for k, v of usage
@@ -205,19 +204,34 @@ complex-type:
     # properties
     priority: !coffee/function |
       (prev) -> @computed (->
-        { reservation, active } = [ (@get 'reservation'), (@get 'active') ]
         switch
-          when not reservation? then 3
-          when not active then 2
+          when not (@get 'reservation')? then 3
+          when not (@get 'active') then 2
           else 1
       ), type: prev
+
+  ResourcePool:
+    save: !coffee/function |
+      (prev) -> (resolve, reject) ->
+        # validate that record contains sufficient data
+        value = @get()
+        for k, v of value.capacity when v? and !!v
+          hasCapacity = true
+        if (not hasCapacity) and value.elements.length is 0
+          return reject "unable to save pool record without any capacity values"
 
   ResourceProvider:
     # properties
     token: !coffee/function |
       (prev) -> prev.set 'private', true
 
+    pools: !coffee/function |
+      (prev) -> @computed (->
+        (@store.find 'ResourcePool', source: (@get 'name')).map (x) -> x.get 'id'
+      ), type: 'array'
+
     # methods
+    # XXX - this method is OpenStack-specific only, will need to revise later
     update: !coffee/function |
       (prev) -> (services=[], resolve, reject) ->
         return reject "unable to update provider without list of services" unless services.length
@@ -225,7 +239,8 @@ complex-type:
         services.forEach (service) =>
           switch service.type
             when 'compute'
-              request.get "#{service.endpoints[0].publicURL}/limits"
+              url = service.endpoints[0].publicURL
+              request.get "#{url}/limits"
                 .set 'X-Auth-Token', @get 'token'
                 .set 'Accept', 'application/json'
                 .end (err, res) =>
@@ -238,6 +253,15 @@ complex-type:
                     addresses: capacity.maxTotalFloatingIps
                   }
                   console.log @get()
+
+              request.get "#{url}/flavors/detail"
+                .set 'X-Auth-Token', @get 'token'
+                .set 'Accept', 'application/json'
+                .end (err, res) =>
+                  if err? or !res.ok then return
+                  (@access 'services.compute.flavors').push res.body.flavors...
+
+              @set 'services.compute.endpoint', url
 
         # should update do promise.all?
         resolve this
@@ -428,6 +452,7 @@ rpc:
         output.set result: 'error', message: e
         done()
 
+  # TEMPORARY (should go into VIM-specific module)
   create-instance: !coffee/function |
     (input, output, done) ->
       rid = input.get 'reservation-id'
@@ -440,23 +465,31 @@ rpc:
           output.set result: 'error', message: "reservation is currently not active"
           return done()
         available = reservation.get 'remaining'
+        # XXX - find the provider of the reservation?
+        provider = reservation.get 'pools'
       else
         available = @get 'promise.capacity.available'
+        provider = (@get 'promise.providers')[0] # hack - just get first provider?
 
-      request = input.get 'capacity'
-      for k, v of request when v? and !!v
+      # calculate required capacity based on 'flavor' and other params
+
+      required = 
+        instances: 1
+
+      for k, v of required when v? and !!v
         unless available[k] >= v
-          output.set result: 'conflict', message: "requested #{k}=#{v} exceeds available #{available[k]}"
+          output.set result: 'conflict', message: "required #{k}=#{v} exceeds available #{available[k]}"
           return done()
 
       allocations = @access 'promise.allocations'
       instance = @create 'ResourceAllocation', 
         reservation: rid
-        capacity: request
+        capacity: required
       instance.save()
       .then (res) -> 
         allocations.push instance
-        (reservation?.access 'allocations')?.push instance.id
+        # reservation.allocations is auto-computed property
+        #(reservation?.access 'allocations')?.push instance.id
         output.set result: 'ok', message: 'create-instance request accepted'
         output.set 'instance-id', instance.id
         done()

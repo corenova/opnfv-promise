@@ -216,15 +216,19 @@ module nfv-infrastructure {
     }
   }
 
-  ct:complex-type VirtualMachineFlavor {
-    ct:extends ComputeElement;
+  ct:complex-type ComputeFlavor {
+    ct:extends ResourceElement;
+
+    leaf disk { type uint32; units 'GB'; default 0; }
+    leaf ram  { type uint32; units 'MB'; default 0; }
+    leaf vcpu { type uint16; default 0; }
   }
 
   ct:complex-type ServerInstance {
     ct:extends ResourceInstance;
 
     leaf flavor {
-      type instance-identifier { ct:instance-type VirtualMachineFlavor; }
+      type instance-identifier { ct:instance-type ComputeFlavor; }
       mandatory true;
     }
     leaf image {
