@@ -536,6 +536,8 @@ module opnfv-promise {
         }
         mandatory true;
       }
+      // TODO: consider supporting a template-id (such as HEAT) for more complex instantiation
+      
       leaf reservation-id {
         type instance-identifier { ct:instance-type ResourceReservation; require-instance true; }
       }

@@ -120,8 +120,7 @@ complex-type:
     remaining: !coffee/function |
       (prev) -> @computed (->
         total = @get 'capacity'
-        #records = @access 'allocations.*'
-        records = @store.find 'ResourceAllocation', id: (@get 'allocations')
+        records = @store.find 'ResourceAllocation', id: (@get 'allocations'), active: true
         for entry in records
           usage = entry.get 'capacity'
           for k, v of usage
@@ -242,30 +241,30 @@ complex-type:
           switch service.type
             when 'compute'
               url = service.endpoints[0].publicURL
-              request.get "#{url}/limits"
-                .set 'X-Auth-Token', @get 'token'
-                .set 'Accept', 'application/json'
-                .end (err, res) =>
-                  if err? or !res.ok then return
-                  capacity = res.body.limits?.absolute
-                  (@access 'capacity').set {
-                    cores: capacity.maxTotalCores
-                    ram: capacity.maxTotalRAMSize
-                    instances: capacity.maxTotalInstances
-                    addresses: capacity.maxTotalFloatingIps
-                  }
-                  console.log @get()
-
-              request.get "#{url}/flavors/detail"
-                .set 'X-Auth-Token', @get 'token'
-                .set 'Accept', 'application/json'
-                .end (err, res) =>
-                  if err? or !res.ok then return
-                  (@access 'services.compute.flavors').push res.body.flavors...
+              request
+                .get "#{url}/limits"
+                  .set 'X-Auth-Token', @get 'token'
+                  .set 'Accept', 'application/json'
+                  .end (err, res) =>
+                    if err? or !res.ok then return
+                    capacity = res.body.limits?.absolute
+                    (@access 'capacity').set {
+                      cores: capacity.maxTotalCores
+                      ram: capacity.maxTotalRAMSize
+                      instances: capacity.maxTotalInstances
+                      addresses: capacity.maxTotalFloatingIps
+                    }
+                    console.log @get()
+                .get "#{url}/flavors/detail"
+                  .set 'X-Auth-Token', @get 'token'
+                  .set 'Accept', 'application/json'
+                  .end (err, res) =>
+                    if err? or !res.ok then return
+                    (@access 'services.compute.flavors').push res.body.flavors...
 
               @set 'services.compute.endpoint', url
 
-        # should update do promise.all?
+        # XXX - update should do promise.all
         resolve this
 
 # RPC definitions (INTENT interfaces)
@@ -457,47 +456,79 @@ rpc:
   # TEMPORARY (should go into VIM-specific module)
   create-instance: !coffee/function |
     (input, output, done) ->
+      pid = input.get 'provider-id'
+      if pid?
+        provider = @find 'ResourceProvider', pid
+        unless provider?
+          output.set result: 'error', message: "no matching provider found for specified identifier: #{pid}"
+          return done()
+      else
+        provider = (@find 'ResourceProvider')[0]
+        unless provider?
+          output.set result: 'error', message: "no available provider found for create-instance"
+          return done()
+
+      # calculate required capacity based on 'flavor' and other params
+      flavor = provider.access "services.compute.flavors.#{input.get 'flavor'}"
+      unless flavor?
+        output.set result: 'error', message: "no such flavor found for specified identifier: #{pid}"
+        return done()
+
+      required = 
+        instances: 1
+        cores:     flavor.get 'vcpus'
+        ram:       flavor.get 'ram'
+        gigabytes: flavor.get 'disk'
+
       rid = input.get 'reservation-id'
       if rid?
         reservation = @find 'ResourceReservation', rid
         unless reservation?
-          output.set result: 'error', message: 'no reservation found for specified identifier'
+          output.set result: 'error', message: 'no valid reservation found for specified identifier'
           return done()
         unless (reservation.get 'active') is true
           output.set result: 'error', message: "reservation is currently not active"
           return done()
         available = reservation.get 'remaining'
-        # XXX - find the provider of the reservation?
-        provider = reservation.get 'pools'
       else
         available = @get 'promise.capacity.available'
-        provider = (@get 'promise.providers')[0] # hack - just get first provider?
 
-      # calculate required capacity based on 'flavor' and other params
-
-      required = 
-        instances: 1
+      # TODO: need to verify whether 'provider' associated with this 'reservation'
 
       for k, v of required when v? and !!v
         unless available[k] >= v
           output.set result: 'conflict', message: "required #{k}=#{v} exceeds available #{available[k]}"
           return done()
 
-      allocations = @access 'promise.allocations'
-      instance = @create 'ResourceAllocation',
+      @create 'ResourceAllocation',
         reservation: rid
         capacity: required
-      instance.save()
-      .then (res) ->
-        allocations.push instance
-        # reservation.allocations is auto-computed property
-        #(reservation?.access 'allocations')?.push instance.id
-        output.set result: 'ok', message: 'create-instance request accepted'
-        output.set 'instance-id', instance.id
-        done()
-      .catch (err) ->
-        output.set result: 'error', mesage: err
-        done()
+        .save()
+        .then (instance) =>
+          url = provider.get 'services.compute.endpoint'
+          request = @parent.require 'superagent'
+          request
+            .post "#{url}/servers"
+            .send {
+              server:
+                name: input.get 'name'
+                imageRef: input.get 'image'
+                flavorRef: input.get 'flavor'
+            }
+            .set 'X-Auth-Token', provider.get 'token'
+            .set 'Accept', 'application/json'
+            .end (err, res) =>
+              if err? or !res.ok
+                instance.destroy()
+                return done err
+              console.log JSON.stringify res.body, null, 2
+              (@access 'promise.allocations').push instance
+              output.set result: 'ok', message: 'create-instance request accepted'
+              output.set 'instance-id', instance.id
+              done()
+        .catch (err) ->
+          output.set result: 'error', mesage: err
+          done()
 
   destroy-instance: !coffee/function |
     (input, output, done) ->

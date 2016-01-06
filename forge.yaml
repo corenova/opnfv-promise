@@ -1,50 +1,36 @@
-name: promise
-description: Resource Management for Virtualized Infrastructure
-maintainer: Peter K. Lee <peter@intercloud.net>
-license: Apache-2.0
-repository: opnfv/promise
-yangforge: ">=0.12.0"
-
 compilers:
   yang: yangforge/register
   coffee: coffee-script/register
 
-targets:
+nfvi:
+  - yangforge:common
+  - schema/access-control-models.yang
+  - schema/nfv-infrastructure.yang
+  - schema/nfv-mano.yang
 
-  common:
-    - yangforge
-    - schema/access-control-models.yang
-    - schema/nfv-infrastructure.yang
-    - schema/nfv-mano.yang
+# primary promise service
+main:
+  - nfvi
+  - schema/opnfv-promise.yang
+  - binding/promise.yaml
 
-  # standalone promise service
-  promise:
-    - common
-    - schema/opnfv-promise.yang
-    - binding/promise.coffee
+# base openstack composition
+openstack:
+  - nfvi
+  - schema/openstack.yang
+  - schema/openstack-identity.yang
+  - schema/openstack-compute.yang
+  - schema/openstack-storage.yang
+  - schema/openstack-network.yang
+  - binding/openstack.yaml
 
-  # base openstack composition
-  openstack:
-    - common
-    - schema/openstack.yang
-    - schema/openstack-identity.yang
-    - schema/openstack-compute.yang
-    - schema/openstack-storage.yang
-    - schema/openstack-network.yang
-    - binding/openstack.coffee
+# openstack with promise augmentation
+os-promise:
+  - main
+  - openstack
+  - schema/openstack-promise.yang
+  - binding/openstack-promise.coffee
 
-  # openstack with promise augmentation
-  os-promise:
-    - openstack
-    - promise
-    - schema/openstack-promise.yang
-    - binding/openstack-promise.coffee
-
-  all: 
-    - os-promise
-
-  test:
-    - promise
-    - promise-demo.json
-    # future
-    # - !exec "mocha --compiler coffee:coffee-script/register"
+test:
+  - main
+  - promise-demo.json

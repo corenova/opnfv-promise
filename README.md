@@ -23,7 +23,7 @@ a need to perform an `install` of this module. You simply need to
 
 ## Usage
 ```bash
-$ yfc run github:opnfv/master/opnfv-promise.yaml
+$ yfc run promise.yaml
 ```
 
 The `yfc run` command will download/retrieve the primary application
@@ -39,10 +39,10 @@ into your local system and run the application.
 
 name | description | status
 --- | --- | ---
-[opnfv-promise](opnfv-promise.yang) | provide resource reservation and capacity management | 95% complete
-[nfv-infrastructure](nfv-infrastructure.yang) | common NFV Infrastructure resource models | 80% complete
-[nfv-mano](nfv-mano.yang) | common NFV MANO resource models including VIM | 20% complete
-[openstack](openstack.yang) | openstack specific VIM extensions | 50% complete
+[opnfv-promise](schema/opnfv-promise.yang) | provide resource reservation and capacity management | 95% complete
+[nfv-infrastructure](schema/nfv-infrastructure.yang) | common NFV Infrastructure resource models | 80% complete
+[nfv-mano](schema/nfv-mano.yang) | common NFV MANO resource models including VIM | 20% complete
+[openstack](schema/openstack.yang) | openstack specific VIM extensions | 50% complete
 
 ## Promise Information Models
 
@@ -50,7 +50,7 @@ name | description | status
 
 The data model describing the required parameters regarding a resource
 reservation. The schema definition expressed in Yang can be found
-[here](opnfv-promise.yang).
+[here](schema/opnfv-promise.yang).
 
 #### Key Elements
 
@@ -82,7 +82,7 @@ reservation-event | Event | Subscribers will be notified if the reservation enco
 
 #### Inherited Elements
 
-##### Extended from [nfvi:ResourceElement](nfv-infrastructure.yang)
+##### Extended from [nfvi:ResourceElement](schema/nfv-infrastructure.yang)
 
 Name | Type | Description
 ---  | ---  | ---
@@ -99,7 +99,7 @@ members | list (nfvi:AccessIdentity) | List of additional AccessIdentities that 
 
 The data model describing the required parameters regarding a resource
 allocation.  The schema definition expressed in YANG can be found
-[here](opnfv-promise.yang).
+[here](schema/opnfv-promise.yang).
 
 #### Key Elements
 
@@ -117,7 +117,7 @@ priority | number | Read-only state information about the priority classificatio
 
 #### Inherited Elements
 
-##### Extended from [nfvi:ResourceElement](nfv-infrastructure.yang)
+##### Extended from [nfvi:ResourceElement](schema/nfv-infrastructure.yang)
 
 Name | Type | Description
 ---  | ---  | ---
