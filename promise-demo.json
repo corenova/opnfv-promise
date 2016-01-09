@@ -9,21 +9,23 @@
       ],
       "pools": [
         {
-          "id": "4085f0da-8030-4252-a0ff-c6f93870eb5f",
-          "name": "OPNFV OpenStack - West",
-          "source": "example-demo-provider",
-          "capacity": {
-            "cores": 100,
-            "ram": 262144,
-            "instances": 500,
-            "networks": 100,
-            "ports": 100,
-            "routers": 30,
-            "subnets": 1000,
-            "addresses": 500,
-            "gigabytes": 10000,
-            "snapshots": 100,
-            "volumes": 100
+          "ResourcePool": {
+            "id": "4085f0da-8030-4252-a0ff-c6f93870eb5f",
+            "name": "OPNFV OpenStack - West",
+            "source": "example-demo-provider",
+            "capacity": {
+              "cores": 100,
+              "ram": 262144,
+              "instances": 500,
+              "networks": 100,
+              "ports": 100,
+              "routers": 30,
+              "subnets": 1000,
+              "addresses": 500,
+              "gigabytes": 10000,
+              "snapshots": 100,
+              "volumes": 100
+            }
           }
         }
       ],
@@ -43,7 +45,7 @@
             "volumes": 0
           },
           "start": "2015-11-07T10:17:12.747Z",
-          "end": "2016-01-13T10:17:18.226Z",
+          "end": "2016-02-13T10:17:18.226Z",
           "pools": [
             "4085f0da-8030-4252-a0ff-c6f93870eb5f"
           ]
@@ -63,7 +65,7 @@
             "volumes": 0
           },
           "start": "2015-11-09T10:17:12.747Z",
-          "end": "2016-01-11T10:17:18.226Z",
+          "end": "2016-02-11T10:17:18.226Z",
           "pools": [
             "4085f0da-8030-4252-a0ff-c6f93870eb5f"
           ]

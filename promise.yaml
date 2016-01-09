@@ -216,10 +216,13 @@ complex-type:
       (prev) -> (resolve, reject) ->
         # validate that record contains sufficient data
         value = @get()
+
         for k, v of value.capacity when v? and !!v
           hasCapacity = true
         if (not hasCapacity) and value.elements.length is 0
           return reject "unable to save pool record without any capacity values"
+
+        resolve this
 
   ResourceProvider:
     # properties
@@ -241,28 +244,43 @@ complex-type:
           switch service.type
             when 'compute'
               url = service.endpoints[0].publicURL
+              @set 'services.compute.endpoint', url
               request
                 .get "#{url}/limits"
                   .set 'X-Auth-Token', @get 'token'
                   .set 'Accept', 'application/json'
                   .end (err, res) =>
-                    if err? or !res.ok then return
+                    if err? or !res.ok
+                      console.warn "request to discover capacity limits failed"
+                      return
+
                     capacity = res.body.limits?.absolute
+                    console.log "\ndiscovered capacity:"
+                    console.log capacity
+
                     (@access 'capacity').set {
                       cores: capacity.maxTotalCores
                       ram: capacity.maxTotalRAMSize
                       instances: capacity.maxTotalInstances
                       addresses: capacity.maxTotalFloatingIps
                     }
-                    console.log @get()
+              request
                 .get "#{url}/flavors/detail"
                   .set 'X-Auth-Token', @get 'token'
                   .set 'Accept', 'application/json'
                   .end (err, res) =>
-                    if err? or !res.ok then return
-                    (@access 'services.compute.flavors').push res.body.flavors...
+                    if err? or !res.ok
+                      console.warn "request to discover compute flavors failed"
+                      return
 
-              @set 'services.compute.endpoint', url
+                    flavors = res.body.flavors
+                    console.log "\ndiscovered flavors:"
+                    console.log flavors
+                    try
+                      flavors = flavors.map (x) -> ResourceFlavor: x
+                      (@access 'services.compute.flavors').push flavors...
+                    catch er
+                      console.warn "failed to update flavors into the provider due to validation errors"
 
         # XXX - update should do promise.all
         resolve this

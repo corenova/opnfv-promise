@@ -299,6 +299,16 @@ module opnfv-promise {
     }
   }
 
+  ct:complex-type ResourceFlavor {
+    description "currently NOT an extension of ResourceElement.";
+    key "id";
+    leaf id    { type string; }
+    leaf name  { type string; }
+    leaf disk  { type uint32; units 'GB'; default 0; }
+    leaf ram   { type uint32; units 'MB'; default 0; }
+    leaf vcpus { type uint16; default 0; }
+  }
+  
   ct:complex-type ResourceProvider {
     ct:extends nfvi:ResourceContainer;
 
@@ -309,7 +319,7 @@ module opnfv-promise {
       config false;
       container compute {
         leaf endpoint { type inet:uri; }
-        ct:instance-list flavors { ct:instance-type nfvi:ComputeFlavor; }
+        ct:instance-list flavors { ct:instance-type ResourceFlavor; }
       }
     }
     
