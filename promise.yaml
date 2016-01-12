@@ -22,7 +22,8 @@ keywords:
 schema: !yang schema/opnfv-promise.yang
 
 # below config provides default parameters
-config: !json promise-demo.json
+# NOTE: uncomment locally for testing with pre-existing data
+#config: !json promise-demo.json
 
 dependencies:
   access-control-models: !yang schema/access-control-models.yang
@@ -521,32 +522,37 @@ rpc:
       @create 'ResourceAllocation',
         reservation: rid
         capacity: required
-        .save()
-        .then (instance) =>
-          url = provider.get 'services.compute.endpoint'
-          request = @parent.require 'superagent'
-          request
-            .post "#{url}/servers"
-            .send {
-              server:
-                name: input.get 'name'
-                imageRef: input.get 'image'
-                flavorRef: input.get 'flavor'
-            }
-            .set 'X-Auth-Token', provider.get 'token'
-            .set 'Accept', 'application/json'
-            .end (err, res) =>
-              if err? or !res.ok
-                instance.destroy()
-                return done err
-              console.log JSON.stringify res.body, null, 2
-              (@access 'promise.allocations').push instance
-              output.set result: 'ok', message: 'create-instance request accepted'
-              output.set 'instance-id', instance.id
-              done()
-        .catch (err) ->
-          output.set result: 'error', mesage: err
-          done()
+      .save()
+      .then (instance) =>
+        url = provider.get 'services.compute.endpoint'
+        request = @parent.require 'superagent'
+        request
+          .post "#{url}/servers"
+          .send {
+            server:
+              name: input.get 'name'
+              imageRef: input.get 'image'
+              flavorRef: input.get 'flavor'
+          }
+          .set 'X-Auth-Token', provider.get 'token'
+          .set 'Accept', 'application/json'
+          .end (err, res) =>
+            if err? or !res.ok
+              instance.destroy()
+              console.error err
+              return done res.error
+            console.log JSON.stringify res.body, null, 2
+            instance.set 'instance-ref', 
+              provider: provider
+              server: res.body.server.id
+            (@access 'promise.allocations').push instance
+            output.set result: 'ok', message: 'create-instance request accepted'
+            output.set 'instance-id', instance.id
+            done()
+         return instance
+      .catch (err) ->
+        output.set result: 'error', mesage: err
+        done()
 
   destroy-instance: !coffee/function |
     (input, output, done) ->
@@ -559,10 +565,24 @@ rpc:
       # 2. destroy all traces of this instance
       instance.destroy()
       .then =>
+        # always remove internally
         (@access 'promise.allocations').remove instance.id
-        output.set 'result', 'ok'
-        output.set 'message', 'instance destroyed and resource released back to pool'
-        done()
+        ref = instance.get 'instance-ref'
+        provider = (@access "promise.providers.#{ref.provider}")
+        url = provider.get 'services.compute.endpoint'
+        request = @parent.require 'superagent'
+        request
+          .delete "#{url}/servers/#{ref.server}"
+          .set 'X-Auth-Token', provider.get 'token'
+          .set 'Accept', 'application/json'
+          .end (err, res) =>
+            if err? or !res.ok
+              console.error err
+              return done res.error
+            output.set 'result', 'ok'
+            output.set 'message', 'instance destroyed and resource released back to pool'
+            done()
+        return instance
       .catch (e) ->
         output.set 'result', 'error'
         output.set 'message', e

@@ -286,6 +286,16 @@ module opnfv-promise {
       }
     }
 
+    container instance-ref {
+      config false;
+      description
+        "Reference to actual instance identifier of the provider/server for this allocation";
+      leaf provider {
+        type instance-identifier { ct:instance-type ResourceProvider; }
+      }
+      leaf server { type yang:uuid; }
+    }
+
     leaf priority {
       config false;
       description
