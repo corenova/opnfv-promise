@@ -23,7 +23,7 @@ schema: !yang schema/opnfv-promise.yang
 
 # below config provides default parameters
 # NOTE: uncomment locally for testing with pre-existing data
-#config: !json promise-demo.json
+#config: !json config/demo.json
 
 dependencies:
   access-control-models: !yang schema/access-control-models.yang

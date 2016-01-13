@@ -2,35 +2,36 @@ compilers:
   yang: yangforge/register
   coffee: coffee-script/register
 
-nfvi:
-  - yangforge:common
-  - schema/access-control-models.yang
-  - schema/nfv-infrastructure.yang
-  - schema/nfv-mano.yang
+components:
+  nfvi:
+    - yangforge:common
+    - schema/access-control-models.yang
+    - schema/nfv-infrastructure.yang
+    - schema/nfv-mano.yang
 
-# primary promise service
-main:
-  - nfvi
-  - schema/opnfv-promise.yang
-  - binding/promise.yaml
+  # primary promise service
+  promise:
+    - nfvi
+    - schema/opnfv-promise.yang
+    - spec/promise.yaml
 
-# base openstack composition
-openstack:
-  - nfvi
-  - schema/openstack.yang
-  - schema/openstack-identity.yang
-  - schema/openstack-compute.yang
-  - schema/openstack-storage.yang
-  - schema/openstack-network.yang
-  - binding/openstack.yaml
+  # base openstack composition
+  openstack:
+    - nfvi
+    - schema/openstack.yang
+    - schema/openstack-identity.yang
+    - schema/openstack-compute.yang
+    - schema/openstack-storage.yang
+    - schema/openstack-network.yang
+    - spec/openstack.yaml
 
-# openstack with promise augmentation
-os-promise:
-  - main
-  - openstack
-  - schema/openstack-promise.yang
-  - binding/openstack-promise.coffee
+  # openstack with promise augmentation
+  os-promise:
+    - promise
+    - openstack
+    - schema/openstack-promise.yang
+    - spec/openstack-promise.yaml
 
-test:
-  - main
-  - promise-demo.json
+  test:
+    - promise
+    - promise-demo.json
