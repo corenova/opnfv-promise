@@ -256,8 +256,8 @@ complex-type:
                       return
 
                     capacity = res.body.limits?.absolute
-                    console.log "\ndiscovered capacity:"
-                    console.log capacity
+                    #console.log "\ndiscovered capacity:"
+                    #console.log capacity
 
                     (@access 'capacity').set {
                       cores: capacity.maxTotalCores
@@ -275,8 +275,8 @@ complex-type:
                       return
 
                     flavors = res.body.flavors
-                    console.log "\ndiscovered flavors:"
-                    console.log flavors
+                    #console.log "\ndiscovered flavors:"
+                    #console.log flavors
                     try
                       flavors = flavors.map (x) -> ResourceFlavor: x
                       (@access 'services.compute.flavors').push flavors...
@@ -541,7 +541,7 @@ rpc:
               instance.destroy()
               console.error err
               return done res.error
-            console.log JSON.stringify res.body, null, 2
+            #console.log JSON.stringify res.body, null, 2
             instance.set 'instance-ref', 
               provider: provider
               server: res.body.server.id
@@ -610,8 +610,8 @@ rpc:
         .send payload
         .set 'Accept', 'application/json'
         .end (err, res) =>
-          if err? or !res.ok then return done err
-          console.log JSON.stringify res.body, null, 2
+          if err? or !res.ok then return done res.error
+          #console.log JSON.stringify res.body, null, 2
           access = res.body.access
           provider = @create 'ResourceProvider',
             token: access?.token?.id
