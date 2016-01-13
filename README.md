@@ -1,4 +1,4 @@
-# opnfv-promise -- Resource Management for Virtual Infrastructure
+# Resource Management for Virtual Infrastructure
 
 This module presents collection of Virtual Infrastructure Manager
 resource entity data models as defined under guidance of [OPNFV
