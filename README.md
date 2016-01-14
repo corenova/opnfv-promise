@@ -1,13 +1,6 @@
 # Resource Management for Virtual Infrastructure
 
-This module presents collection of Virtual Infrastructure Manager
-resource entity data models as defined under guidance of [OPNFV
-Promise](http://wiki.opnfv.org/promise) project.
-
-`opnfv-promise` is built on top of the
-[YangForge](http://github.com/opnfv/yangforge) data modeling
-framework. You will need to first install `yangforge` and use the
-provided `yfc` command line utility to run this module.
+**Promise** is a resource reservation and management project to identify NFV related requirements and realize resource reservation for future usage by capacity management of resource pools regarding compute, network and storage.
 
 The following are the key features provided by this module:
 
@@ -15,25 +8,42 @@ The following are the key features provided by this module:
 * Resource Reservation
 * Resource Allocation
 
+This module also contains a collection of [YANG data models](schema/) as defined under the direction of [OPNFV Promise](http://wiki.opnfv.org/promise) project.
+
 ## Installation
 
-Utilizing the latest `YangForge` 0.10.x framework, there is no longer
-a need to perform an `install` of this module. You simply need to
-*point* `yfc` to retrieve/run assets from this repository.
+`opnfv-promise` is built with [YangForge](http://github.com/opnfv/yangforge) data modeling
+framework. You will need to first install `yangforge` and use the
+provided `yfc` command line utility to run this module.
+
+```bash
+$ npm install -g yangforge
+```
+
+There are also alternative installer plugins for [Fuel](http://github.com/opnfv/fuel-plugin-promise) and [Juju](http://github.com/opnfv/juju-plugin-promise).
 
 ## Usage
 ```bash
 $ yfc run promise.yaml
 ```
 
-The `yfc run` command will download/retrieve the primary application
-package from the Github repository along with any other dependency
+The `yfc run` command will load the primary application
+package from this repository along with any other dependency
 files/assets referenced within the YAML manifest and instantiate the
 opnfv-promise module and run REST/JSON interface by default listening
 on port 5000.
 
 You can also checkout this GIT repository or simply download the files
 into your local system and run the application.
+
+## Testing
+
+```bash
+$ npm install
+$ npm test
+```
+
+TBD
 
 ## Primary YANG Data Models
 
