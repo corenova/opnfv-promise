@@ -1,0 +1,9 @@
+openstack:
+  auth:
+    url: OS_AUTH_URL
+    tenant:
+      id: OS_TENANT_ID
+      name: OS_TENANT_NAME
+    credentials:
+      username: OS_USERNAME
+      password: OS_PASSWORD
