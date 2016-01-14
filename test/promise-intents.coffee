@@ -4,10 +4,10 @@ forge  = require 'yangforge'
 app = forge.load '!yaml ../promise.yaml', async: false, pkgdir: __dirname
 
 describe "promise", ->
-  ctx =
-    provider: id: undefined
-    pool: id: undefined
+  # below 'provider' is used across test suites
+  provider = undefined
 
+  # Test Scenario 01
   describe "register openstack into resource pool", ->
     before ->
       try
@@ -16,35 +16,39 @@ describe "promise", ->
         throw new Error "missing OpenStack environmental variables, particularly OS_PASSWORD"
       app.set config
 
+    pool = undefined
+    
+    # TC-01
     describe "add-provider", ->
       it "should add a new OpenStack provider without error", (done) ->
         @timeout 5000
 
         os = config.get 'openstack'
-        payload =
+        app.access('opnfv-promise').invoke 'add-provider',
           'provider-type': 'openstack'
           endpoint: "#{os.auth.url}/tokens"
           tenant: id: os.auth.tenant.id, name: os.auth.tenant.name
           username: os.auth.credentials.username
           password: os.auth.credentials.password
-        app.access('opnfv-promise').invoke 'add-provider', payload
         .then (res) ->
           res.get('result').should.equal 'ok'
-          ctx.provider.id = res.get('provider-id')
+          provider = id: res.get('provider-id')
           done()
         .catch (err) -> done err
 
       it "should update promise.providers with a new entry", ->
         app.get('opnfv-promise.promise.providers').should.have.length(1)
 
-        it "should contain a new ResourceProvider record in the store", ->
-        ctx.provider = app.access('opnfv-promise').find('ResourceProvider', ctx.provider.id)
-        assert ctx.provider?
+      it "should contain a new ResourceProvider record in the store", ->
+        assert provider?.id?, "unable to check without ID"
+        provider = app.access('opnfv-promise').find('ResourceProvider', provider.id)
+        assert provider?
 
+    # TC-02
     describe "increase-capacity", ->
       it "should add more capacity to the reservation service without error", (done) ->
         app.access('opnfv-promise').invoke 'increase-capacity',
-          source: ctx.provider
+          source: provider
           capacity:
             cores: 20
             ram: 51200
@@ -52,7 +56,7 @@ describe "promise", ->
             addresses: 10
         .then (res) ->
           res.get('result').should.equal 'ok'
-          ctx.pool.id = res.get('pool-id')
+          pool = id: res.get('pool-id')
           done()
         .catch (err) -> done err
 
@@ -60,12 +64,15 @@ describe "promise", ->
         app.get('opnfv-promise.promise.pools').should.have.length(1)
 
       it "should contain a ResourcePool record in the store", ->
-        ctx.pool = app.access('opnfv-promise').find('ResourcePool', ctx.pool.id)
-        assert ctx.pool?
+        assert pool?.id?, "unable to check without ID"
+        pool = app.access('opnfv-promise').find('ResourcePool', pool.id)
+        assert pool?
 
+    # TC-03
     describe "query-capacity", ->
-      it "should report available collections and utilizations", (done) ->
-        app.access('opnfv-promise').invoke 'query-capacity', capacity: 'total'
+      it "should report total collections and utilizations", (done) ->
+        app.access('opnfv-promise').invoke 'query-capacity',
+          capacity: 'total'
         .then (res) ->
           res.get('collections').should.be.Array
           res.get('collections').length.should.be.above(0)
@@ -75,34 +82,61 @@ describe "promise", ->
         .catch (err) -> done err
 
       it "should contain newly added capacity pool", (done) ->
-        app.access('opnfv-promise').invoke 'query-capacity', capacity: 'total'
+        app.access('opnfv-promise').invoke 'query-capacity',
+          capacity: 'total'
         .then (res) ->
-          assert ("ResourcePool:#{ctx.pool.id}" in res.get('collections'))
+          res.get('collections').should.containEql "ResourcePool:#{pool.id}"
           done()
         .catch (err) -> done err
 
+  # Test Scenario 02
   describe "allocation without reservation", ->
-    before (done) ->
-      # XXX - need to determine image and flavor to use in the given provider for this test
-
+    
+    # TC-04
     describe "create-instance", ->
+      allocation = undefined
+      instance_id = undefined
+      
+      before ->
+        # XXX - need to determine image and flavor to use in the given provider for this test
+        assert provider?,
+          "unable to execute without registered 'provider'"
+
       it "should create a new server in target provider without error", (done) ->
         app.access('opnfv-promise').invoke 'create-instance',
-          'provider-id': ctx.provider.id
+          'provider-id': provider.id
           name: 'promise-test-no-reservation'
-          image: 'xxx'
-          flavor: 'yyy'
+          image: undefined
+          flavor: undefined
         .then (res) ->
-          # do something
+          res.get('result').should.equal 'ok'
+          instance_id = res.get('instance-id')
           done()
         .catch (err) -> done err
+        
+      it "should update promise.allocations with a new entry", ->
+        app.get('opnfv-promise.promise.allocations').length.should.be.above(0)
 
+      it "should contain a new ResourceAllocation record in the store", ->
+        assert instance_id?, "unable to check without ID"
+        allocation = app.access('opnfv-promise').find('ResourceAllocation', instance_id)
+        assert allocation?
+
+      it "should reference the created server ID from the provider", ->
+        assert allocation?, "unable to check without record"
+        allocation.get('instance-ref').should.have.property('provider')
+        allocation.get('instance-ref').should.have.property('server')
+
+      it "should have low priority state", ->
+        assert allocation?, "unable to check without record"
+        allocation.get('priority').should.equal 'low'
+
+  # Test Scenario 03
   describe "allocation using reservation for immediate use", ->
     reservation = undefined
 
+    # TC-05
     describe "create-reservation", ->
-      res_id = undefined
-
       it "should create reservation record (no start/end) without error", (done) ->
         app.access('opnfv-promise').invoke 'create-reservation',
           capacity:
@@ -111,22 +145,234 @@ describe "promise", ->
             addresses: 3
             instances: 3
         .then (res) ->
-          # do something
+          res.get('result').should.equal 'ok'
+          reservation = id: res.get('reservation-id')
           done()
         .catch (err) -> done err
+        
+      it "should update promise.reservations with a new entry", ->
+        app.get('opnfv-promise.promise.reservations').length.should.be.above(0)
 
+      it "should contain a new ResourceReservation record in the store", ->
+        assert reservation?.id?, "unable to check without ID"
+        reservation = app.access('opnfv-promise').find('ResourceReservation', reservation.id)
+        assert reservation?
+
+    # TC-06
     describe "create-instance", ->
+      allocation = undefined
+      
+      before ->
+        assert provider?,
+          "unable to execute without registered 'provider'"
+        assert reservation?,
+          "unable to execute without valid reservation record"
+      
       it "should create a new server in target provider (with reservation) without error", (done) ->
         app.access('opnfv-promise').invoke 'create-instance',
-          'provider-id': ctx.provider.id
+          'provider-id': provider.id
           name: 'promise-test-no-reservation'
-          image: 'xxx'
-          flavor: 'yyy'
-          'reservation-id': ctx.reservation.id
+          image: undefined
+          flavor: undefined
+          'reservation-id': reservation.id
         .then (res) ->
-          # do something
+          res.get('result').should.equal 'ok'
+          allocation = id: res.get('instance-id')
           done()
         .catch (err) -> done err
 
+      it "should contain a new ResourceAllocation record in the store", ->
+        assert allocation?.id?, "unable to check without ID"
+        allocation = app.access('opnfv-promise').find('ResourceAllocation', allocation.id)
+        assert allocation?
+
+      it "should be referenced in the reservation record", ->
+        assert reservation? and allocation?, "unable to check without records"
+        reservation.get('allocations').should.containEql allocation.id
+
+      it "should have high priority state", ->
+        assert allocation?, "unable to check without record"
+        allocation.get('priority').should.equal 'high'
+
+  # Test Scenario 04
+  describe "reservation for future use", ->
+    reservation = undefined
+    start = new Date
+    end   = new Date
+    # 7 days in the future
+    start.setTime (start.getTime() + 7*60*60*1000)
+    # 8 days in the future
+    end.setTime (end.getTime() + 8*60*60*1000)
+    
+    # TC-07
+    describe "create-reservation", ->
+      it "should create reservation record (for future) without error", (done) ->
+        app.access('opnfv-promise').invoke 'create-reservation',
+          start: start.toJSON()
+          end: end.toJSON()
+          capacity:
+            cores: 1
+            ram: 12800
+            addresses: 1
+            instances: 1
+        .then (res) ->
+          res.get('result').should.equal 'ok'
+          reservation = id: res.get('reservation-id')
+          done()
+        .catch (err) -> done err
+        
+      it "should update promise.reservations with a new entry", ->
+        app.get('opnfv-promise.promise.reservations').length.should.be.above(0)
+
+      it "should contain a new ResourceReservation record in the store", ->
+        assert reservation?.id?, "unable to check without ID"
+        reservation = app.access('opnfv-promise').find('ResourceReservation', reservation.id)
+        assert reservation?
+
+    # TC-08
+    describe "query-reservation", ->
+      it "should contain newly created future reservation", (done) ->
+        app.access('opnfv-promise').invoke 'query-reservation',
+          window:
+            start: start.toJSON()
+            end: end.toJSON()
+        .then (res) ->
+          res.get('reservations').should.containEql reservation.id
+          done()
+        .catch (err) -> done err
+
+    # TC-09
+    describe "update-reservation", ->
+      it "should modify existing reservation without error", (done) ->
+        app.access('opnfv-promise').invoke 'update-reservation',
+          'reservation-id': reservation.id
+          capacity:
+            cores: 3
+            ram: 12800
+            addresses: 2
+            instances: 2
+        .then (res) ->
+          res.get('result').should.equal 'ok'
+          done()
+        .catch (err) -> done err
+
+    # TC-10
+    describe "cancel-reservation", ->
+      it "should modify existing reservation without error", (done) ->
+        app.access('opnfv-promise').invoke 'cancel-reservation',
+          'reservation-id': reservation.id
+        .then (res) ->
+          res.get('result').should.equal 'ok'
+          done()
+        .catch (err) -> done err
+
+      it "should no longer contain record of the deleted reservation", ->
+        assert reservation?.id?, "unable to check without ID"
+        reservation = app.access('opnfv-promise').find('ResourceReservation', reservation.id)
+        assert not reservation?
+
+  # Test Scenario 05
+  describe "capacity planning", ->
+
+    # TC-11
+    describe "decrease-capacity", ->
+      start = new Date
+      end   = new Date
+      # 30 days in the future
+      start.setTime (start.getTime() + 30*60*60*1000)
+      # 45 days in the future
+      end.setTime (end.getTime() + 45*60*60*1000)
+      
+      it "should decrease available capacity from a provider in the future", (done) ->
+        app.access('opnfv-promise').invoke 'decrease-capacity',
+          source: provider
+          capacity:
+            cores: 5
+            ram: 17920
+            instances: 5
+          start: start.toJSON()
+          end: end.toJSON()
+        .then (res) ->
+          res.get('result').should.equal 'ok'
+          done()
+        .catch (err) -> done err
+
+    # TC-12
+    describe "increase-capacity", ->
+      start = new Date
+      end   = new Date
+      # 14 days in the future
+      start.setTime (start.getTime() + 14*60*60*1000)
+      # 21 days in the future
+      end.setTime (end.getTime() + 21*60*60*1000)
+
+      it "should increase available capacity from a provider in the future", (done) ->
+        app.access('opnfv-promise').invoke 'decrease-capacity',
+          source: provider
+          capacity:
+            cores: 1
+            ram: 3584
+            instances: 1
+          start: start.toJSON()
+          end: end.toJSON()
+        .then (res) ->
+          res.get('result').should.equal 'ok'
+          done()
+        .catch (err) -> done err
+
+    # TC-13 (Should improve this TC)
+    describe "query-capacity", ->
+      it "should report available collections and utilizations", (done) ->
+        app.access('opnfv-promise').invoke 'query-capacity',
+          capacity: 'available'
+        .then (res) ->
+          res.get('collections').should.be.Array
+          res.get('collections').length.should.be.above(0)
+          res.get('utilization').should.be.Array
+          res.get('utilization').length.should.be.above(0)
+          done()
+        .catch (err) -> done err
+
+  # Test Scenario 06
+  describe "reservation with conflict", ->
+    # TC-14
+    describe "create-reservation", ->
+      it "should fail to create immediate reservation record with proper error", (done) ->
+        app.access('opnfv-promise').invoke 'create-reservation',
+          capacity:
+            cores: 5
+            ram: 17920
+            instances: 10
+        .then (res) ->
+          res.get('result').should.equal 'conflict'
+          done()
+        .catch (err) -> done err
+
+      it "should fail to create future reservation record with proper error", (done) ->
+        start = new Date
+        # 30 days in the future
+        start.setTime (start.getTime() + 30*60*60*1000)
+        
+        app.access('opnfv-promise').invoke 'create-reservation',
+          capacity:
+            cores: 5
+            ram: 17920
+            instances: 10
+          start: start.toJSON()
+        .then (res) ->
+          res.get('result').should.equal 'conflict'
+          done()
+        .catch (err) -> done err
+
+  # Test Scenario 07
   describe "cleanup test allocations", ->
+    allocations = app.get('opnfv-promise.promise.allocations')
+    before ->
+      allocations.length.should.be.above(0)
+      
     describe "destroy-instance", ->
+      it "should successfully destroy all allocations", (done) ->
+        # XXX - need to be promise.all
+        app.access('opnfv-promise').invoke 'destroy-instance',
+          'instance-id': allocations[0]
+        
