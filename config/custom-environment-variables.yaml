@@ -1,9 +1,17 @@
+# OPNFV FuncTest config (refer to schema/opnfv-functest.yang)
+opnfv-functest:
+  environment:
+    installer:
+      type: INSTALLER_TYPE
+      address: INSTALLER_IP
+    lab: NODE_NAME
+
+# OpenStack config (refer to schema/openstack.yang)
 openstack:
   auth:
     url: OS_AUTH_URL
     tenant:
       id: OS_TENANT_ID
       name: OS_TENANT_NAME
-    credentials:
-      username: OS_USERNAME
-      password: OS_PASSWORD
+    username: OS_USERNAME
+    password: OS_PASSWORD

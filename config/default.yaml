@@ -1,3 +1,5 @@
+# default configuration for 'npm test'
+
 opnfv-promise:
   promise:
     policy:
@@ -6,3 +8,4 @@ opnfv-promise:
         max-future-end-range: 
         max-duration:
         expiry: 600
+

@@ -1,7 +1,6 @@
 # the following config is used when ENV is as follows:
 # NODE_ENV=intercloud
 # NODE_APP_INSTANCE=vhub4
-
 openstack:
   auth:
     url: http://vhub4.intercloud.net:5000/v2.0

@@ -3,33 +3,61 @@ assert = require 'assert'
 forge  = require 'yangforge'
 app = forge.load '!yaml ../promise.yaml', async: false, pkgdir: __dirname
 
+# in the future with YF 0.12.x
+# app = forge.load('..').build('test')
+# app.set config
+# app.use 'proxy', target: x.x.x.x:5050, interface: 'restjson'
+
 describe "promise", ->
+  before ->
+    config.get 'opnfv-functest'
+
   # below 'provider' is used across test suites
   provider = undefined
 
-  # Test Scenario 01
-  describe "register openstack into resource pool", ->
-    before ->
+  # Test Scenario 00
+  describe "prepare OpenStack for testing", ->
+    before (done) ->
+      # ensure we have valid OpenStack environment to test against
       try
-        config.get 'openstack.auth.credentials.password'
+        config.get 'openstack.auth.url'
       catch e
-        throw new Error "missing OpenStack environmental variables, particularly OS_PASSWORD"
+        throw new Error "missing OpenStack environmental variables"
+
+      os = forge.load '!yaml ../openstack.yaml', async: false, pkgdir: __dirname
+      app.attach 'openstack', os.access 'openstack'
       app.set config
 
+    describe "synchronize", ->
+      it "should retrieve available service catalog", (done) ->
+        app.access('openstack').invoke 'synchronize'
+        .then (res) ->
+
+          done()
+        .catch (err) -> done err
+
+    describe "create-tenant", ->
+      # create a new tenant for testing purposes
+
+    describe "upload-image", ->
+      # upload a new test image
+
+
+
+  # Test Scenario 01
+  describe "register OpenStack into resource pool", ->
     pool = undefined
-    
+
     # TC-01
     describe "add-provider", ->
       it "should add a new OpenStack provider without error", (done) ->
         @timeout 5000
 
-        os = config.get 'openstack'
-        app.access('opnfv-promise').invoke 'add-provider',
-          'provider-type': 'openstack'
-          endpoint: "#{os.auth.url}/tokens"
-          tenant: id: os.auth.tenant.id, name: os.auth.tenant.name
-          username: os.auth.credentials.username
-          password: os.auth.credentials.password
+        auth = config.get 'openstack.auth'
+        auth.endpoint = auth.url + '/tokens'
+        auth['provider-type'] = 'openstack'
+
+        app.access('opnfv-promise').invoke 'add-provider', auth
         .then (res) ->
           res.get('result').should.equal 'ok'
           provider = id: res.get('provider-id')
@@ -91,12 +119,12 @@ describe "promise", ->
 
   # Test Scenario 02
   describe "allocation without reservation", ->
-    
+
     # TC-04
     describe "create-instance", ->
       allocation = undefined
       instance_id = undefined
-      
+
       before ->
         # XXX - need to determine image and flavor to use in the given provider for this test
         assert provider?,
@@ -113,7 +141,7 @@ describe "promise", ->
           instance_id = res.get('instance-id')
           done()
         .catch (err) -> done err
-        
+
       it "should update promise.allocations with a new entry", ->
         app.get('opnfv-promise.promise.allocations').length.should.be.above(0)
 
@@ -149,7 +177,7 @@ describe "promise", ->
           reservation = id: res.get('reservation-id')
           done()
         .catch (err) -> done err
-        
+
       it "should update promise.reservations with a new entry", ->
         app.get('opnfv-promise.promise.reservations').length.should.be.above(0)
 
@@ -161,13 +189,13 @@ describe "promise", ->
     # TC-06
     describe "create-instance", ->
       allocation = undefined
-      
+
       before ->
         assert provider?,
           "unable to execute without registered 'provider'"
         assert reservation?,
           "unable to execute without valid reservation record"
-      
+
       it "should create a new server in target provider (with reservation) without error", (done) ->
         app.access('opnfv-promise').invoke 'create-instance',
           'provider-id': provider.id
@@ -203,7 +231,7 @@ describe "promise", ->
     start.setTime (start.getTime() + 7*60*60*1000)
     # 8 days in the future
     end.setTime (end.getTime() + 8*60*60*1000)
-    
+
     # TC-07
     describe "create-reservation", ->
       it "should create reservation record (for future) without error", (done) ->
@@ -220,7 +248,7 @@ describe "promise", ->
           reservation = id: res.get('reservation-id')
           done()
         .catch (err) -> done err
-        
+
       it "should update promise.reservations with a new entry", ->
         app.get('opnfv-promise.promise.reservations').length.should.be.above(0)
 
@@ -282,7 +310,7 @@ describe "promise", ->
       start.setTime (start.getTime() + 30*60*60*1000)
       # 45 days in the future
       end.setTime (end.getTime() + 45*60*60*1000)
-      
+
       it "should decrease available capacity from a provider in the future", (done) ->
         app.access('opnfv-promise').invoke 'decrease-capacity',
           source: provider
@@ -352,7 +380,7 @@ describe "promise", ->
         start = new Date
         # 30 days in the future
         start.setTime (start.getTime() + 30*60*60*1000)
-        
+
         app.access('opnfv-promise').invoke 'create-reservation',
           capacity:
             cores: 5
@@ -369,10 +397,9 @@ describe "promise", ->
     allocations = app.get('opnfv-promise.promise.allocations')
     before ->
       allocations.length.should.be.above(0)
-      
+
     describe "destroy-instance", ->
       it "should successfully destroy all allocations", (done) ->
         # XXX - need to be promise.all
         app.access('opnfv-promise').invoke 'destroy-instance',
           'instance-id': allocations[0]
-        

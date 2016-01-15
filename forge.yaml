@@ -1,3 +1,5 @@
+# YF 0.12.x forge manifest
+
 compilers:
   yang: yangforge/register
   coffee: coffee-script/register
@@ -20,6 +22,7 @@ components:
     - nfvi
     - schema/openstack.yang
     - schema/openstack-identity.yang
+    - schema/openstack-image.yang
     - schema/openstack-compute.yang
     - schema/openstack-storage.yang
     - schema/openstack-network.yang
@@ -32,6 +35,8 @@ components:
     - schema/openstack-promise.yang
     - spec/openstack-promise.yaml
 
+  # test component for using with 'npm test'
   test:
-    - promise
-    - promise-demo.json
+    - os-promise
+    - schema/opnfv-functest.yang
+    - config/demo.json
