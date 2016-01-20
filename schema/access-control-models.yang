@@ -1,12 +1,37 @@
 module access-control-models {
+  prefix acm;
   namespace "urn:opnfv:promise:acm";
 
   import complex-types { prefix ct; }
   import ietf-yang-types { prefix yang; }
+  import ietf-inet-types { prefix inet; }
 
   typedef password {
     type string {
       length 1..255;
+    }
+  }
+
+  grouping access-credentials {
+    leaf strategy {
+      type enumeration {
+        enum oauth;
+        enum keystone;
+      }
+      default oauth;
+    }
+    leaf endpoint {
+      type inet:uri;
+      description "The target endpoint for authentication";
+      mandatory true;
+    }
+    leaf username {
+      type string;
+      mandatory true;
+    }
+    leaf password {
+      type acm:password;
+      mandatory true;
     }
   }
   

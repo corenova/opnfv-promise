@@ -7,7 +7,6 @@ module opnfv-promise {
   import ietf-inet-types { prefix inet; }
   import access-control-models { prefix acm; }
   import nfv-infrastructure { prefix nfvi; }
-  import nfv-mano { prefix mano; }
 
   description
     "OPNFV Promise Resource Reservation/Allocation controller module";
@@ -605,9 +604,12 @@ module opnfv-promise {
         }
         default openstack;
       }
-      uses mano:provider-credentials {
+      uses acm:access-credentials {
+        refine strategy {
+          default keystone;
+        }
         refine endpoint {
-          default "http://localhost:5000/v2.0/tokens";
+          default "http://localhost:5000/v2.0";
         }
       }
       container tenant {

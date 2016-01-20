@@ -10,37 +10,42 @@ app = forge.load '!yaml ../promise.yaml', async: false, pkgdir: __dirname
 
 describe "promise", ->
   before ->
-    config.get 'opnfv-functest'
+    # ensure we have valid OpenStack environment to test against
+    try
+      config.get 'openstack.auth.endpoint'
+    catch e
+      throw new Error "missing OpenStack environmental variables"
+    
 
   # below 'provider' is used across test suites
   provider = undefined
 
-  # Test Scenario 00
-  describe "prepare OpenStack for testing", ->
-    before (done) ->
-      # ensure we have valid OpenStack environment to test against
-      try
-        config.get 'openstack.auth.url'
-      catch e
-        throw new Error "missing OpenStack environmental variables"
+  # Test Scenario 00 (FUTURE)
+  # describe "prepare OpenStack for testing", ->
+  #   before (done) ->
+  #     # ensure we have valid OpenStack environment to test against
+  #     try
+  #       config.get 'openstack.auth.url'
+  #     catch e
+  #       throw new Error "missing OpenStack environmental variables"
 
-      os = forge.load '!yaml ../openstack.yaml', async: false, pkgdir: __dirname
-      app.attach 'openstack', os.access 'openstack'
-      app.set config
+  #     os = forge.load '!yaml ../openstack.yaml', async: false, pkgdir: __dirname
+  #     app.attach 'openstack', os.access 'openstack'
+  #     app.set config
 
-    describe "synchronize", ->
-      it "should retrieve available service catalog", (done) ->
-        app.access('openstack').invoke 'synchronize'
-        .then (res) ->
+  #   describe "authenticate", ->
+  #     it "should retrieve available service catalog", (done) ->
+  #       app.access('openstack').invoke 'authenticate'
+  #       .then (res) ->
 
-          done()
-        .catch (err) -> done err
+  #         done()
+  #       .catch (err) -> done err
 
-    describe "create-tenant", ->
-      # create a new tenant for testing purposes
+  #   describe "create-tenant", ->
+  #     # create a new tenant for testing purposes
 
-    describe "upload-image", ->
-      # upload a new test image
+  #   describe "upload-image", ->
+  #     # upload a new test image
 
 
 
@@ -54,7 +59,6 @@ describe "promise", ->
         @timeout 5000
 
         auth = config.get 'openstack.auth'
-        auth.endpoint = auth.url + '/tokens'
         auth['provider-type'] = 'openstack'
 
         app.access('opnfv-promise').invoke 'add-provider', auth
@@ -134,8 +138,8 @@ describe "promise", ->
         app.access('opnfv-promise').invoke 'create-instance',
           'provider-id': provider.id
           name: 'promise-test-no-reservation'
-          image: undefined
-          flavor: undefined
+          image:  config.get 'openstack.test.image'
+          flavor: config.get 'openstack.test.flavor'
         .then (res) ->
           res.get('result').should.equal 'ok'
           instance_id = res.get('instance-id')
@@ -200,8 +204,8 @@ describe "promise", ->
         app.access('opnfv-promise').invoke 'create-instance',
           'provider-id': provider.id
           name: 'promise-test-no-reservation'
-          image: undefined
-          flavor: undefined
+          image:  config.get 'openstack.test.image'
+          flavor: config.get 'openstack.test.flavor'
           'reservation-id': reservation.id
         .then (res) ->
           res.get('result').should.equal 'ok'

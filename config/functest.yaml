@@ -2,9 +2,8 @@
 
 opnfv-functest:
   environment:
-    openstack:
-      images:
-        -
-          name: cirros
-          path: /home/opnfv/functest/data/cirros-0.3.4-x86_64-disk.img
+    images:
+      -
+        name: cirros
+        path: /home/opnfv/functest/data/cirros-0.3.4-x86_64-disk.img
 

@@ -34,7 +34,7 @@
   "main": "./lib/index.js",
   "scripts": {
     "prepublish": "yfc build -o index.yaml promise.yaml",
-    "test": "mocha --require should --compilers coffee:coffee-script/register",
+    "test": "mocha",
 	"start": "yfc run --express 5050 promise.yaml"
   }
 }
