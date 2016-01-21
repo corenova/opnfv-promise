@@ -277,8 +277,8 @@ complex-type:
                       return
 
                     flavors = res.body.flavors
-                    #console.log "\ndiscovered flavors:"
-                    #console.log flavors
+                    # console.log "\ndiscovered flavors:"
+                    # console.log flavors
                     try
                       flavors = flavors.map (x) -> ResourceFlavor: x
                       (@access 'services.compute.flavors').push flavors...

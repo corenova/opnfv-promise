@@ -3,6 +3,14 @@ assert = require 'assert'
 forge  = require 'yangforge'
 app = forge.load '!yaml ../promise.yaml', async: false, pkgdir: __dirname
 
+# this is javascript promise framework and not related to opnfv-promise
+promise = require 'promise'
+
+if process.env.DEBUG
+  debug = console.log
+else
+  debug = ->
+
 # in the future with YF 0.12.x
 # app = forge.load('..').build('test')
 # app.set config
@@ -15,7 +23,7 @@ describe "promise", ->
       config.get 'openstack.auth.endpoint'
     catch e
       throw new Error "missing OpenStack environmental variables"
-    
+
 
   # below 'provider' is used across test suites
   provider = undefined
@@ -65,7 +73,8 @@ describe "promise", ->
         .then (res) ->
           res.get('result').should.equal 'ok'
           provider = id: res.get('provider-id')
-          done()
+          # HACK - we delay by a second to allow time for discovering capacity and flavors
+          setTimeout done, 1000
         .catch (err) -> done err
 
       it "should update promise.providers with a new entry", ->
@@ -398,12 +407,22 @@ describe "promise", ->
 
   # Test Scenario 07
   describe "cleanup test allocations", ->
-    allocations = app.get('opnfv-promise.promise.allocations')
+    allocations = undefined
     before ->
+      allocations = app.get('opnfv-promise.promise.allocations')
+      debug provider.get()
+      debug allocations
       allocations.length.should.be.above(0)
 
     describe "destroy-instance", ->
       it "should successfully destroy all allocations", (done) ->
-        # XXX - need to be promise.all
-        app.access('opnfv-promise').invoke 'destroy-instance',
-          'instance-id': allocations[0]
+        promises = allocations.map (x) ->
+          app.access('opnfv-promise').invoke 'destroy-instance',
+            'instance-id': x.id
+        promise.all promises
+        .then (res) ->
+          res.forEach (x) ->
+            debug x.get()
+            x.get('result').should.equal 'ok'
+          done()
+        .catch (err) -> done err

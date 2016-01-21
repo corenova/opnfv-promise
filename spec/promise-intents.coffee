@@ -204,7 +204,7 @@ module.exports =
         output.set result: 'error', message: "no such flavor found for specified identifier: #{pid}"
         return done()
 
-      required = 
+      required =
         instances: 1
         cores:     flavor.get 'vcpus'
         ram:       flavor.get 'ram'
@@ -250,10 +250,10 @@ module.exports =
           .end (err, res) =>
             if err? or !res.ok
               instance.destroy()
-              console.error err
+              #console.error err
               return done res.error
             #console.log JSON.stringify res.body, null, 2
-            instance.set 'instance-ref', 
+            instance.set 'instance-ref',
               provider: provider
               server: res.body.server.id
             (@access 'promise.allocations').push instance
