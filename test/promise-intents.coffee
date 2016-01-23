@@ -144,6 +144,7 @@ describe "promise", ->
           "unable to execute without registered 'provider'"
 
       it "should create a new server in target provider without error", (done) ->
+        @timeout 5000
         app.access('opnfv-promise').invoke 'create-instance',
           'provider-id': provider.id
           name: 'promise-test-no-reservation'
@@ -210,6 +211,7 @@ describe "promise", ->
           "unable to execute without valid reservation record"
 
       it "should create a new server in target provider (with reservation) without error", (done) ->
+        @timeout 5000
         app.access('opnfv-promise').invoke 'create-instance',
           'provider-id': provider.id
           name: 'promise-test-no-reservation'
@@ -416,6 +418,7 @@ describe "promise", ->
 
     describe "destroy-instance", ->
       it "should successfully destroy all allocations", (done) ->
+        @timeout 5000
         promises = allocations.map (x) ->
           app.access('opnfv-promise').invoke 'destroy-instance',
             'instance-id': x.id
