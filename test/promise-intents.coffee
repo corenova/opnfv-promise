@@ -145,12 +145,15 @@ describe "promise", ->
 
       it "should create a new server in target provider without error", (done) ->
         @timeout 5000
+        test = config.get 'openstack.test'
         app.access('opnfv-promise').invoke 'create-instance',
           'provider-id': provider.id
           name: 'promise-test-no-reservation'
-          image:  config.get 'openstack.test.image'
-          flavor: config.get 'openstack.test.flavor'
+          image:   test.image
+          flavor:  test.flavor
+          network: test.network
         .then (res) ->
+          debug res.get()
           res.get('result').should.equal 'ok'
           instance_id = res.get('instance-id')
           done()
@@ -212,13 +215,16 @@ describe "promise", ->
 
       it "should create a new server in target provider (with reservation) without error", (done) ->
         @timeout 5000
+        test = config.get 'openstack.test'
         app.access('opnfv-promise').invoke 'create-instance',
           'provider-id': provider.id
           name: 'promise-test-no-reservation'
-          image:  config.get 'openstack.test.image'
-          flavor: config.get 'openstack.test.flavor'
+          image:  test.image
+          flavor: test.flavor
+          network: test.network
           'reservation-id': reservation.id
         .then (res) ->
+          debug res.get()
           res.get('result').should.equal 'ok'
           allocation = id: res.get('instance-id')
           done()

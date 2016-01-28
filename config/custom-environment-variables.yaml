@@ -19,4 +19,5 @@ openstack:
   test:
     image:  OS_TEST_IMAGE
     flavor: OS_TEST_FLAVOR
+    network: OS_TEST_NETWORK
     

@@ -236,15 +236,18 @@ module.exports =
       .save()
       .then (instance) =>
         url = provider.get 'services.compute.endpoint'
+        payload =
+          server:
+            name: input.get 'name'
+            imageRef: input.get 'image'
+            flavorRef: input.get 'flavor'
+        if (input.get 'network')?
+          payload.server.networks = uuid: input.get 'network'
+
         request = @parent.require 'superagent'
         request
           .post "#{url}/servers"
-          .send {
-            server:
-              name: input.get 'name'
-              imageRef: input.get 'image'
-              flavorRef: input.get 'flavor'
-          }
+          .send payload
           .set 'X-Auth-Token', provider.get 'token'
           .set 'Accept', 'application/json'
           .end (err, res) =>
