@@ -151,7 +151,7 @@ describe "promise", ->
           name: 'promise-test-no-reservation'
           image:   test.image
           flavor:  test.flavor
-          network: test.network
+          networks: [ test.network ]
         .then (res) ->
           debug res.get()
           res.get('result').should.equal 'ok'
@@ -221,7 +221,7 @@ describe "promise", ->
           name: 'promise-test-no-reservation'
           image:  test.image
           flavor: test.flavor
-          network: test.network
+          networks: [ test.network ]
           'reservation-id': reservation.id
         .then (res) ->
           debug res.get()
