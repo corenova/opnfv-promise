@@ -218,7 +218,7 @@ describe "promise", ->
         test = config.get 'openstack.test'
         app.access('opnfv-promise').invoke 'create-instance',
           'provider-id': provider.id
-          name: 'promise-test-no-reservation'
+          name: 'promise-test-reservation'
           image:  test.image
           flavor: test.flavor
           networks: [ test.network ]
