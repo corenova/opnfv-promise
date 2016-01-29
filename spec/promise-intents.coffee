@@ -241,8 +241,9 @@ module.exports =
             name: input.get 'name'
             imageRef: input.get 'image'
             flavorRef: input.get 'flavor'
-        if (input.get 'network')?
-          payload.server.networks = uuid: input.get 'network'
+        networks = (input.get 'networks').filter (x) -> x? and !!x
+        if networks.length > 0
+          payload.server.networks = networks.map (x) -> uuid: x
 
         request = @parent.require 'superagent'
         request

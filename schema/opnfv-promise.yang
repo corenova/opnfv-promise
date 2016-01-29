@@ -558,7 +558,7 @@ module opnfv-promise {
         type reference-identifier;
         mandatory true;
       }
-      leaf network {
+      leaf-list networks {
         type reference-identifier;
         description "optional, will assign default network if not provided";
       }
