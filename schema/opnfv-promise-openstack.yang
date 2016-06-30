@@ -1,5 +1,5 @@
-module openstack {
-  prefix os;
+module opnfv-promise-openstack {
+  prefix op-os;
 
   import nfv-infrastructure { prefix nfvi; }
   import access-control-models { prefix acm; }
