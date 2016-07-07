@@ -1,6 +1,7 @@
 module opnfv-promise {
+  yang-version 1.1;
   namespace "urn:opnfv:promise";
-  prefix promise;
+  prefix prom;
 
   import nfv-infrastructure { prefix nfvi; }
   import ietf-yang-types    { prefix yang; }
@@ -26,30 +27,12 @@ module opnfv-promise {
     description "Initial revision.";
   }
 
-  feature reservation-service {
-    description "When enabled, provides resource reservation service";
-  }
-
-  feature multi-provider {
-    description "When enabled, provides resource management across multiple providers";
-  }
-
-  typedef reference-identifier {
-    description "defines valid formats for external reference id";
-    type union {
-      type yang:uuid;
-      type inet:uri;
-      type uint32;
-    }
+  feature capacity-management {
+    description "When enabled, provides capacity management service";
   }
   
-  grouping resource-utilization {
-    container capacity {
-      container total     { description 'Conceptual container that should be extended'; }
-      container reserved  { description 'Conceptual container that should be extended'; config false; }
-      container usage     { description 'Conceptual container that should be extended'; config false; }
-      container available { description 'Conceptual container that should be extended'; config false; }
-    }
+  feature reservation-service {
+    description "When enabled, provides resource reservation service";
   }
 
   grouping temporal-resource-collection {
@@ -128,32 +111,21 @@ module opnfv-promise {
     }
     leaf-list without {
       description "Excludes specified collection identifiers from the result";
-      type instance-identifier { ct:instance-type ResourceCollection; }
+      type instance-identifier;
     }
     leaf show-utilization { type boolean; default true; }
     container elements {
       leaf-list some {
         description "Query for ResourceCollection(s) that contain some or more of these element(s)";
-        type instance-identifier { ct:instance-type nfvi:ResourceElement; }
+        type instance-identifier;
       }
       leaf-list every {
         description "Query for ResourceCollection(s) that contain all of these element(s)";
-        type instance-identifier { ct:instance-type nfvi:ResourceElement; }
+        type instance-identifier;
       }
     }
   }
 
-  grouping common-action-output {
-    leaf result {
-      type enumeration {
-        enum "ok";
-        enum "conflict";
-        enum "error";
-      }
-    }
-    leaf message { type string; }
-  }
-  
   grouping utilization-output {
     list utilization {
       key 'timestamp';
@@ -164,186 +136,97 @@ module opnfv-promise {
   }
 
 
-  ct:complex-type ResourceAllocation {
-    ct:extends ResourceCollection;
-
-    description
-      "A ResourceAllocation record denotes consumption of resources from a
-       referenced ResourcePool.
-
-       It does not reflect an accepted request but is created to
-       represent the actual state about the ResourcePool. It is
-       created once the allocation(s) have successfully taken effect
-       on the 'source' of the ResourcePool.
-       
-       The 'priority' state indicates the classification for dealing
-       with resource starvation scenarios. Lower priority allocations
-       will be forcefully terminated to allow for higher priority
-       allocations to be fulfilled.
-
-       Allocations without reference to an existing reservation will
-       receive the lowest priority.";
-    
-    reference "OPNFV-PROMISE, Section 3.4.3";
-
-    leaf reservation {
-      description "Reference to an existing reservation identifier (optional)";
-      
-      type instance-identifier {
-        ct:instance-type ResourceReservation;
-        require-instance true;
-      }
-    }
-
-    leaf pool {
-      description "Reference to an existing resource pool from which allocation is drawn";
-      
-      type instance-identifier {
-        ct:instance-type ResourcePool;
-        require-instance true;
-      }
-    }
-
-    container instance-ref {
-      config false;
-      description
-        "Reference to actual instance identifier of the provider/server for this allocation";
-      leaf provider {
-        type instance-identifier { ct:instance-type ResourceProvider; }
-      }
-      leaf server { type yang:uuid; }
-    }
-
-    leaf priority {
-      config false;
-      description
-        "Reflects current priority level of the allocation according to classification rules";
-      type enumeration {
-        enum "high"   { value 1; }
-        enum "normal" { value 2; }
-        enum "low"    { value 3; }
-      }
-      default "normal";
-    }
-  }
-
+  // EXTEND nfvi module with capacity and reservation facilities
   augment "/nfvi:stack" {
-    leaf-list pools {
+
+    container capacity {
+      if-feature capacity-management;
       config false;
-      description
-        "Provides list of one or more pools that are referencing the infrastructure.";
       
-      type leafref {
-        path "/promise/pools/id";
-      }
-    }
-  }
-  
-  // MAIN CONTAINER
-  container promise {
-    
-    uses resource-utilization {
       description "Describes current state info about capacity utilization info";
       
-      augment "capacity/total"     { uses nfvi:resource-capacity; }
-      augment "capacity/reserved"  { uses nfvi:resource-capacity; }
-      augment "capacity/usage"     { uses nfvi:resource-capacity; }
-      augment "capacity/available" { uses nfvi:resource-capacity; }
+      container total     { uses nfvi:resource-capacity; }
+      container reserved  { uses nfvi:resource-capacity; }
+      container usage     { uses nfvi:resource-capacity; }
+      container available { uses nfvi:resource-capacity; }
+      
+      leaf-list elements {
+        config false;
+        description "aggregate reference to all resource-element identifiers";
+        type instance-identifier;
+      }
 
-      augment "capacity" {
-        
-        action increase {
-          description "Increase total capacity for the reservation system between a window in time";
-          input {
-            uses temporal-resource-collection;
-            leaf source {
-              type instance-identifier {
-                ct:instance-type nfvi:ResourceContainer;
-              }
-            }
-          }
-          output {
-            uses common-intent-output;
-            leaf pool-id {
-              type leafref {
-                path "/promise/pools/id";
-              }
+      action increase {
+        description "Increase total capacity available for reservations between a window in time";
+        input {
+          uses temporal-resource-collection;
+        }
+        output {
+          uses nfvi:common-action-output;
+          leaf pool-id {
+            type leafref {
+              path "/nfvi:stack/prom:pools/prom:id";
             }
           }
         }
+      }
 
-        action decrease {
-          description "Decrease total capacity for the reservation system between a window in time";
-          input {
-            uses temporal-resource-collection;
-            leaf source {
-              type instance-identifier {
-                ct:instance-type nfvi:ResourceContainer;
-              }
-            }
-          }
-          output {
-            uses common-intent-output;
-            leaf pool-id {
-              type leafref {
-                path "/promise/pools/id";
-              }
+      action decrease {
+        description "Decrease total capacity available for reservations between a window in time";
+        input {
+          uses temporal-resource-collection;
+        }
+        output {
+          uses nfvi:common-action-output;
+          leaf pool-id {
+            type leafref {
+              path "/nfvi:stack/prom:pools/prom:id";
             }
           }
         }
+      }
 
-        action query {
-          description "Check available capacity information about a specified resource collection";
-          input {
-            leaf capacity {
-              type enumeration {
-                enum 'total';
-                enum 'reserved';
-                enum 'usage';
-                enum 'available';
-              }
-              default 'available';
+      action query {
+        description "Check available capacity information about a specified resource collection";
+        input {
+          leaf capacity {
+            type enumeration {
+              enum 'total';
+              enum 'reserved';
+              enum 'usage';
+              enum 'available';
             }
-            leaf zone { type string; }
-            uses query-resource-collection;
-            // TBD: additional parameters for query-capacity
+            default 'available';
           }
-          output {
-            leaf-list collections { type instance-identifier { ct:instance-type ResourceCollection; } }
-            uses utilization-output;
-          }
+          leaf zone { type string; }
+          uses query-resource-collection;
+          // TBD: additional parameters for query-capacity
+        }
+        output {
+          leaf-list collections { type instance-identifier; }
+          uses utilization-output;
         }
       }
     }
 
     list pools {
-      uses temporal-resource-collection;
-
       description
         "Describes an instance of an active ResourcePool record, which
-         represents total available capacity and elements from a given
-         source";
+         represents total available capacity and elements for a given
+         time window";
 
-      leaf source {
-        type instance-identifier {
-          ct:instance-type nfvi:ResourceContainer;
-          require-instance true;
-        }
-        mandatory true;
-      }
-
-      refine elements {
-        // following 'must' statement applies to each element
-        // NOTE: just a non-working example for now...
-        must "boolean(../source/elements/*[@id=id])" {
-          error-message "One or more of the ResourceElement(s) does not exist in the provider to be reserved";
+      uses temporal-resource-collection {
+        refine elements {
+          // following 'must' statement applies to each element
+          // NOTE: just a non-working example for now...
+          must "boolean(../source/elements/*[@id=id])" {
+            error-message "One or more of the ResourceElement(s) does not exist in the provider to be reserved";
+          }
         }
       }
     }
 
     list reservations {
-      uses temporal-resource-collection;
-
       description
         "Describes an instance of an accepted resource reservation request,
          created usually as a result of 'create-reservation' request.
@@ -359,6 +242,8 @@ module opnfv-promise {
     
       reference "OPNFV-PROMISE, Section 3.4.1";
 
+      uses temporal-resource-collection;
+
       leaf created-on  { type yang:date-and-time; config false; }
       leaf modified-on { type yang:date-and-time; config false; }
 
@@ -372,7 +257,7 @@ module opnfv-promise {
            likely that the total reserved resource capacity/elements are
            made availble from multiple sources.";
         type leafref {
-          path "/promise/pools/id";
+          path "/nfvi:stack/prom:pools/prom:id";
         }
       }
 
@@ -392,7 +277,7 @@ module opnfv-promise {
           "Reference to a collection of consumed allocations referencing
            this reservation.";
         type leafref {
-          path "/promise/allocations/id";
+          path "/nfvi:stack/nfvi:compute/nfvi:servers/nfvi:id";
         }
       }
 
@@ -402,10 +287,10 @@ module opnfv-promise {
           uses resource-usage-request;
         }
         output {
-          uses common-action-output;
+          uses nfvi:common-action-output;
           leaf reservation-id {
             type leafref {
-              path '/promise/reservations/id'
+              path "/nfvi:stack/prom:reservations/prom:id";
             }
           }
         }
@@ -416,14 +301,14 @@ module opnfv-promise {
         input {
           leaf reservation-id {
             type leafref {
-              path '/promise/reservations/id'
+              path "/nfvi:stack/prom:reservations/prom:id";
             }
             mandatory true;
           }
           uses resource-usage-request;
         }
         output {
-          uses common-action-output;
+          uses nfvi:common-action-output;
         }
       }
 
@@ -432,14 +317,14 @@ module opnfv-promise {
         input {
           leaf reservation-id {
             type leafref {
-              path '/promise/reservations/id'
+              path "/nfvi:stack/prom:reservations/prom:id";
             }
             mandatory true;
           }
           uses resource-usage-request;
         }
         output {
-          uses common-action-output;
+          uses nfvi:common-action-output;
         }
       }
 
@@ -452,7 +337,7 @@ module opnfv-promise {
         output {
           leaf-list reservations {
             type leafref {
-              path "/promise/reservations/id";
+              path "/nfvi:stack/prom:reservations/prom:id";
             }
           }
           uses utilization-output;
@@ -460,43 +345,95 @@ module opnfv-promise {
       }
 
       notification failure {
-        description "Notify when failure occurs for a previously successful reservation";
+        description "Notify when failure occurs for an existing reservation";
       }
     }
+  }
+
+  augment "/nfvi:stack/nfvi:compute/nfvi:servers" {
+    description
+      "A ResourceAllocation record denotes consumption of resources from a
+       referenced ResourcePool.
+
+       It does not reflect an accepted request but is created to
+       represent the actual state about the ResourcePool. It is
+       created once the allocation(s) have successfully taken effect
+       on the 'source' of the ResourcePool.
+       
+       The 'priority' state indicates the classification for dealing
+       with resource starvation scenarios. Lower priority allocations
+       will be forcefully terminated to allow for higher priority
+       allocations to be fulfilled.
+
+       Allocations without reference to an existing reservation will
+       receive the lowest priority.";
     
-    ct:instance-list allocations {
-      description "Aggregate collection of all ResourceAllocation instances";
-      ct:instance-type ResourceAllocation;
+    reference "OPNFV-PROMISE, Section 3.4.3";
+
+    leaf reservation-id {
+      config false;
+      description "Reference to an existing reservation identifier (optional)";
+      type leafref {
+        path "/nfvi:stack/prom:reservations/prom:id";
+      }
     }
 
-    container policy {
-      container reservation {
-        leaf max-future-start-range {
-          description
-            "Enforce reservation request 'start' time is within allowed range from now";
-          type uint16 { range 0..365; }
-          units "days";
-        }
-        leaf max-future-end-range {
-          description
-            "Enforce reservation request 'end' time is within allowed range from now";
-          type uint16 { range 0..365; }
-          units "days";
-        }
-        leaf max-duration {
-          description
-            "Enforce reservation duration (end-start) does not exceed specified threshold";
-          type uint16;
-          units "hours";
-          default 8760; // for now cap it at max one year as default
-        }
-        leaf expiry {
-          description
-            "Duration in minutes from start when unallocated reserved resources
+    leaf pool-id {
+      config false;
+      description "Reference to an existing resource pool from which allocation is drawn";
+      type leafref {
+        path "/nfvi:stack/prom:pools/prom:id";
+      }
+    }
+
+    leaf priority {
+      config false;
+      description
+        "Reflects current priority level of the allocation according to classification rules";
+      type enumeration {
+        enum "high"   { value 1; }
+        enum "normal" { value 2; }
+        enum "low"    { value 3; }
+      }
+      default "normal";
+    }
+  }
+
+  augment "/nfvi:stack/nfvi:compute/nfvi:servers/nfvi:create/nfvi:input" {
+    leaf reservation-id {
+      type leafref {
+        path "/nfvi:stack/prom:reservations/prom:id";
+      }
+    }
+  }
+
+  augment "/nfvi:stack/nfvi:policy" {
+    container reservation {
+      leaf max-future-start-range {
+        description
+          "Enforce reservation request 'start' time is within allowed range from now";
+        type uint16 { range 0..365; }
+        units "days";
+      }
+      leaf max-future-end-range {
+        description
+          "Enforce reservation request 'end' time is within allowed range from now";
+        type uint16 { range 0..365; }
+        units "days";
+      }
+      leaf max-duration {
+        description
+          "Enforce reservation duration (end-start) does not exceed specified threshold";
+        type uint16;
+        units "hours";
+        default 8760; // for now cap it at max one year as default
+      }
+      leaf expiry {
+        description
+          "Duration in minutes from start when unallocated reserved resources
              will be released back into the pool";
-          type uint32;
-          units "minutes";
-        }
+        type uint32;
+        units "minutes";
       }
     }
   }

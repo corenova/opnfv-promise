@@ -8,89 +8,92 @@
 #
 
 require('yang-js').register()
-require './nfv-infrastructure'
+require('./nfv-infrastructure')
 
 module.exports = require('../schema/opnfv-promise.yang').bind {
 
-  '/promise/capacity/total': ->
-    combine = (a, b) ->
-      for k, v of b.capacity when v?
-        a[k] ?= 0
-        a[k] += v
-      return a
-    (@get '/promise/pools')
-    .filter (entry) -> entry.active is true
-    .reduce combine, {}
-
-  '/promise/capacity/reserved': ->
-    combine = (a, b) ->
-      for k, v of b.remaining when v?
-        a[k] ?= 0
-        a[k] += v
-      return a
-    (@get '/promise/reservations')
-    .filter (entry) -> entry.active is true
-    .reduce combine, {}
-
-  '/promise/capacity/usage': ->
-    combine = (a, b) ->
-      for k, v of b.capacity when v?
-        a[k] ?= 0
-        a[k] += v
-      return a
-    (@get '/promise/allocations')
-    .filter (entry) -> entry.active is true
-    .reduce combine, {}
-
-  '/promise/capacity/available': ->
-    total    = @get '../total'
-    reserved = @get '../reserved'
-    usage    = @get '../usage'
-    available = {}
-    for k, v of total when v?
-      available[k] = v
-      available[k] -= reserved[k] if reserved[k]?
-      available[k] -= usage[k]    if usage[k]?
-    available
-
-  'complex-type:ResourceCollection':
+  '[grouping:temporal-resource-collection]':
     start:  -> (new Date).toJSON()
     active: ->
       now = new Date
       start = new Date (@get 'start')
       end = switch
-      when (@get 'end')? then new Date (@get 'end')
-      else now
-        (@get 'enabled') and (start <= now <= end)
+        when (@get 'end')? then new Date (@get 'end')
+        else now
+      (@get 'enabled') and (start <= now <= end)
 
-  'complex-type:ResourceReservation':
+  '/nfvi:stack/prom:capacity':
+    total: ->
+      combine = (a, b) ->
+        for k, v of b.capacity when v?
+          a[k] ?= 0
+          a[k] += v
+        return a
+      (@get '/nfvi:stack/prom:pools')
+      .filter (entry) -> entry.active is true
+      .reduce combine, {}
+    reserved: ->
+      combine = (a, b) ->
+        for k, v of b.remaining when v?
+          a[k] ?= 0
+          a[k] += v
+        return a
+      (@get '/nfvi:stack/prom:reservations')
+      .filter (entry) -> entry.active is true
+      .reduce combine, {}
+    usage: ->
+      combine = (a, b) ->
+        for k, v of b.capacity when v?
+          a[k] ?= 0
+          a[k] += v
+        return a
+      (@get '/nfvi:stack/prom:allocations')
+      .filter (entry) -> entry.active is true
+      .reduce combine, {}
+    available: ->
+      total    = @get '../total'
+      reserved = @get '../reserved'
+      usage    = @get '../usage'
+      available = {}
+      for k, v of total when v?
+        available[k] = v
+        available[k] -= reserved[k] if reserved[k]?
+        available[k] -= usage[k]    if usage[k]?
+      available
+    elements: -> #todo
+    '[action:query]':     require './action/query-capacity'
+    '[action:increase]':  require './action/increase-capacity'
+    '[action:decrease]':  require './action/decrease-capacity'
+  
+  '/nfvi:stack/prom:reservations':
     end: ->
       end = (new Date @get 'start')
-      max = @get '/promise/policy/reservation/max-duration'
+      max = @get '/nfvi:stack/nfvi:policy/prom:reservation/prom:max-duration'
       return unless max?
       end.setTime (end.getTime() + (max*60*60*1000))
       end.toJSON()
     allocations: ->
-      res = (@store.find 'ResourceAllocation', reservation: @id)
-      res.map (x) -> x.get 'id'
+      @get "/nfvi:stack/nfvi:compute/nfvi:servers[prom:reservation-id = #{@get('../id')}]/id"
     remaining: ->
-      total = @get 'capacity'
-      records = @store.find 'ResourceAllocation', id: (@get 'allocations'), active: true
+      total = @get '../capacity'
+      records = @get "/nfvi:stack/nfvi:compute/nfvi:servers[active = true]"
+      #store.find 'ResourceAllocation', id: (@get 'allocations'), active: true
       for entry in records
         usage = entry.capacity
         for k, v of usage
           total[k] -= v
       total
-    'action:validate': require './action/validate'
-      
+    '[action:validate]': require './action/validate-reservation'
+    '[action:create]':   require './action/create-reservation'
+    '[action:query]':    require './action/query-reservation'
+    '[action:update]':   require './action/update-reservation'
+    '[action:cancel]':   require './action/cancel-reservation'
 
-  # Intent Processor bindings
-  'rpc:create-reservation': require './rpc/create-reservation'
-  'rpc:query-reservation':  require './rpc/query-reservation'
-  'rpc:update-reservation': require './rpc/update-reservation'
-  'rpc:cancel-reservation': require './rpc/cancel-reservation'
-  'rpc:query-capacity':     require './rpc/query-capacity'
-  'rpc:increase-capacity':  require './rpc/increase-capacity'
-  'rpc:decrease-capacity':  require './rpc/decrease-capacity'
+  '/nfvi:stack/nfvi:compute/nfvi:servers/prom:priority': ->
+    switch
+      when not (@get '../reservation-id')? then 3
+      when not (@get '../active') then 2
+      else 1
 
+    
 }

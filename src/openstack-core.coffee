@@ -9,7 +9,7 @@
 
 require('yang-js').register()
 
-module.exports = require('../schema/opnfv-promise-openstack.yang').bind {
+module.exports = require('../schema/openstack-core.yang').bind {
 
   # Intent Processor bindings
   'rpc:create-instance':  require './rpc/create-instance'

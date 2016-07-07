@@ -1,4 +1,5 @@
 module access-control-models {
+  yang-version 1.1;
   namespace "urn:opnfv:promise:acm";
   prefix acm;
 
@@ -13,6 +14,15 @@ module access-control-models {
   typedef password {
     type string {
       length 1..255;
+    }
+  }
+
+  typedef unique-identifier {
+    description "defines valid formats for external reference id";
+    type union {
+      type yang:uuid;
+      type inet:uri;
+      type uint32;
     }
   }
 
@@ -41,7 +51,7 @@ module access-control-models {
   grouping access-identity {
     description "Identity represents an administrative access model entity";
 
-    leaf id { type yang:uuid; mandatory true; }
+    leaf id { type unique-identifier; mandatory true; }
     leaf name { type string; }
     leaf description { type string; }
     leaf enabled { type boolean; default true; }

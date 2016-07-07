@@ -1,4 +1,6 @@
 module openstack-core {
+  yang-version 1.1;
+  namespace "urn:opnfv:promise:openstack:core";
   prefix ostack;
 
   import openstack-identity-keystone { prefix keys; }

@@ -1,4 +1,5 @@
 module nfv-infrastructure {
+  yang-version 1.1;
   namespace "urn:opnfv:promise:nfv:infrastructure";
   prefix nfvi;
 
@@ -108,15 +109,6 @@ module nfv-infrastructure {
     }
   }
 
-  grouping resource-container {
-    description
-      "An abstract resource instance which contains a collection of capacity
-       and elements.";
-    
-    uses resource-instance;
-    uses resource-collection;
-  }
-  
   grouping resource-collection {
     description
       "Information model capturing parameters for describing a collection of
@@ -131,6 +123,17 @@ module nfv-infrastructure {
     }
   }
 
+  grouping common-action-output {
+    leaf result {
+      type enumeration {
+        enum "ok";
+        enum "conflict";
+        enum "error";
+      }
+    }
+    leaf message { type string; }
+  }
+  
   container stack {
     description
       "Information model describing a NFVI resource stack comprising of
@@ -144,6 +147,8 @@ module nfv-infrastructure {
     
     container compute {
       description "Contains compute related resources";
+
+      container capacity { uses compute-capacity; }
 
       list hosts {
         uses resource-element;
@@ -183,32 +188,26 @@ module nfv-infrastructure {
       list servers {
         uses resource-instance;
 
-        grouping server-instance {
-          leaf flavor {
-            type leafref {
-              path "/stack/compute/flavors/id";
-            }
-            mandatory true;
-          }
-          leaf image {
-            type leafref {
-              path "/stack/compute/images/id";
-            }
-            mandatory true;
+        leaf flavor {
+          config false;
+          type leafref {
+            path "/stack/compute/flavors/id";
           }
         }
-
-        uses server-instance;
-
-        container metadata {
-          // placeholder
+        leaf image {
+          config false;
+          type leafref {
+            path "/stack/compute/images/id";
+          }
         }
-
         leaf host {
+          config false;
           type leafref {
             path "/stack/compute/hosts/id";
           }
         }
+
+        leaf metadata { type binary; }
 
         action create {
           input {
@@ -216,14 +215,27 @@ module nfv-infrastructure {
               type string;
               mandatory true;
             }
-            uses server-instance;
+            leaf flavor {
+              type leafref {
+                path "/stack/compute/flavors/id";
+              }
+              mandatory true;
+            }
+            leaf image {
+              type leafref {
+                path "/stack/compute/images/id";
+              }
+              mandatory true;
+            }
             leaf-list networks {
-              type reference-identifier;
+              type leafref {
+                path "/stack/network/networks/id";
+              }
               description "optional, will assign default network if not provided";
             }
           }
           output {
-            // uses common-action-output;
+            uses common-action-output;
             leaf server-id {
               type leafref {
                 path "/stack/compute/servers/id";
@@ -242,7 +254,7 @@ module nfv-infrastructure {
             }
           }
           output {
-            // uses common-action-output;
+            uses common-action-output;
           }
         }
     
@@ -295,6 +307,8 @@ module nfv-infrastructure {
     container network {
       description "Contains networking related resources";
 
+      container capacity { uses network-capacity; }
+
       list networks {
         uses resource-element;
 
@@ -319,9 +333,23 @@ module nfv-infrastructure {
       }
 
       list routers {
-        uses resource-element;
+        uses resource-instance;
         // TBD
       }
+    }
+
+    container storage {
+      description "Contains storage related resources";
+      
+      container capacity { uses storage-capacity; }
+
+      // TBD
+
+    }
+    
+    container policy {
+      description "Contains NFVI policy configurations";
+      // augmented by feature modules
     }
   }
 }

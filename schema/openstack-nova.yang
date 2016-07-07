@@ -1,4 +1,5 @@
 module openstack-nova {
+  yang-version 1.1;
   namespace "urn:opnfv:promise:openstack:compute:nova";
   prefix nova;
 
