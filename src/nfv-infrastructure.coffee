@@ -9,11 +9,8 @@
 
 require('yang-js').register()
 
-uuid = require 'node-uuid'
-
 module.exports = require('../schema/nfv-infrastructure.yang').bind {
   
-  'complex-type:ResourceElement':
-    id: -> uuid.v4()
+  'complex-type:ResourceElement/id': require('node-uuid').v4
 
 }

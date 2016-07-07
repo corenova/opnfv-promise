@@ -46,10 +46,12 @@ module.exports = require('../schema/opnfv-promise.yang').bind {
     total    = @get '../total'
     reserved = @get '../reserved'
     usage    = @get '../usage'
+    available = {}
     for k, v of total when v?
-      total[k] -= reserved[k] if reserved[k]?
-      total[k] -= usage[k] if usage[k]?
-    total
+      available[k] = v
+      available[k] -= reserved[k] if reserved[k]?
+      available[k] -= usage[k]    if usage[k]?
+    available
 
   'complex-type:ResourceCollection':
     start:  -> (new Date).toJSON()
@@ -60,6 +62,27 @@ module.exports = require('../schema/opnfv-promise.yang').bind {
       when (@get 'end')? then new Date (@get 'end')
       else now
         (@get 'enabled') and (start <= now <= end)
+
+  'complex-type:ResourceReservation':
+    end: ->
+      end = (new Date @get 'start')
+      max = @get '/promise/policy/reservation/max-duration'
+      return unless max?
+      end.setTime (end.getTime() + (max*60*60*1000))
+      end.toJSON()
+    allocations: ->
+      res = (@store.find 'ResourceAllocation', reservation: @id)
+      res.map (x) -> x.get 'id'
+    remaining: ->
+      total = @get 'capacity'
+      records = @store.find 'ResourceAllocation', id: (@get 'allocations'), active: true
+      for entry in records
+        usage = entry.capacity
+        for k, v of usage
+          total[k] -= v
+      total
+    'action:validate': require './action/validate'
+      
 
   # Intent Processor bindings
   'rpc:create-reservation': require './rpc/create-reservation'

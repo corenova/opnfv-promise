@@ -1,0 +1,76 @@
+module openstack-keystone {
+  namespace "urn:opnfv:promise:openstack:identity:keystone";
+  prefix keys;
+  
+  import access-control-models { prefix acm; }
+  import nfv-infrastructure { prefix nfvi; }
+
+  description
+    "OpenStack Identity Data Models with complex types and typed instance
+     identifiers represent the various Access Control Models available
+     within OpenStack.";
+
+  revision 2016-07-07 {
+    description
+      "Updated to remove dependency to complex-types and adopt YANG 1.1";
+  }
+  
+  revision 2015-09-03 {
+    description
+      "This YANG module is modeled using 'yangforge' which natively provides
+       complex types and typed instance identifiers.  This module
+       provides various collections of resource management data models
+       for instance based management";
+  }
+
+  augment "/nfvi:stack/nfvi:identity/nfvi:domains" {
+    list projects {
+      uses acm:access-identity;
+      
+      description
+        "OpenStack Project represent a distinct resource consumption space across
+         collection of users and groups that can reserve and allocate
+         resources.";
+      
+      leaf-list groups {
+        type leafref {
+          path "../../groups/id";
+        }
+      }
+
+      leaf-list images {
+        type leafref {
+          path "/nfvi:stack/nfvi:compute/nfvi:images/nfvi:id";
+        }
+      }
+
+      leaf-list flavors {
+        type leafref {
+          path "/nfvi:stack/nfvi:compute/nfvi:flavors/nfvi:id";
+        }
+      }
+
+      action create;
+      action remove;
+    }
+    
+  }
+
+  augment "/nfvi:stack/nfvi:identity/nfvi:domains/nfvi:users" {
+    description
+      "OpenStack User can also belong to multiple projects.";
+    
+    leaf-list projects {
+      type leafref { path "../../projects/id"; }
+    }
+  }
+
+  augment "/nfvi:stack/nfvi:identity/nfvi:domains/nfvi:groups" {
+    description
+      "OpenStack Group can also belong to multiple projects.";
+    
+    leaf-list projects {
+      type leafref { path "../../projects/id"; }
+    }
+  }
+}

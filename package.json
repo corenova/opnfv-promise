@@ -1,5 +1,5 @@
 {
-  "name": "@opnfv/promise",
+  "name": "opnfv-promise",
   "version": "1.1.0",
   "description": "Resource Management for Virtualized Infrastructure",
   "author": "Peter K. Lee <peter@corenova.com>",
@@ -14,6 +14,7 @@
     "infrastructure",
     "openstack",
     "nbi",
+    "yangjs",
     "yangforge",
     "resource",
     "reservation",
@@ -21,10 +22,8 @@
     "allocation"
   ],
   "dependencies": {
-    "js-yaml": "^3.6.1",
-    "pretty": "^1.0.0",
+    "node-uuid": "^1.4.7",
     "superagent": "^2.0.0",
-    "treeify": "^1.0.1",
     "yang-js": "^0.14.7"
   },
   "devDependencies": {
