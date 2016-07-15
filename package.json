@@ -24,7 +24,7 @@
   "dependencies": {
     "node-uuid": "^1.4.7",
     "superagent": "^2.0.0",
-    "yang-js": "^0.14.11"
+    "yang-js": "^0.14.13"
   },
   "devDependencies": {
     "config": "^1.19.0",

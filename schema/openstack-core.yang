@@ -3,8 +3,8 @@ module openstack-core {
   namespace "urn:opnfv:promise:openstack:core";
   prefix ostack;
 
-  import openstack-identity-keystone { prefix keys; }
-  import openstack-compute-nova { prefix nova; }
+  import openstack-keystone { prefix keys; }
+  import openstack-nova { prefix nova; }
   
   import nfv-infrastructure { prefix nfvi; }
   import access-control-models { prefix acm; }
