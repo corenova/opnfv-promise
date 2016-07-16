@@ -8,7 +8,6 @@
 #
 
 require('yang-js').register()
-require('./nfv-infrastructure')
 
 module.exports = require('../schema/opnfv-promise.yang').bind {
 
