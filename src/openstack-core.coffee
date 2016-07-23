@@ -12,8 +12,8 @@ require('yang-js').register()
 module.exports = require('../schema/openstack-core.yang').bind {
 
   # Intent Processor bindings
-  '[rpc:create-instance]':  require './rpc/create-instance'
-  '[rpc:destroy-instance]': require './rpc/destroy-instance'
-  '[rpc:authenticate]':     require './rpc/authenticate'
+  '/create-instance':  require './rpc/create-instance'
+  '/destroy-instance': require './rpc/destroy-instance'
+  '/authenticate':     require './rpc/authenticate'
     
 }

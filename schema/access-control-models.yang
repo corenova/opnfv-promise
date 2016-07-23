@@ -64,7 +64,7 @@ module access-control-models {
       "Domain represent a distinct administrative domain across
        collection of users and groups.";
 
-    list users  {
+    list user {
       uses access-identity;
       
       leaf credential {
@@ -77,7 +77,7 @@ module access-control-models {
       
       leaf-list groups {
         type leafref {
-          path "../../groups/id";
+          path "../../group/id";
         }
       }
       leaf domain {
@@ -89,11 +89,11 @@ module access-control-models {
       action create;
       action remove;
     }
-    list groups {
+    list group {
       uses access-identity;
       leaf-list users {
         type leafref {
-          path "../../users/id";
+          path "../../user/id";
         }
       }
       leaf domain {

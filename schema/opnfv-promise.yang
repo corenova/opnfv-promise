@@ -165,7 +165,7 @@ module opnfv-promise {
           uses nfvi:common-action-output;
           leaf pool-id {
             type leafref {
-              path "/nfvi:stack/prom:pools/prom:id";
+              path "/nfvi:stack/prom:pool/prom:id";
             }
           }
         }
@@ -180,7 +180,7 @@ module opnfv-promise {
           uses nfvi:common-action-output;
           leaf pool-id {
             type leafref {
-              path "/nfvi:stack/prom:pools/prom:id";
+              path "/nfvi:stack/prom:pool/prom:id";
             }
           }
         }
@@ -209,7 +209,7 @@ module opnfv-promise {
       }
     }
 
-    list pools {
+    list pool {
       description
         "Describes an instance of an active ResourcePool record, which
          represents total available capacity and elements for a given
@@ -226,7 +226,7 @@ module opnfv-promise {
       }
     }
 
-    list reservations {
+    list reservation {
       description
         "Describes an instance of an accepted resource reservation request,
          created usually as a result of 'create-reservation' request.
@@ -257,7 +257,7 @@ module opnfv-promise {
            likely that the total reserved resource capacity/elements are
            made availble from multiple sources.";
         type leafref {
-          path "/nfvi:stack/prom:pools/prom:id";
+          path "/nfvi:stack/prom:pool/prom:id";
         }
       }
 
@@ -277,7 +277,7 @@ module opnfv-promise {
           "Reference to a collection of consumed allocations referencing
            this reservation.";
         type leafref {
-          path "/nfvi:stack/nfvi:compute/nfvi:servers/nfvi:id";
+          path "/nfvi:stack/nfvi:compute/nfvi:server/nfvi:id";
         }
       }
 
@@ -290,7 +290,7 @@ module opnfv-promise {
           uses nfvi:common-action-output;
           leaf reservation-id {
             type leafref {
-              path "/nfvi:stack/prom:reservations/prom:id";
+              path "/nfvi:stack/prom:reservation/prom:id";
             }
           }
         }
@@ -301,7 +301,7 @@ module opnfv-promise {
         input {
           leaf reservation-id {
             type leafref {
-              path "/nfvi:stack/prom:reservations/prom:id";
+              path "/nfvi:stack/prom:reservation/prom:id";
             }
             mandatory true;
           }
@@ -317,7 +317,7 @@ module opnfv-promise {
         input {
           leaf reservation-id {
             type leafref {
-              path "/nfvi:stack/prom:reservations/prom:id";
+              path "/nfvi:stack/prom:reservation/prom:id";
             }
             mandatory true;
           }
@@ -337,7 +337,7 @@ module opnfv-promise {
         output {
           leaf-list reservations {
             type leafref {
-              path "/nfvi:stack/prom:reservations/prom:id";
+              path "/nfvi:stack/prom:reservation/prom:id";
             }
           }
           uses utilization-output;
@@ -350,7 +350,7 @@ module opnfv-promise {
     }
   }
 
-  augment "/nfvi:stack/nfvi:compute/nfvi:servers" {
+  augment "/nfvi:stack/nfvi:compute/nfvi:server" {
     description
       "A ResourceAllocation record denotes consumption of resources from a
        referenced ResourcePool.
@@ -374,7 +374,7 @@ module opnfv-promise {
       config false;
       description "Reference to an existing reservation identifier (optional)";
       type leafref {
-        path "/nfvi:stack/prom:reservations/prom:id";
+        path "/nfvi:stack/prom:reservation/prom:id";
       }
     }
 
@@ -382,7 +382,7 @@ module opnfv-promise {
       config false;
       description "Reference to an existing resource pool from which allocation is drawn";
       type leafref {
-        path "/nfvi:stack/prom:pools/prom:id";
+        path "/nfvi:stack/prom:pool/prom:id";
       }
     }
 
@@ -399,10 +399,10 @@ module opnfv-promise {
     }
   }
 
-  augment "/nfvi:stack/nfvi:compute/nfvi:servers/nfvi:create/nfvi:input" {
+  augment "/nfvi:stack/nfvi:compute/nfvi:server/nfvi:create/nfvi:input" {
     leaf reservation-id {
       type leafref {
-        path "/nfvi:stack/prom:reservations/prom:id";
+        path "/nfvi:stack/prom:reservation/prom:id";
       }
     }
   }

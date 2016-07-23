@@ -55,7 +55,7 @@ module openstack-core {
         leaf endpoint { type inet:uri; }
         leaf-list flavors {
           type leafref {
-            path "/nfvi:stack/nfvi:compute/nfvi:flavors/nfvi:id";
+            path "/nfvi:stack/nfvi:compute/nfvi:flavor/nfvi:id";
           }
         }
       }
@@ -84,7 +84,6 @@ module openstack-core {
 
   rpc create-tenant {
     if-feature os-system-admin;
-    
   }
 
   // PROVIDER INTENTS (should go into VIM module in the future)
@@ -126,7 +125,7 @@ module openstack-core {
     output {
       uses common-intent-output;
       leaf provider-id {
-        type instance-identifier { ct:instance-type ResourceProvider; }
+        type instance-identifier { /* ct:instance-type ResourceProvider; */ }
       }
     }
   }

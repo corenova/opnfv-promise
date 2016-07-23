@@ -140,7 +140,7 @@ module nfv-infrastructure {
        various resource elements across compute, network, and storage";
 
     container identity {
-      list domains {
+      list domain {
         uses acm:access-domain;
       }
     }
@@ -150,7 +150,7 @@ module nfv-infrastructure {
 
       container capacity { uses compute-capacity; }
 
-      list hosts {
+      list host {
         uses resource-element;
       
         leaf type { type string; }
@@ -171,7 +171,7 @@ module nfv-infrastructure {
           leaf free { type uint32; units 'GB'; }
         }
 
-        list hypervisors {
+        list hypervisor {
           container vcpu {
             leaf total { type uint16; }
             leaf used  { type uint16; }
@@ -185,7 +185,7 @@ module nfv-infrastructure {
         }
       }
 
-      list servers {
+      list server {
         uses resource-instance;
 
         leaf flavor {
@@ -267,7 +267,7 @@ module nfv-infrastructure {
         // }
       }
 
-      list images {
+      list image {
         uses resource-element;
 
         leaf checksum { type string; mandatory true; }
@@ -295,7 +295,7 @@ module nfv-infrastructure {
         }
       }
 
-      list flavors {
+      list flavor {
         uses resource-element;
 
         leaf disk  { type uint32; units 'GB'; default 0; }
@@ -309,30 +309,30 @@ module nfv-infrastructure {
 
       container capacity { uses network-capacity; }
 
-      list networks {
+      list network {
         uses resource-element;
 
-        list subnets {
+        list subnet {
           uses resource-element;
           
           leaf-list nameservers { type string; }
     
           container dhcp {
             leaf enabled { type boolean; }
-            list pools {
+            list pool {
               leaf start { type inet:ip-address; }
               leaf end   { type inet:ip-address; }
             }
           }
 
-          list ports {
+          list port {
             uses resource-element;
             // TBD
           }
         }
       }
 
-      list routers {
+      list router {
         uses resource-instance;
         // TBD
       }

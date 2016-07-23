@@ -24,13 +24,13 @@ module openstack-nova {
 
   augment "/nfvi:stack/nfvi:compute" {
     if-feature security-groups;
-    list security-groups {
+    list security-group {
       uses nfvi:resource-element;
       // TBD
     }
   }
   
-  augment "/nfvi:stack/nfvi:compute/nfvi:servers" {
+  augment "/nfvi:stack/nfvi:compute/nfvi:server" {
     leaf zone {
       if-feature availability-zone;
       type string;
@@ -52,7 +52,7 @@ module openstack-nova {
     leaf-list security-groups {
       if-feature security-groups;
       type leafref {
-        path "../../security-groups/id";
+        path "../../security-group/id";
       }
     }
 
@@ -61,7 +61,7 @@ module openstack-nova {
       input {
         leaf server-id {
           type leafref {
-            path "/nfvi:stack/nfvi:compute/nfvi:servers/nfvi:id"
+            path "/nfvi:stack/nfvi:compute/nfvi:server/nfvi:id"
           }
         }
         // other params for resize

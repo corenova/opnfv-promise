@@ -24,8 +24,8 @@ module openstack-keystone {
        for instance based management";
   }
 
-  augment "/nfvi:stack/nfvi:identity/nfvi:domains" {
-    list projects {
+  augment "/nfvi:stack/nfvi:identity/nfvi:domain" {
+    list project {
       uses acm:access-identity;
       
       description
@@ -35,19 +35,19 @@ module openstack-keystone {
       
       leaf-list groups {
         type leafref {
-          path "../../groups/id";
+          path "../../group/id";
         }
       }
 
       leaf-list images {
         type leafref {
-          path "/nfvi:stack/nfvi:compute/nfvi:images/nfvi:id";
+          path "/nfvi:stack/nfvi:compute/nfvi:image/nfvi:id";
         }
       }
 
       leaf-list flavors {
         type leafref {
-          path "/nfvi:stack/nfvi:compute/nfvi:flavors/nfvi:id";
+          path "/nfvi:stack/nfvi:compute/nfvi:flavor/nfvi:id";
         }
       }
 
@@ -57,21 +57,21 @@ module openstack-keystone {
     
   }
 
-  augment "/nfvi:stack/nfvi:identity/nfvi:domains/nfvi:users" {
+  augment "/nfvi:stack/nfvi:identity/nfvi:domain/nfvi:user" {
     description
       "OpenStack User can also belong to multiple projects.";
     
     leaf-list projects {
-      type leafref { path "../../projects/id"; }
+      type leafref { path "../../project/id"; }
     }
   }
 
-  augment "/nfvi:stack/nfvi:identity/nfvi:domains/nfvi:groups" {
+  augment "/nfvi:stack/nfvi:identity/nfvi:domain/nfvi:group" {
     description
       "OpenStack Group can also belong to multiple projects.";
     
     leaf-list projects {
-      type leafref { path "../../projects/id"; }
+      type leafref { path "../../project/id"; }
     }
   }
 }
