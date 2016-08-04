@@ -7,13 +7,16 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 #
 
-require('yang-js').register()
+yang = require('yang-js')
+argv = require('minimist')(process.argv.slice(2))
 
-module.exports = require('../schema/openstack-core.yang').bind {
+require('yang-express').run {
 
-  # RPC bindings
-  '/authenticate':     require './action/authenticate'
-  # '/create-instance':  require './action/create-instance'
-  # '/destroy-instance': require './action/destroy-instance'
-    
+  port: argv.port || 5050
+  models: [
+    yang.require 'openstack-core'
+    yang.require 'opnfv-promise'
+  ]
+  data: require '../../config/demo.json'
+
 }

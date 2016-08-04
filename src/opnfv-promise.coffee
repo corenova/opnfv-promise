@@ -60,6 +60,7 @@ module.exports = require('../schema/opnfv-promise.yang').bind {
         available[k] -= usage[k]    if usage[k]?
       available
     elements: -> #todo
+    
     '[action:query]':     require './action/query-capacity'
     '[action:increase]':  require './action/increase-capacity'
     '[action:decrease]':  require './action/decrease-capacity'

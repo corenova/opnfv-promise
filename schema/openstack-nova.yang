@@ -61,7 +61,7 @@ module openstack-nova {
       input {
         leaf server-id {
           type leafref {
-            path "/nfvi:stack/nfvi:compute/nfvi:server/nfvi:id"
+            path "/nfvi:stack/nfvi:compute/nfvi:server/nfvi:id";
           }
         }
         // other params for resize

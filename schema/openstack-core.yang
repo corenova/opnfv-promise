@@ -92,7 +92,6 @@ module openstack-core {
     input {
       leaf provider-type {
         description "Select a specific resource provider type";
-        mandatory true;
         type enumeration {
           enum openstack;
           enum hp;
@@ -123,7 +122,7 @@ module openstack-core {
       }
     }
     output {
-      uses common-intent-output;
+      uses nfvi:common-action-output;
       leaf provider-id {
         type instance-identifier { /* ct:instance-type ResourceProvider; */ }
       }

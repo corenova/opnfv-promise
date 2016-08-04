@@ -32,7 +32,8 @@
   "dependencies": {
     "node-uuid": "^1.4.7",
     "superagent": "^2.0.0",
-    "yang-js": "^0.14.19"
+    "yang-express": "^0.2.6",
+    "yang-js": "^0.15.1"
   },
   "devDependencies": {
     "coffee-script": ">=1.7.0",
@@ -41,7 +42,7 @@
     "rimraf": "^2.5.2",
     "should": "~3.1.3"
   },
-  "main": "./lib/index.js",
+  "main": "./lib/opnfv-promise.js",
   "scripts": {
     "clean": "rimraf dist/* lib/*",
     "prebuild": "npm run clean -s && mkdir -p dist",
@@ -49,6 +50,8 @@
     "build": "npm run build:src",
     "prepublish": "npm run build",
     "pretest": "npm run build",
-    "test": "mocha"
+    "test": "mocha",
+    "prestart": "npm run build",
+    "start": "node lib/api/server.js"
   }
 }
