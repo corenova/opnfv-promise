@@ -152,7 +152,7 @@ describe "promise", ->
           "unable to execute without registered 'provider'"
 
       it "should create a new server in target provider without error", (done) ->
-        @timeout 5000
+        @timeout 10000
         test = config.get 'openstack.test'
         app.access('opnfv-promise').invoke 'create-instance',
           'provider-id': provider.id
@@ -222,7 +222,7 @@ describe "promise", ->
           "unable to execute without valid reservation record"
 
       it "should create a new server in target provider (with reservation) without error", (done) ->
-        @timeout 5000
+        @timeout 10000
         test = config.get 'openstack.test'
         app.access('opnfv-promise').invoke 'create-instance',
           'provider-id': provider.id
