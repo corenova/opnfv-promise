@@ -1,28 +1,40 @@
 module opnfv-promise {
-  yang-version 1.1;
-  namespace "urn:opnfv:promise";
+  namespace "urn:ietf:params:xml:ns:yang:opnfv-promise";
   prefix prom;
+  yang-version 1.1;
 
   import nfv-infrastructure { prefix nfvi; }
   import ietf-yang-types    { prefix yang; }
   import ietf-inet-types    { prefix inet; }
 
+  organization
+    "Open Platform for NFV (OPNFV) / Corenova Technologies, Inc.";
+  
+  contact
+    "Peter K. Lee <peter@corenova.com>";
+
   description
-    "OPNFV Promise Resource Reservation/Allocation controller module";
+    "OPNFV Promise Resource Reservation/Allocation controller module
+
+     Copyright (c) 2016 OPNFV and the persons identified as authors of
+     the code.  All rights reserved.
+
+     Redistribution and use in source and binary forms, with or
+     without modification, is permitted pursuant to, and subject to
+     the license terms of the Apache License, Version 2.0 which
+     accompanies this distribution, and is available at
+     (http://www.apache.org/licenses/LICENSE-2.0).";
 
   revision 2016-07-07 {
     description
       "Updated to remove dependency to complex-types and adopt YANG 1.1";
   }
-  
   revision 2015-10-05 {
     description "Complete coverage of reservation related intents";
   }
-  
   revision 2015-08-06 {
     description "Updated to incorporate YangForge framework";
   }
-
   revision 2015-04-16 {
     description "Initial revision.";
   }
@@ -30,11 +42,10 @@ module opnfv-promise {
   feature capacity-management {
     description "When enabled, provides capacity management service";
   }
-  
   feature reservation-service {
     description "When enabled, provides resource reservation service";
   }
-
+  
   grouping temporal-resource-collection {
     uses nfvi:resource-collection;
     
@@ -55,7 +66,6 @@ module opnfv-promise {
       type boolean;
     }
   }
-  
   grouping resource-usage-request {
     description
       "Information model capturing available parameters to make a resource
@@ -85,7 +95,6 @@ module opnfv-promise {
       type instance-identifier;
     }
   }
-
   grouping query-start-end-window {
     container window {
       description "Matches entries that are within the specified start/end time window";
@@ -104,7 +113,6 @@ module opnfv-promise {
       }
     }
   }
-
   grouping query-resource-collection {
     uses query-start-end-window {
       description "Match for ResourceCollection(s) that are within the specified start/end time window";
@@ -125,7 +133,6 @@ module opnfv-promise {
       }
     }
   }
-
   grouping utilization-output {
     list utilization {
       key 'timestamp';
@@ -134,7 +141,16 @@ module opnfv-promise {
       container capacity { uses nfvi:resource-capacity; }
     }
   }
-
+  grouping common-action-output {
+    leaf result {
+      type enumeration {
+        enum "ok";
+        enum "conflict";
+        enum "error";
+      }
+    }
+    leaf message { type string; }
+  }
 
   // EXTEND nfvi module with capacity and reservation facilities
   augment "/nfvi:stack" {
@@ -155,14 +171,13 @@ module opnfv-promise {
         description "aggregate reference to all resource-element identifiers";
         type instance-identifier;
       }
-
       action increase {
         description "Increase total capacity available for reservations between a window in time";
         input {
           uses temporal-resource-collection;
         }
         output {
-          uses nfvi:common-action-output;
+          uses common-action-output;
           leaf pool-id {
             type leafref {
               path "/nfvi:stack/prom:pool/prom:id";
@@ -170,14 +185,13 @@ module opnfv-promise {
           }
         }
       }
-
       action decrease {
         description "Decrease total capacity available for reservations between a window in time";
         input {
           uses temporal-resource-collection;
         }
         output {
-          uses nfvi:common-action-output;
+          uses common-action-output;
           leaf pool-id {
             type leafref {
               path "/nfvi:stack/prom:pool/prom:id";
@@ -185,7 +199,6 @@ module opnfv-promise {
           }
         }
       }
-
       action query {
         description "Check available capacity information about a specified resource collection";
         input {
@@ -287,7 +300,7 @@ module opnfv-promise {
           uses resource-usage-request;
         }
         output {
-          uses nfvi:common-action-output;
+          uses common-action-output;
           leaf reservation-id {
             type leafref {
               path "/nfvi:stack/prom:reservation/prom:id";
@@ -308,7 +321,7 @@ module opnfv-promise {
           uses resource-usage-request;
         }
         output {
-          uses nfvi:common-action-output;
+          uses common-action-output;
         }
       }
 
@@ -324,7 +337,7 @@ module opnfv-promise {
           uses resource-usage-request;
         }
         output {
-          uses nfvi:common-action-output;
+          uses common-action-output;
         }
       }
 

@@ -7,10 +7,11 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 #
 
-require('yang-js').register()
+require('yang-js')
+uuid = require('node-uuid').v4
 
-module.exports = require('../schema/nfv-infrastructure.yang').bind {
+module.exports = require('../schema/opnfv-iaas.yang').bind {
   
-  '/{resource-element}/id': require('node-uuid').v4
+  '/{resource-element}/id': -> @content ?= uuid()
 
 }
