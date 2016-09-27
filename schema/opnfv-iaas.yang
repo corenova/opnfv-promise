@@ -159,7 +159,7 @@ module opnfv-iaas {
       }
       leaf-list servers {
         type leafref {
-          path "/nfvi:stack/nfvi:compute/nfvi:server/nfvi:id";
+          path "/nfvi:controller/nfvi:compute/nfvi:server/nfvi:id";
         }
       }
     }
@@ -169,19 +169,19 @@ module opnfv-iaas {
     leaf flavor {
       config false;
       type leafref {
-        path "/nfvi:stack/compute/flavor/id";
+        path "/nfvi:controller/compute/flavor/id";
       }
     }
     leaf image {
       config false;
       type leafref {
-        path "/nfvi:stack/compute/image/id";
+        path "/nfvi:controller/compute/image/id";
       }
     }
     leaf host {
       config false;
       type leafref {
-        path "/nfvi:stack/compute/host/id";
+        path "/nfvi:controller/compute/host/id";
       }
     }
     leaf metadata {
@@ -202,28 +202,27 @@ module opnfv-iaas {
         }
         leaf flavor {
           type leafref {
-            path "/nfvi:stack/compute/flavor/id";
+            path "/nfvi:controller/compute/flavor/id";
           }
           mandatory true;
         }
         leaf image {
           type leafref {
-            path "/nfvi:stack/compute/image/id";
+            path "/nfvi:controller/compute/image/id";
           }
           mandatory true;
         }
         leaf-list networks {
           type leafref {
-            path "/nfvi:stack/fabric/network/id";
+            path "/nfvi:controller/fabric/network/id";
           }
           description "optional, will assign default network if not provided";
         }
       }
       output {
-        uses common-action-output;
         leaf server-id {
           type leafref {
-            path "/nfvi:stack/compute/server/id";
+            path "/nfvi:controller/compute/server/id";
           }
         }
       }
@@ -233,12 +232,9 @@ module opnfv-iaas {
       input {
         leaf server-id {
           type leafref {
-            path "/nfvi:stack/compute/server/id";
+            path "/nfvi:controller/compute/server/id";
           }
         }
-      }
-      output {
-        uses common-action-output;
       }
     }
   }
@@ -285,7 +281,7 @@ module opnfv-iaas {
   /*
    * Configuration Data Nodes
    */
-  container stack {
+  container controller {
     description
       "Information model describing a NFVI resource stack comprising of
        various resource elements across compute, network, and storage";
@@ -303,19 +299,19 @@ module opnfv-iaas {
       }
       list host {
         key id;
-        uses iaas:compute-host;
+        uses nfvi:compute-host;
       }
       list server {
         key id;
-        uses iaas:virtual-server;
+        uses nfvi:virtual-server;
       }
       list image {
         key id;
-        uses iaas:server-image;
+        uses nfvi:server-image;
       }
       list flavor {
         key id;
-        uses iaas:resource-flavor;
+        uses nfvi:resource-flavor;
       }
     }
     container fabric {
