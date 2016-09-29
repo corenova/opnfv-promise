@@ -26,7 +26,7 @@
     "ietf-inet-types": "yang-js",
     "access-control-models": "./schema/access-control-models.yang",
     "openstack-core": "./lib/openstack-core.js",
-    "opnfv-iaas": "./lib/opnfv-iaas.js",
+    "opnfv-iaas": "./schema/opnfv-iaas.yang",
     "opnfv-promise": "./lib/opnfv-promise.js"
   },
   "dependencies": {
