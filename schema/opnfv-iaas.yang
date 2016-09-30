@@ -256,6 +256,7 @@ module opnfv-iaas {
       }
       leaf disk {
         type enumeration { enum ami; enum ari; enum aki; enum vhd; enum vmdk; enum raw; enum qcow2; enum vdi; enum iso; }
+        default raw;
       }
     }
     leaf content {
@@ -264,6 +265,7 @@ module opnfv-iaas {
         type binary;
         type inet:uri;
       }
+      mandatory true;
     }
     container constraint {
       leaf disk { type uint32; units 'GB'; default 0; }

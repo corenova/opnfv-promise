@@ -20,9 +20,9 @@ module access-control-models {
   typedef unique-identifier {
     description "defines valid formats for external reference id";
     type union {
+      type uint32;
       type yang:uuid;
       type inet:uri;
-      type uint32;
     }
   }
 
