@@ -7,7 +7,7 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 #
 
-require('yang-js').register()
+require 'yang-js'
 
 module.exports = require('../schema/opnfv-promise.yang').bind {
 
@@ -21,14 +21,14 @@ module.exports = require('../schema/opnfv-promise.yang').bind {
         else now
       (@get '../enabled') and (start <= now <= end)
 
-  '/nfvi:stack/prom:capacity':
+  '/nfvi:controller/promise:capacity':
     total: ->
       combine = (a, b) ->
         for k, v of b.capacity when v?
           a[k] ?= 0
           a[k] += v
         return a
-      (@get '/nfvi:stack/prom:pool')
+      (@get '/nfvi:controller/promise:pool')
       .filter (entry) -> entry.active is true
       .reduce combine, {}
     reserved: ->
@@ -37,7 +37,7 @@ module.exports = require('../schema/opnfv-promise.yang').bind {
           a[k] ?= 0
           a[k] += v
         return a
-      (@get '/nfvi:stack/prom:reservation')
+      (@get '/nfvi:controller/promise:reservation')
       .filter (entry) -> entry.active is true
       .reduce combine, {}
     usage: ->
@@ -46,7 +46,7 @@ module.exports = require('../schema/opnfv-promise.yang').bind {
           a[k] ?= 0
           a[k] += v
         return a
-      (@get '/nfvi:stack/prom:allocation')
+      (@get '/nfvi:controller/promise:allocation')
       .filter (entry) -> entry.active is true
       .reduce combine, {}
     available: ->
@@ -61,35 +61,35 @@ module.exports = require('../schema/opnfv-promise.yang').bind {
       available
     elements: -> #todo
     
-    '[action:query]':     require './action/query-capacity'
-    '[action:increase]':  require './action/increase-capacity'
-    '[action:decrease]':  require './action/decrease-capacity'
+    '<action:query>':     require './action/query-capacity'
+    '<action:increase>':  require './action/increase-capacity'
+    '<action:decrease>':  require './action/decrease-capacity'
   
-  '/nfvi:stack/prom:reservation':
+  '/nfvi:controller/promise:reservation':
     end: ->
       end = (new Date @get 'start')
-      max = @get '/nfvi:stack/nfvi:policy/prom:reservation/prom:max-duration'
+      max = @get '/nfvi:controller/nfvi:policy/promise:reservation/promise:max-duration'
       return unless max?
       end.setTime (end.getTime() + (max*60*60*1000))
       end.toJSON()
     allocations: ->
-      @get "/nfvi:stack/nfvi:compute/nfvi:server[prom:reservation-id = #{@get('../id')}]/id"
+      @get "/nfvi:controller/nfvi:compute/nfvi:server[promise:reservation-id = #{@get('../id')}]/id"
     remaining: ->
       total = @get '../capacity'
-      records = @get "/nfvi:stack/nfvi:compute/nfvi:server[active = true]"
+      records = @get "/nfvi:controller/nfvi:compute/nfvi:server[active = true]"
       #store.find 'ResourceAllocation', id: (@get 'allocations'), active: true
       for entry in records
         usage = entry.capacity
         for k, v of usage
           total[k] -= v
       total
-    '[action:validate]': require './action/validate-reservation'
-    '[action:create]':   require './action/create-reservation'
-    '[action:query]':    require './action/query-reservation'
-    '[action:update]':   require './action/update-reservation'
-    '[action:cancel]':   require './action/cancel-reservation'
+    '<action:validate>': require './action/validate-reservation'
+    '<action:create>':   require './action/create-reservation'
+    '<action:query>':    require './action/query-reservation'
+    '<action:update>':   require './action/update-reservation'
+    '<action:cancel>':   require './action/cancel-reservation'
 
-  '/nfvi:stack/nfvi:compute/nfvi:server/prom:priority': ->
+  '/nfvi:controller/nfvi:compute/nfvi:server/promise:priority': ->
     switch
       when not (@get '../reservation-id')? then 3
       when not (@get '../active') then 2

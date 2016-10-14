@@ -1,11 +1,11 @@
 module opnfv-promise {
   namespace "urn:ietf:params:xml:ns:yang:opnfv-promise";
-  prefix prom;
+  prefix promise;
   yang-version 1.1;
 
-  import nfv-infrastructure { prefix nfvi; }
-  import ietf-yang-types    { prefix yang; }
-  import ietf-inet-types    { prefix inet; }
+  import ietf-yang-types { prefix yang; }
+  import ietf-inet-types { prefix inet; }
+  import opnfv-iaas { prefix nfvi; }
 
   organization
     "Open Platform for NFV (OPNFV) / Corenova Technologies, Inc.";
@@ -153,7 +153,7 @@ module opnfv-promise {
   }
 
   // EXTEND nfvi module with capacity and reservation facilities
-  augment "/nfvi:stack" {
+  augment "/nfvi:controller" {
 
     container capacity {
       if-feature capacity-management;
@@ -180,7 +180,7 @@ module opnfv-promise {
           uses common-action-output;
           leaf pool-id {
             type leafref {
-              path "/nfvi:stack/prom:pool/prom:id";
+              path "/nfvi:controller/promise:pool/promise:id";
             }
           }
         }
@@ -194,7 +194,7 @@ module opnfv-promise {
           uses common-action-output;
           leaf pool-id {
             type leafref {
-              path "/nfvi:stack/prom:pool/prom:id";
+              path "/nfvi:controller/promise:pool/promise:id";
             }
           }
         }
@@ -270,7 +270,7 @@ module opnfv-promise {
            likely that the total reserved resource capacity/elements are
            made availble from multiple sources.";
         type leafref {
-          path "/nfvi:stack/prom:pool/prom:id";
+          path "/nfvi:controller/promise:pool/promise:id";
         }
       }
 
@@ -290,10 +290,14 @@ module opnfv-promise {
           "Reference to a collection of consumed allocations referencing
            this reservation.";
         type leafref {
-          path "/nfvi:stack/nfvi:compute/nfvi:server/nfvi:id";
+          path "/nfvi:controller/nfvi:compute/nfvi:server/nfvi:id";
         }
       }
 
+      action validate {
+        
+      }
+      
       action create {
         description "Make a request to the reservation system to reserve resources";
         input {
@@ -303,7 +307,7 @@ module opnfv-promise {
           uses common-action-output;
           leaf reservation-id {
             type leafref {
-              path "/nfvi:stack/prom:reservation/prom:id";
+              path "/nfvi:controller/promise:reservation/promise:id";
             }
           }
         }
@@ -314,7 +318,7 @@ module opnfv-promise {
         input {
           leaf reservation-id {
             type leafref {
-              path "/nfvi:stack/prom:reservation/prom:id";
+              path "/nfvi:controller/promise:reservation/promise:id";
             }
             mandatory true;
           }
@@ -330,7 +334,7 @@ module opnfv-promise {
         input {
           leaf reservation-id {
             type leafref {
-              path "/nfvi:stack/prom:reservation/prom:id";
+              path "/nfvi:controller/promise:reservation/promise:id";
             }
             mandatory true;
           }
@@ -350,7 +354,7 @@ module opnfv-promise {
         output {
           leaf-list reservations {
             type leafref {
-              path "/nfvi:stack/prom:reservation/prom:id";
+              path "/nfvi:controller/promise:reservation/promise:id";
             }
           }
           uses utilization-output;
@@ -363,7 +367,7 @@ module opnfv-promise {
     }
   }
 
-  augment "/nfvi:stack/nfvi:compute/nfvi:server" {
+  augment "/nfvi:controller/nfvi:compute/nfvi:server" {
     description
       "A ResourceAllocation record denotes consumption of resources from a
        referenced ResourcePool.
@@ -387,7 +391,7 @@ module opnfv-promise {
       config false;
       description "Reference to an existing reservation identifier (optional)";
       type leafref {
-        path "/nfvi:stack/prom:reservation/prom:id";
+        path "/nfvi:controller/promise:reservation/promise:id";
       }
     }
 
@@ -395,7 +399,7 @@ module opnfv-promise {
       config false;
       description "Reference to an existing resource pool from which allocation is drawn";
       type leafref {
-        path "/nfvi:stack/prom:pool/prom:id";
+        path "/nfvi:controller/promise:pool/promise:id";
       }
     }
 
@@ -412,15 +416,15 @@ module opnfv-promise {
     }
   }
 
-  augment "/nfvi:stack/nfvi:compute/nfvi:server/nfvi:create/nfvi:input" {
+  augment "/nfvi:controller/nfvi:compute/nfvi:server/nfvi:create/nfvi:input" {
     leaf reservation-id {
       type leafref {
-        path "/nfvi:stack/prom:reservation/prom:id";
+        path "/nfvi:controller/promise:reservation/promise:id";
       }
     }
   }
 
-  augment "/nfvi:stack/nfvi:policy" {
+  augment "/nfvi:controller/nfvi:policy" {
     container reservation {
       leaf max-future-start-range {
         description
