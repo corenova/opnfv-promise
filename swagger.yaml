@@ -1191,6 +1191,94 @@ paths:
         type: integer
         format: int64
         description: An index key identifying domain item (may change over time)
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: An index key identifying domain item (may change over time)
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: An index key identifying domain item (may change over time)
+  '/opnfv-iaas:controller/identity/domain/{index}/user/{index}/create':
+    post:
+      summary: Invokes create in user
+      deprecated: false
+      parameters:
+        - name: 'create:input'
+          in: body
+          schema: {}
+          required: false
+      responses:
+        '200':
+          description: Expected response of create
+          schema: {}
+    parameters:
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: An index key identifying user item (may change over time)
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: An index key identifying domain item (may change over time)
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: An index key identifying domain item (may change over time)
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: An index key identifying domain item (may change over time)
+  '/opnfv-iaas:controller/identity/domain/{index}/user/{index}/remove':
+    post:
+      summary: Invokes remove in user
+      deprecated: false
+      parameters:
+        - name: 'remove:input'
+          in: body
+          schema: {}
+          required: false
+      responses:
+        '200':
+          description: Expected response of remove
+          schema: {}
+    parameters:
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: An index key identifying user item (may change over time)
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: An index key identifying domain item (may change over time)
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: An index key identifying domain item (may change over time)
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: An index key identifying domain item (may change over time)
   '/opnfv-iaas:controller/identity/domain/{index}/group':
     post:
       summary: Creates one or more new group in access-domain
@@ -1595,6 +1683,94 @@ paths:
         type: integer
         format: int64
         description: An index key identifying group item (may change over time)
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: An index key identifying domain item (may change over time)
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: An index key identifying domain item (may change over time)
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: An index key identifying domain item (may change over time)
+  '/opnfv-iaas:controller/identity/domain/{index}/group/{index}/create':
+    post:
+      summary: Invokes create in group
+      deprecated: false
+      parameters:
+        - name: 'create:input'
+          in: body
+          schema: {}
+          required: false
+      responses:
+        '200':
+          description: Expected response of create
+          schema: {}
+    parameters:
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: An index key identifying group item (may change over time)
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: An index key identifying domain item (may change over time)
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: An index key identifying domain item (may change over time)
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: An index key identifying domain item (may change over time)
+  '/opnfv-iaas:controller/identity/domain/{index}/group/{index}/remove':
+    post:
+      summary: Invokes remove in group
+      deprecated: false
+      parameters:
+        - name: 'remove:input'
+          in: body
+          schema: {}
+          required: false
+      responses:
+        '200':
+          description: Expected response of remove
+          schema: {}
+    parameters:
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: An index key identifying group item (may change over time)
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: An index key identifying domain item (may change over time)
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: An index key identifying domain item (may change over time)
       - name: index
         in: path
         required: true
@@ -2615,6 +2791,78 @@ paths:
       responses:
         '204':
           description: Expected response for delete
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: A key uniquely identifying server item
+        type: string
+        format: unique-identifier
+  '/opnfv-iaas:controller/compute/server/{id}/create':
+    post:
+      summary: Invokes create in virtual-server
+      deprecated: false
+      parameters:
+        - name: 'create:input'
+          in: body
+          schema:
+            type: object
+            required:
+              - name
+              - flavor
+              - image
+            properties:
+              name:
+                type: string
+                format: string
+              flavor:
+                type: string
+                format: leafref
+              image:
+                type: string
+                format: leafref
+              networks:
+                type: array
+                items:
+                  description: 'optional, will assign default network if not provided'
+                  type: string
+                  format: leafref
+          required: false
+      responses:
+        '200':
+          description: Expected response of create
+          schema:
+            type: object
+            properties:
+              server-id:
+                type: string
+                format: leafref
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: A key uniquely identifying server item
+        type: string
+        format: unique-identifier
+  '/opnfv-iaas:controller/compute/server/{id}/destroy':
+    post:
+      description: Destroy an instance of server allocation
+      summary: Invokes destroy in virtual-server
+      deprecated: false
+      parameters:
+        - name: 'destroy:input'
+          in: body
+          schema:
+            type: object
+            properties:
+              server-id:
+                type: string
+                format: leafref
+          required: false
+      responses:
+        '200':
+          description: Expected response of destroy
+          schema: {}
     parameters:
       - name: id
         in: path
@@ -10329,6 +10577,602 @@ paths:
         description: >-
           An index key identifying opnfv-promise:reservation item (may change
           over time)
+  '/opnfv-iaas:controller/opnfv-promise:reservation/{index}/validate':
+    post:
+      summary: 'Invokes validate in opnfv-promise:reservation'
+      deprecated: false
+      parameters:
+        - name: 'validate:input'
+          in: body
+          schema: {}
+          required: false
+      responses:
+        '200':
+          description: Expected response of validate
+          schema: {}
+    parameters:
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: >-
+          An index key identifying opnfv-promise:reservation item (may change
+          over time)
+  '/opnfv-iaas:controller/opnfv-promise:reservation/{index}/create':
+    post:
+      description: Make a request to the reservation system to reserve resources
+      summary: 'Invokes create in opnfv-promise:reservation'
+      deprecated: false
+      parameters:
+        - name: 'create:input'
+          in: body
+          schema:
+            allOf:
+              - $ref: '#/definitions/resource-usage-request'
+              - $ref: '#/definitions/temporal-resource-collection'
+              - $ref: '#/definitions/nfvi:resource-collection'
+              - properties:
+                  zone:
+                    description: Optional identifier to an Availability Zone
+                    type: string
+                    format: instance-identifier
+                  start:
+                    type: string
+                    format: 'yang:date-and-time'
+                  end:
+                    type: string
+                    format: 'yang:date-and-time'
+                  active:
+                    description: >-
+                      Provides current state of this record whether it is
+                      enabled and within
+
+                      specified start/end time
+                    type: string
+                    format: boolean
+                  capacity:
+                    allOf:
+                      - $ref: '#/definitions/resource-capacity'
+                      - $ref: '#/definitions/compute-capacity'
+                      - $ref: '#/definitions/network-capacity'
+                      - $ref: '#/definitions/storage-capacity'
+                      - properties:
+                          cores:
+                            default: '0'
+                            type: string
+                            format: int16
+                          ram:
+                            default: '0'
+                            type: string
+                            format: int32
+                          instances:
+                            default: '0'
+                            type: string
+                            format: int16
+                          networks:
+                            default: '0'
+                            type: string
+                            format: int16
+                          ports:
+                            default: '0'
+                            type: string
+                            format: int16
+                          routers:
+                            default: '0'
+                            type: string
+                            format: int16
+                          subnets:
+                            default: '0'
+                            type: string
+                            format: int16
+                          addresses:
+                            default: '0'
+                            type: string
+                            format: int32
+                          gigabytes:
+                            default: '0'
+                            type: string
+                            format: int32
+                          snapshots:
+                            default: '0'
+                            type: string
+                            format: int16
+                          volumes:
+                            default: '0'
+                            type: string
+                            format: int16
+                  elements:
+                    type: array
+                    items:
+                      description: >-
+                        Reference to a list of 'pre-existing' resource elements
+                        that are
+
+                        required for fulfillment of the resource-usage-request.
+
+
+                        It can contain any instance derived from
+                        ResourceElement,
+
+                        such as ServerInstances or even other
+
+                        ResourceReservations. If the resource-usage-request is
+
+                        accepted, the ResourceElement(s) listed here will be
+                        placed
+
+                        into 'protected' mode as to prevent accidental removal.
+
+
+                        If any of these resource elements become 'unavailable'
+                        due to
+
+                        environmental or administrative activity, a notification
+                        will
+
+                        be issued informing of the issue.
+                      type: string
+                      format: instance-identifier
+          required: false
+      responses:
+        '200':
+          description: Expected response of create
+          schema:
+            allOf:
+              - $ref: '#/definitions/common-action-output'
+              - properties:
+                  reservation-id:
+                    type: string
+                    format: leafref
+                  result:
+                    type: string
+                    format: enumeration
+                  message:
+                    type: string
+                    format: string
+    parameters:
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: >-
+          An index key identifying opnfv-promise:reservation item (may change
+          over time)
+  '/opnfv-iaas:controller/opnfv-promise:reservation/{index}/update':
+    post:
+      description: Update reservation details for an existing reservation
+      summary: 'Invokes update in opnfv-promise:reservation'
+      deprecated: false
+      parameters:
+        - name: 'update:input'
+          in: body
+          schema:
+            allOf:
+              - $ref: '#/definitions/resource-usage-request'
+              - $ref: '#/definitions/temporal-resource-collection'
+              - $ref: '#/definitions/nfvi:resource-collection'
+              - required:
+                  - reservation-id
+                properties:
+                  reservation-id:
+                    type: string
+                    format: leafref
+                  zone:
+                    description: Optional identifier to an Availability Zone
+                    type: string
+                    format: instance-identifier
+                  start:
+                    type: string
+                    format: 'yang:date-and-time'
+                  end:
+                    type: string
+                    format: 'yang:date-and-time'
+                  active:
+                    description: >-
+                      Provides current state of this record whether it is
+                      enabled and within
+
+                      specified start/end time
+                    type: string
+                    format: boolean
+                  capacity:
+                    allOf:
+                      - $ref: '#/definitions/resource-capacity'
+                      - $ref: '#/definitions/compute-capacity'
+                      - $ref: '#/definitions/network-capacity'
+                      - $ref: '#/definitions/storage-capacity'
+                      - properties:
+                          cores:
+                            default: '0'
+                            type: string
+                            format: int16
+                          ram:
+                            default: '0'
+                            type: string
+                            format: int32
+                          instances:
+                            default: '0'
+                            type: string
+                            format: int16
+                          networks:
+                            default: '0'
+                            type: string
+                            format: int16
+                          ports:
+                            default: '0'
+                            type: string
+                            format: int16
+                          routers:
+                            default: '0'
+                            type: string
+                            format: int16
+                          subnets:
+                            default: '0'
+                            type: string
+                            format: int16
+                          addresses:
+                            default: '0'
+                            type: string
+                            format: int32
+                          gigabytes:
+                            default: '0'
+                            type: string
+                            format: int32
+                          snapshots:
+                            default: '0'
+                            type: string
+                            format: int16
+                          volumes:
+                            default: '0'
+                            type: string
+                            format: int16
+                  elements:
+                    type: array
+                    items:
+                      description: >-
+                        Reference to a list of 'pre-existing' resource elements
+                        that are
+
+                        required for fulfillment of the resource-usage-request.
+
+
+                        It can contain any instance derived from
+                        ResourceElement,
+
+                        such as ServerInstances or even other
+
+                        ResourceReservations. If the resource-usage-request is
+
+                        accepted, the ResourceElement(s) listed here will be
+                        placed
+
+                        into 'protected' mode as to prevent accidental removal.
+
+
+                        If any of these resource elements become 'unavailable'
+                        due to
+
+                        environmental or administrative activity, a notification
+                        will
+
+                        be issued informing of the issue.
+                      type: string
+                      format: instance-identifier
+          required: false
+      responses:
+        '200':
+          description: Expected response of update
+          schema:
+            allOf:
+              - $ref: '#/definitions/common-action-output'
+              - properties:
+                  result:
+                    type: string
+                    format: enumeration
+                  message:
+                    type: string
+                    format: string
+    parameters:
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: >-
+          An index key identifying opnfv-promise:reservation item (may change
+          over time)
+  '/opnfv-iaas:controller/opnfv-promise:reservation/{index}/cancel':
+    post:
+      description: Cancel the reservation and be a good steward
+      summary: 'Invokes cancel in opnfv-promise:reservation'
+      deprecated: false
+      parameters:
+        - name: 'cancel:input'
+          in: body
+          schema:
+            allOf:
+              - $ref: '#/definitions/resource-usage-request'
+              - $ref: '#/definitions/temporal-resource-collection'
+              - $ref: '#/definitions/nfvi:resource-collection'
+              - required:
+                  - reservation-id
+                properties:
+                  reservation-id:
+                    type: string
+                    format: leafref
+                  zone:
+                    description: Optional identifier to an Availability Zone
+                    type: string
+                    format: instance-identifier
+                  start:
+                    type: string
+                    format: 'yang:date-and-time'
+                  end:
+                    type: string
+                    format: 'yang:date-and-time'
+                  active:
+                    description: >-
+                      Provides current state of this record whether it is
+                      enabled and within
+
+                      specified start/end time
+                    type: string
+                    format: boolean
+                  capacity:
+                    allOf:
+                      - $ref: '#/definitions/resource-capacity'
+                      - $ref: '#/definitions/compute-capacity'
+                      - $ref: '#/definitions/network-capacity'
+                      - $ref: '#/definitions/storage-capacity'
+                      - properties:
+                          cores:
+                            default: '0'
+                            type: string
+                            format: int16
+                          ram:
+                            default: '0'
+                            type: string
+                            format: int32
+                          instances:
+                            default: '0'
+                            type: string
+                            format: int16
+                          networks:
+                            default: '0'
+                            type: string
+                            format: int16
+                          ports:
+                            default: '0'
+                            type: string
+                            format: int16
+                          routers:
+                            default: '0'
+                            type: string
+                            format: int16
+                          subnets:
+                            default: '0'
+                            type: string
+                            format: int16
+                          addresses:
+                            default: '0'
+                            type: string
+                            format: int32
+                          gigabytes:
+                            default: '0'
+                            type: string
+                            format: int32
+                          snapshots:
+                            default: '0'
+                            type: string
+                            format: int16
+                          volumes:
+                            default: '0'
+                            type: string
+                            format: int16
+                  elements:
+                    type: array
+                    items:
+                      description: >-
+                        Reference to a list of 'pre-existing' resource elements
+                        that are
+
+                        required for fulfillment of the resource-usage-request.
+
+
+                        It can contain any instance derived from
+                        ResourceElement,
+
+                        such as ServerInstances or even other
+
+                        ResourceReservations. If the resource-usage-request is
+
+                        accepted, the ResourceElement(s) listed here will be
+                        placed
+
+                        into 'protected' mode as to prevent accidental removal.
+
+
+                        If any of these resource elements become 'unavailable'
+                        due to
+
+                        environmental or administrative activity, a notification
+                        will
+
+                        be issued informing of the issue.
+                      type: string
+                      format: instance-identifier
+          required: false
+      responses:
+        '200':
+          description: Expected response of cancel
+          schema:
+            allOf:
+              - $ref: '#/definitions/common-action-output'
+              - properties:
+                  result:
+                    type: string
+                    format: enumeration
+                  message:
+                    type: string
+                    format: string
+    parameters:
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: >-
+          An index key identifying opnfv-promise:reservation item (may change
+          over time)
+  '/opnfv-iaas:controller/opnfv-promise:reservation/{index}/query':
+    post:
+      description: Query the reservation system to return matching reservation(s)
+      summary: 'Invokes query in opnfv-promise:reservation'
+      deprecated: false
+      parameters:
+        - name: 'query:input'
+          in: body
+          schema:
+            allOf:
+              - $ref: '#/definitions/query-resource-collection'
+              - $ref: '#/definitions/query-start-end-window'
+              - properties:
+                  zone:
+                    type: string
+                    format: string
+                  show-utilization:
+                    default: 'true'
+                    type: string
+                    format: boolean
+                  without:
+                    type: array
+                    items:
+                      description: >-
+                        Excludes specified collection identifiers from the
+                        result
+                      type: string
+                      format: instance-identifier
+                  elements:
+                    type: object
+                    properties:
+                      some:
+                        type: array
+                        items:
+                          description: >-
+                            Query for ResourceCollection(s) that contain some or
+                            more of these element(s)
+                          type: string
+                          format: instance-identifier
+                      every:
+                        type: array
+                        items:
+                          description: >-
+                            Query for ResourceCollection(s) that contain all of
+                            these element(s)
+                          type: string
+                          format: instance-identifier
+                  window:
+                    description: >-
+                      Matches entries that are within the specified start/end
+                      time window
+                    type: object
+                    properties:
+                      start:
+                        type: string
+                        format: 'yang:date-and-time'
+                      end:
+                        type: string
+                        format: 'yang:date-and-time'
+                      scope:
+                        default: inclusive
+                        type: string
+                        format: enumeration
+          required: false
+      responses:
+        '200':
+          description: Expected response of query
+          schema:
+            allOf:
+              - $ref: '#/definitions/utilization-output'
+              - properties:
+                  reservations:
+                    type: array
+                    items:
+                      type: string
+                      format: leafref
+                  utilization:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        timestamp:
+                          type: string
+                          format: 'yang:date-and-time'
+                        count:
+                          type: string
+                          format: int16
+                        capacity:
+                          allOf:
+                            - $ref: '#/definitions/nfvi:resource-capacity'
+                            - $ref: '#/definitions/compute-capacity'
+                            - $ref: '#/definitions/network-capacity'
+                            - $ref: '#/definitions/storage-capacity'
+                            - properties:
+                                cores:
+                                  default: '0'
+                                  type: string
+                                  format: int16
+                                ram:
+                                  default: '0'
+                                  type: string
+                                  format: int32
+                                instances:
+                                  default: '0'
+                                  type: string
+                                  format: int16
+                                networks:
+                                  default: '0'
+                                  type: string
+                                  format: int16
+                                ports:
+                                  default: '0'
+                                  type: string
+                                  format: int16
+                                routers:
+                                  default: '0'
+                                  type: string
+                                  format: int16
+                                subnets:
+                                  default: '0'
+                                  type: string
+                                  format: int16
+                                addresses:
+                                  default: '0'
+                                  type: string
+                                  format: int32
+                                gigabytes:
+                                  default: '0'
+                                  type: string
+                                  format: int32
+                                snapshots:
+                                  default: '0'
+                                  type: string
+                                  format: int16
+                                volumes:
+                                  default: '0'
+                                  type: string
+                                  format: int16
+    parameters:
+      - name: index
+        in: path
+        required: true
+        type: integer
+        format: int64
+        description: >-
+          An index key identifying opnfv-promise:reservation item (may change
+          over time)
 definitions:
   'acm:access-domain':
     description: |-
@@ -10387,6 +11231,8 @@ definitions:
   access-identity:
     description: Identity represents an administrative access model entity
     type: object
+    required:
+      - id
     properties:
       id:
         type: string
@@ -10520,6 +11366,8 @@ definitions:
   'acm:access-identity':
     description: Identity represents an administrative access model entity
     type: object
+    required:
+      - id
     properties:
       id:
         type: string
