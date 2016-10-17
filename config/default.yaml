@@ -9,3 +9,17 @@ opnfv-promise:
         max-duration:
         expiry: 600
 
+yang-openapi:info:
+  title: OPNFV Promise
+  description: |
+    **Promise** is a resource reservation and management project to
+    identify NFV related requirements and realize resource
+    reservation for future usage by capacity management of resource
+    pools regarding compute, network and storage.
+  version: '1.0'
+  contact:
+    name: Peter Lee
+    url: 'http://github.com/corenova/opnfv-promise'
+    email: peter@corenova.com
+  license:
+    name: 'Apache-2.0'
