@@ -1,0 +1,370 @@
+module opnfv-iaas {
+  namespace "urn:ietf:params:xml:ns:yang:opnfv-iaas";
+  prefix nfvi;
+  yang-version 1.1;
+
+  import access-control-models { prefix acm; }
+  import ietf-inet-types { prefix inet; }
+  import ietf-yang-types { prefix yang; }
+
+  organization
+    "Open Platform for NFV (OPNFV) / Corenova Technologies, Inc.";
+  
+  contact
+    "Peter K. Lee <peter@corenova.com>";
+
+  description
+    "NFV Infrastructure Data Models representing the various
+     ResourceElements available in the infrastructure across compute,
+     network, and storage.
+
+     Copyright (c) 2016 OPNFV and the persons identified as authors of
+     the code.  All rights reserved.
+
+     Redistribution and use in source and binary forms, with or
+     without modification, is permitted pursuant to, and subject to
+     the license terms of the Apache License, Version 2.0 which
+     accompanies this distribution, and is available at
+     (http://www.apache.org/licenses/LICENSE-2.0).";
+
+  revision 2016-07-07 {
+    description
+      "Updated to remove dependency to complex-types and adopt YANG 1.1";
+  }
+  revision 2015-10-13 {
+    description
+      "Introduce capacity and element collection into NFVI models";
+  }
+  revision 2015-08-07 {
+    description
+      "This YANG module is modeled using 'yangforge' which natively provides
+       complex types and typed instance identifiers. This module
+       provides various collections of resource management data models
+       for instance based management";
+  }
+
+  identity controller {
+    description "used by specific modules implementing controller role for NFVI";
+  }
+  identity release {
+    base controller;
+  }
+  identity distro  {
+    base controller;
+  }
+  identity compute {
+    description "used by specific modules implementing compute role for NFVI";
+    base controller;
+  }
+
+  /*
+   * Groupings
+   */
+  grouping compute-capacity {
+    leaf cores     { type int16; default 0; }
+    leaf ram       { type int32; default 0; units 'MB'; }
+    leaf instances { type int16; default 0; }
+  }
+  grouping network-capacity {
+    leaf networks  { type int16; default 0; }
+    leaf ports     { type int16; default 0; }
+    leaf routers   { type int16; default 0; }
+    leaf subnets   { type int16; default 0; }
+    leaf addresses { type int32; default 0; }
+  }
+  grouping storage-capacity {
+    leaf gigabytes { type int32; default 0; units 'GB'; }
+    leaf snapshots { type int16; default 0; }
+    leaf volumes   { type int16; default 0; }
+  }
+  grouping resource-capacity {
+    uses compute-capacity;
+    uses network-capacity;
+    uses storage-capacity;
+  }
+  grouping resource-element {
+    uses acm:access-identity;
+    leaf protected { type boolean; default false; }
+    leaf owner { type instance-identifier; }
+    leaf visibility {
+      description "Specify visibility level available from the perspective of 'owner'";
+      type enumeration {
+        enum public;
+        enum domain;
+        enum project;
+        enum group;
+        enum user;
+      }
+      default user;
+    }
+    leaf-list tags {
+      type string;
+    }
+    leaf-list members {
+      description "Optionally share with explicit list of members of AccessIdentity complex-type";
+      type instance-identifier {
+        //ct:instance-type acm:Identity;
+      }
+    }
+  }
+  grouping resource-instance {
+    uses resource-element;
+    leaf status {
+      type enumeration {
+        enum active;
+        enum inactive;
+        enum pending;
+      }
+    }
+    leaf progress {
+      type uint8 { range 0..100; }
+      default 0;
+    }
+  }
+  grouping resource-collection {
+    description
+      "Information model capturing parameters for describing a collection of
+       resource capacity and resource elements";
+    
+    container capacity { uses resource-capacity; }
+    leaf-list elements {
+      type instance-identifier {
+        //ct:instance-type nfvi:ResourceElement;
+        require-instance true;
+      }
+    }
+  }
+  grouping compute-host {
+    uses resource-element;
+    leaf type { type string; }
+    leaf version { type string; }
+    leaf cpu { type uint8; }
+    leaf workload { type uint8; default 0; }
+    leaf uptime { type string; }
+    container ram {
+      leaf total { type uint32; units 'MB'; }
+      leaf used { type uint32; units 'MB'; }
+      leaf free { type uint32; units 'MB'; }
+    }
+    container disk {
+      leaf total { type uint32; units 'GB'; }
+      leaf used { type uint32; units 'GB'; }
+      leaf free { type uint32; units 'GB'; }
+    }
+    list hypervisor {
+      container vcpu {
+        leaf total { type uint16; }
+        leaf used  { type uint16; }
+        leaf free  { type uint16; }
+      }
+      leaf-list servers {
+        type leafref {
+          path "/nfvi:controller/nfvi:compute/nfvi:server/nfvi:id";
+        }
+      }
+    }
+  }
+  grouping virtual-server {
+    uses resource-instance;
+    leaf flavor {
+      config false;
+      type leafref {
+        path "/nfvi:controller/compute/flavor/id";
+      }
+    }
+    leaf image {
+      config false;
+      type leafref {
+        path "/nfvi:controller/compute/image/id";
+      }
+    }
+    leaf host {
+      config false;
+      type leafref {
+        path "/nfvi:controller/compute/host/id";
+      }
+    }
+    leaf metadata {
+      type binary;
+    }
+    // leaf-list connections {
+    //   description
+    //     "References to collection of NetworkingElement class objects such as
+    //      Network, Subnet, Port, Router that this ServerInstance is
+    //      connected with.";
+    //   type instance-identifier { ct:instance-type NetworkElement; }
+    // }
+    action create {
+      input {
+        leaf name {
+          type string;
+          mandatory true;
+        }
+        leaf flavor {
+          type leafref {
+            path "/nfvi:controller/compute/flavor/id";
+          }
+          mandatory true;
+        }
+        leaf image {
+          type leafref {
+            path "/nfvi:controller/compute/image/id";
+          }
+          mandatory true;
+        }
+        leaf-list networks {
+          type leafref {
+            path "/nfvi:controller/fabric/network/id";
+          }
+          description "optional, will assign default network if not provided";
+        }
+      }
+      output {
+        leaf server-id {
+          type leafref {
+            path "/nfvi:controller/compute/server/id";
+          }
+        }
+      }
+    }
+    action destroy {
+      description "Destroy an instance of server allocation";
+      input {
+        leaf server-id {
+          type leafref {
+            path "/nfvi:controller/compute/server/id";
+          }
+        }
+      }
+    }
+  }
+  grouping server-image {
+    uses resource-element;
+    leaf checksum {
+      type string;
+      mandatory true;
+    }
+    leaf size {
+      type uint32;
+      units 'Bytes';
+      mandatory true;
+    }
+    container format {
+      leaf container {
+        type enumeration { enum ami; enum ari; enum aki; enum bare; enum ovf; }
+        default bare;
+      }
+      leaf disk {
+        type enumeration { enum ami; enum ari; enum aki; enum vhd; enum vmdk; enum raw; enum qcow2; enum vdi; enum iso; }
+        default raw;
+      }
+    }
+    leaf content {
+      description "should be a 'private' property so only direct access retrieves content";
+      type union {
+        type binary;
+        type inet:uri;
+      }
+      mandatory true;
+    }
+    container constraint {
+      leaf disk { type uint32; units 'GB'; default 0; }
+      leaf ram  { type uint32; units 'MB'; default 0; }
+      leaf vcpu { type uint16; default 0; }
+    }
+  }
+  grouping resource-flavor {
+    uses resource-element;
+    leaf disk  { type uint32; units 'GB'; default 0; }
+    leaf ram   { type uint32; units 'MB'; default 0; }
+    leaf vcpus { type uint16; default 0; }
+  }
+
+  /*
+   * Configuration Data Nodes
+   */
+  container controller {
+    description
+      "Information model describing a NFVI resource stack comprising of
+       various resource elements across compute, network, and storage";
+
+    container identity {
+      list domain {
+        uses acm:access-domain;
+      }
+    }
+    container compute {
+      description
+        "Contains compute related resources";
+      container capacity {
+        uses compute-capacity;
+      }
+      list host {
+        key id;
+        uses nfvi:compute-host;
+      }
+      list server {
+        key id;
+        uses nfvi:virtual-server;
+      }
+      list image {
+        key id;
+        uses nfvi:server-image;
+      }
+      list flavor {
+        key id;
+        uses nfvi:resource-flavor;
+      }
+    }
+    container fabric {
+      description
+        "Contains networking related resources";
+      container capacity {
+        uses network-capacity;
+      }
+      list network {
+        key id;
+        uses resource-element;
+
+        list subnet {
+          key id;
+          uses resource-element;
+          
+          leaf-list nameservers {
+            type string;
+          }
+          container dhcp {
+            leaf enabled { type boolean; }
+            list pool {
+              leaf start { type inet:ip-address; }
+              leaf end   { type inet:ip-address; }
+            }
+          }
+          list port {
+            key id;
+            uses resource-element;
+            // TBD
+          }
+        }
+      }
+      list router {
+        key id;
+        uses resource-instance;
+        // TBD
+      }
+    }
+    container storage {
+      description
+        "Contains storage related resources";
+      container capacity {
+        uses storage-capacity;
+      }
+      // TBD
+    }
+    container policy {
+      description
+        "Contains NFVI policy configurations";
+      // augmented by feature modules
+    }
+  }
+}

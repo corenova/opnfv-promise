@@ -6,9 +6,12 @@
 # which accompanies this distribution, and is available at
 # http://www.apache.org/licenses/LICENSE-2.0
 #
-request = require 'superagent'
 
-module.exports =
-  'create-tenant':
-    (input, output, done) ->
-      # TODO - this requires OS-KSADM extension
+require('yang-js')
+uuid = require('node-uuid').v4
+
+module.exports = require('../schema/opnfv-iaas.yang').bind {
+  
+  '/{resource-element}/id': -> @content ?= uuid()
+
+}

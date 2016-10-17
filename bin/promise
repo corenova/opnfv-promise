@@ -1,0 +1,35 @@
+#!/usr/bin/env node
+
+var argv = require('minimist')(process.argv.slice(2), {
+  boolean: [ 'help' ],
+  alias: {
+    help: 'h',
+	port: 'p',
+  }
+});
+
+if (argv.h === true) {
+  var help;
+  help  = "  Usage: promise [options] modules...\n\n";
+  help += "  Options:\n";
+  help += "    -p, --port <number>   Run Promise on <port>\n";
+  console.info(help);
+  process.exit();
+}
+
+var config = require('config');
+var express = require('yang-express').eval(config);
+var yaml = require('js-yaml');
+
+argv.modules = [ 'opnfv-iaas' ].concat(argv._)
+argv.feature = [ 'restjson', 'openapi' ]
+
+express.in('run')
+  .invoke(argv)
+  .then(function (res) {
+    console.info("Promise running...");
+    console.info(yaml.dump(res));
+  })
+  .catch(function (err) {
+    console.error(err);
+  });

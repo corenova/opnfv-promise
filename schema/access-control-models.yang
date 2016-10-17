@@ -1,14 +1,28 @@
 module access-control-models {
-  prefix acm;
+  yang-version 1.1;
   namespace "urn:opnfv:promise:acm";
+  prefix acm;
 
-  import complex-types { prefix ct; }
   import ietf-yang-types { prefix yang; }
   import ietf-inet-types { prefix inet; }
 
+  revision 2016-07-07 {
+    description
+      "Updated to remove dependency to complex-types and adopt YANG 1.1";
+  }
+  
   typedef password {
     type string {
       length 1..255;
+    }
+  }
+
+  typedef unique-identifier {
+    description "defines valid formats for external reference id";
+    type union {
+      type uint32;
+      type yang:uuid;
+      type inet:uri;
     }
   }
 
@@ -16,7 +30,6 @@ module access-control-models {
     leaf strategy {
       type enumeration {
         enum oauth;
-        enum keystone;
       }
       default oauth;
     }
@@ -35,58 +48,62 @@ module access-control-models {
     }
   }
   
-  /*********************************************
-   * Identity Models
-   *********************************************/
-
-  ct:complex-type Identity {
-    ct:abstract true;
+  grouping access-identity {
     description "Identity represents an administrative access model entity";
 
-    key "id";
-    leaf id { type yang:uuid; mandatory true; }
-    leaf name { type string; mandatory true; }
+    leaf id { type unique-identifier; mandatory true; }
+    leaf name { type string; }
     leaf description { type string; }
     leaf enabled { type boolean; default true; }
   }
 
-  ct:complex-type User {
-    ct:extends Identity;
-
-    leaf credential {
-      //type instance-identifier { ct:instance-type IdentityCredential; }
-      type string;
-      mandatory true;
-    }
+  grouping access-domain {
+    uses access-identity;
     
-    container contact {
-      leaf fullName { type string; }
-      leaf email { type string; }
-    }
-
-    leaf-list groups { type instance-identifer { ct:instance-type Group; } }
-    leaf domain { type instance-identifier { ct:instance-type Domain; } }
-  }
-
-  ct:complex-type Group {
-    ct:extends Identity;
-    
-    leaf-list users { type instance-identifier { ct:instance-type User; } }
-    leaf domain { type instance-identifier { ct:instance-type Domain; } }
-  }
-
-  ct:complex-type Domain {
-    ct:extends Identity;
     description
       "Domain represent a distinct administrative domain across
        collection of users and groups.";
 
-    ct:instance-list users { ct:instance-type User; }
-    ct:instance-list groups { ct:instance-type Group; }
+    list user {
+      uses access-identity;
+      
+      leaf credential {
+        type string;
+        mandatory true;
+      }
+    
+      leaf fullName { type string; }
+      leaf email { type string; }
+      
+      leaf-list groups {
+        type leafref {
+          path "../../group/id";
+        }
+      }
+      leaf domain {
+        config false;
+        type leafref {
+          path "../../id";
+        }
+      }
+      action create;
+      action remove;
+    }
+    list group {
+      uses access-identity;
+      leaf-list users {
+        type leafref {
+          path "../../user/id";
+        }
+      }
+      leaf domain {
+        config false;
+        type leafref {
+          path "../../id";
+        }
+      }
+      action create;
+      action remove;
+    }
   }
-
-  rpc create-user;
-  rpc remove-user;
-  rpc create-group;
-  rpc remove-group;
 }

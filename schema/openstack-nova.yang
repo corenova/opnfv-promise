@@ -1,0 +1,83 @@
+module openstack-nova {
+  yang-version 1.1;
+  namespace "urn:opnfv:promise:openstack:compute:nova";
+  prefix nova;
+
+  import nfv-infrastructure { prefix nfvi; }
+
+  revision 2016-07-07 {
+    description
+      "Updated to remove dependency to complex-types and adopt YANG 1.1";
+  }
+  
+  identity nova { base nfvi:compute; }
+  
+  feature availability-zone {
+    description "Specifies whether availability zone functionality is available.";
+  }
+  feature extended-status {
+    description "Specifies whether extended status functionality is available.";
+  }
+  feature security-groups {
+    description "Specifies whether security groups functionality is available.";
+  }
+
+  augment "/nfvi:stack/nfvi:compute" {
+    if-feature security-groups;
+    list security-group {
+      uses nfvi:resource-element;
+      // TBD
+    }
+  }
+  
+  augment "/nfvi:stack/nfvi:compute/nfvi:server" {
+    leaf zone {
+      if-feature availability-zone;
+      type string;
+    }
+
+    leaf project {
+      type instance-identifier;
+      mandatory true;
+    }
+
+    container extended-status {
+      if-feature extended-status;
+      leaf locked-by;
+      leaf power;
+      leaf task;
+      leaf vm;
+    }
+
+    leaf-list security-groups {
+      if-feature security-groups;
+      type leafref {
+        path "../../security-group/id";
+      }
+    }
+
+    // OpenStack Nova specific RPC calls
+    action resize {
+      input {
+        leaf server-id {
+          type leafref {
+            path "/nfvi:stack/nfvi:compute/nfvi:server/nfvi:id";
+          }
+        }
+        // other params for resize
+      }
+    }
+    action backup;
+    action migrate;
+    action restore;
+    action evacuate;
+    action lock;
+    action unlock;
+    action suspend;
+    action resume;
+    action pause;
+    action unpause;
+    action inject-network;
+    action reset-network;
+  }
+}

@@ -6,23 +6,8 @@
 # which accompanies this distribution, and is available at
 # http://www.apache.org/licenses/LICENSE-2.0
 #
+app    = require '..'
 config = require 'config'
-assert = require 'assert'
-forge  = require 'yangforge'
-app = forge.load '!yaml ../promise.yaml', async: false, pkgdir: __dirname
-
-# this is javascript promise framework and not related to opnfv-promise
-promise = require 'promise'
-
-if process.env.DEBUG
-  debug = console.log
-else
-  debug = ->
-
-# in the future with YF 0.12.x
-# app = forge.load('..').build('test')
-# app.set config
-# app.use 'proxy', target: x.x.x.x:5050, interface: 'restjson'
 
 describe "promise", ->
   before ->
@@ -31,7 +16,6 @@ describe "promise", ->
       config.get 'openstack.auth.endpoint'
     catch e
       throw new Error "missing OpenStack environmental variables"
-
 
   # below 'provider' is used across test suites
   provider = undefined
@@ -64,7 +48,6 @@ describe "promise", ->
   #     # upload a new test image
 
 
-
   # Test Scenario 01
   describe "register OpenStack into resource pool", ->
     pool = undefined
@@ -77,7 +60,7 @@ describe "promise", ->
         auth = config.get 'openstack.auth'
         auth['provider-type'] = 'openstack'
 
-        app.access('opnfv-promise').invoke 'add-provider', auth
+        app['add-provider'](auth)
         .then (res) ->
           res.get('result').should.equal 'ok'
           provider = id: res.get('provider-id')
