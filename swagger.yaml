@@ -4496,9 +4496,6 @@ paths:
                   total:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -4547,9 +4544,6 @@ paths:
                   reserved:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -4598,9 +4592,6 @@ paths:
                   usage:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -4649,9 +4640,6 @@ paths:
                   available:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -4787,9 +4775,6 @@ paths:
                                     capacity:
                                       allOf:
                                         - $ref: '#/definitions/promise:resource-capacity'
-                                        - $ref: '#/definitions/promise:compute-capacity'
-                                        - $ref: '#/definitions/promise:network-capacity'
-                                        - $ref: '#/definitions/promise:storage-capacity'
                                         - properties:
                                             cores:
                                               default: '0'
@@ -4845,7 +4830,6 @@ paths:
                         window
                       allOf:
                         - $ref: '#/definitions/promise:temporal-resource-collection'
-                        - $ref: '#/definitions/promise:resource-collection'
                         - properties:
                             id:
                               type: string
@@ -4867,9 +4851,6 @@ paths:
                             capacity:
                               allOf:
                                 - $ref: '#/definitions/promise:resource-capacity'
-                                - $ref: '#/definitions/promise:compute-capacity'
-                                - $ref: '#/definitions/promise:network-capacity'
-                                - $ref: '#/definitions/promise:storage-capacity'
                                 - properties:
                                     cores:
                                       default: '0'
@@ -4951,7 +4932,6 @@ paths:
                         available at the time of allocation(s).
                       allOf:
                         - $ref: '#/definitions/promise:temporal-resource-collection'
-                        - $ref: '#/definitions/promise:resource-collection'
                         - properties:
                             id:
                               type: string
@@ -4987,9 +4967,6 @@ paths:
                                 this reservation ID as a reference.
                               allOf:
                                 - $ref: '#/definitions/promise:resource-capacity'
-                                - $ref: '#/definitions/promise:compute-capacity'
-                                - $ref: '#/definitions/promise:network-capacity'
-                                - $ref: '#/definitions/promise:storage-capacity'
                                 - properties:
                                     cores:
                                       default: '0'
@@ -5038,9 +5015,6 @@ paths:
                             capacity:
                               allOf:
                                 - $ref: '#/definitions/promise:resource-capacity'
-                                - $ref: '#/definitions/promise:compute-capacity'
-                                - $ref: '#/definitions/promise:network-capacity'
-                                - $ref: '#/definitions/promise:storage-capacity'
                                 - properties:
                                     cores:
                                       default: '0'
@@ -5157,9 +5131,6 @@ paths:
                   total:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -5208,9 +5179,6 @@ paths:
                   reserved:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -5259,9 +5227,6 @@ paths:
                   usage:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -5310,9 +5275,6 @@ paths:
                   available:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -5448,9 +5410,6 @@ paths:
                                     capacity:
                                       allOf:
                                         - $ref: '#/definitions/promise:resource-capacity'
-                                        - $ref: '#/definitions/promise:compute-capacity'
-                                        - $ref: '#/definitions/promise:network-capacity'
-                                        - $ref: '#/definitions/promise:storage-capacity'
                                         - properties:
                                             cores:
                                               default: '0'
@@ -5506,7 +5465,6 @@ paths:
                         window
                       allOf:
                         - $ref: '#/definitions/promise:temporal-resource-collection'
-                        - $ref: '#/definitions/promise:resource-collection'
                         - properties:
                             id:
                               type: string
@@ -5528,9 +5486,6 @@ paths:
                             capacity:
                               allOf:
                                 - $ref: '#/definitions/promise:resource-capacity'
-                                - $ref: '#/definitions/promise:compute-capacity'
-                                - $ref: '#/definitions/promise:network-capacity'
-                                - $ref: '#/definitions/promise:storage-capacity'
                                 - properties:
                                     cores:
                                       default: '0'
@@ -5612,7 +5567,6 @@ paths:
                         available at the time of allocation(s).
                       allOf:
                         - $ref: '#/definitions/promise:temporal-resource-collection'
-                        - $ref: '#/definitions/promise:resource-collection'
                         - properties:
                             id:
                               type: string
@@ -5648,9 +5602,6 @@ paths:
                                 this reservation ID as a reference.
                               allOf:
                                 - $ref: '#/definitions/promise:resource-capacity'
-                                - $ref: '#/definitions/promise:compute-capacity'
-                                - $ref: '#/definitions/promise:network-capacity'
-                                - $ref: '#/definitions/promise:storage-capacity'
                                 - properties:
                                     cores:
                                       default: '0'
@@ -5699,9 +5650,6 @@ paths:
                             capacity:
                               allOf:
                                 - $ref: '#/definitions/promise:resource-capacity'
-                                - $ref: '#/definitions/promise:compute-capacity'
-                                - $ref: '#/definitions/promise:network-capacity'
-                                - $ref: '#/definitions/promise:storage-capacity'
                                 - properties:
                                     cores:
                                       default: '0'
@@ -5815,9 +5763,6 @@ paths:
                   total:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -5866,9 +5811,6 @@ paths:
                   reserved:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -5917,9 +5859,6 @@ paths:
                   usage:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -5968,9 +5907,6 @@ paths:
                   available:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -6106,9 +6042,6 @@ paths:
                                     capacity:
                                       allOf:
                                         - $ref: '#/definitions/promise:resource-capacity'
-                                        - $ref: '#/definitions/promise:compute-capacity'
-                                        - $ref: '#/definitions/promise:network-capacity'
-                                        - $ref: '#/definitions/promise:storage-capacity'
                                         - properties:
                                             cores:
                                               default: '0'
@@ -6164,7 +6097,6 @@ paths:
                         window
                       allOf:
                         - $ref: '#/definitions/promise:temporal-resource-collection'
-                        - $ref: '#/definitions/promise:resource-collection'
                         - properties:
                             id:
                               type: string
@@ -6186,9 +6118,6 @@ paths:
                             capacity:
                               allOf:
                                 - $ref: '#/definitions/promise:resource-capacity'
-                                - $ref: '#/definitions/promise:compute-capacity'
-                                - $ref: '#/definitions/promise:network-capacity'
-                                - $ref: '#/definitions/promise:storage-capacity'
                                 - properties:
                                     cores:
                                       default: '0'
@@ -6270,7 +6199,6 @@ paths:
                         available at the time of allocation(s).
                       allOf:
                         - $ref: '#/definitions/promise:temporal-resource-collection'
-                        - $ref: '#/definitions/promise:resource-collection'
                         - properties:
                             id:
                               type: string
@@ -6306,9 +6234,6 @@ paths:
                                 this reservation ID as a reference.
                               allOf:
                                 - $ref: '#/definitions/promise:resource-capacity'
-                                - $ref: '#/definitions/promise:compute-capacity'
-                                - $ref: '#/definitions/promise:network-capacity'
-                                - $ref: '#/definitions/promise:storage-capacity'
                                 - properties:
                                     cores:
                                       default: '0'
@@ -6357,9 +6282,6 @@ paths:
                             capacity:
                               allOf:
                                 - $ref: '#/definitions/promise:resource-capacity'
-                                - $ref: '#/definitions/promise:compute-capacity'
-                                - $ref: '#/definitions/promise:network-capacity'
-                                - $ref: '#/definitions/promise:storage-capacity'
                                 - properties:
                                     cores:
                                       default: '0'
@@ -6476,9 +6398,6 @@ paths:
                   total:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -6527,9 +6446,6 @@ paths:
                   reserved:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -6578,9 +6494,6 @@ paths:
                   usage:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -6629,9 +6542,6 @@ paths:
                   available:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -6767,9 +6677,6 @@ paths:
                                     capacity:
                                       allOf:
                                         - $ref: '#/definitions/promise:resource-capacity'
-                                        - $ref: '#/definitions/promise:compute-capacity'
-                                        - $ref: '#/definitions/promise:network-capacity'
-                                        - $ref: '#/definitions/promise:storage-capacity'
                                         - properties:
                                             cores:
                                               default: '0'
@@ -6825,7 +6732,6 @@ paths:
                         window
                       allOf:
                         - $ref: '#/definitions/promise:temporal-resource-collection'
-                        - $ref: '#/definitions/promise:resource-collection'
                         - properties:
                             id:
                               type: string
@@ -6847,9 +6753,6 @@ paths:
                             capacity:
                               allOf:
                                 - $ref: '#/definitions/promise:resource-capacity'
-                                - $ref: '#/definitions/promise:compute-capacity'
-                                - $ref: '#/definitions/promise:network-capacity'
-                                - $ref: '#/definitions/promise:storage-capacity'
                                 - properties:
                                     cores:
                                       default: '0'
@@ -6931,7 +6834,6 @@ paths:
                         available at the time of allocation(s).
                       allOf:
                         - $ref: '#/definitions/promise:temporal-resource-collection'
-                        - $ref: '#/definitions/promise:resource-collection'
                         - properties:
                             id:
                               type: string
@@ -6967,9 +6869,6 @@ paths:
                                 this reservation ID as a reference.
                               allOf:
                                 - $ref: '#/definitions/promise:resource-capacity'
-                                - $ref: '#/definitions/promise:compute-capacity'
-                                - $ref: '#/definitions/promise:network-capacity'
-                                - $ref: '#/definitions/promise:storage-capacity'
                                 - properties:
                                     cores:
                                       default: '0'
@@ -7018,9 +6917,6 @@ paths:
                             capacity:
                               allOf:
                                 - $ref: '#/definitions/promise:resource-capacity'
-                                - $ref: '#/definitions/promise:compute-capacity'
-                                - $ref: '#/definitions/promise:network-capacity'
-                                - $ref: '#/definitions/promise:storage-capacity'
                                 - properties:
                                     cores:
                                       default: '0'
@@ -7134,9 +7030,6 @@ paths:
                   total:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -7185,9 +7078,6 @@ paths:
                   reserved:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -7236,9 +7126,6 @@ paths:
                   usage:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -7287,9 +7174,6 @@ paths:
                   available:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -7425,9 +7309,6 @@ paths:
                                     capacity:
                                       allOf:
                                         - $ref: '#/definitions/promise:resource-capacity'
-                                        - $ref: '#/definitions/promise:compute-capacity'
-                                        - $ref: '#/definitions/promise:network-capacity'
-                                        - $ref: '#/definitions/promise:storage-capacity'
                                         - properties:
                                             cores:
                                               default: '0'
@@ -7483,7 +7364,6 @@ paths:
                         window
                       allOf:
                         - $ref: '#/definitions/promise:temporal-resource-collection'
-                        - $ref: '#/definitions/promise:resource-collection'
                         - properties:
                             id:
                               type: string
@@ -7505,9 +7385,6 @@ paths:
                             capacity:
                               allOf:
                                 - $ref: '#/definitions/promise:resource-capacity'
-                                - $ref: '#/definitions/promise:compute-capacity'
-                                - $ref: '#/definitions/promise:network-capacity'
-                                - $ref: '#/definitions/promise:storage-capacity'
                                 - properties:
                                     cores:
                                       default: '0'
@@ -7589,7 +7466,6 @@ paths:
                         available at the time of allocation(s).
                       allOf:
                         - $ref: '#/definitions/promise:temporal-resource-collection'
-                        - $ref: '#/definitions/promise:resource-collection'
                         - properties:
                             id:
                               type: string
@@ -7625,9 +7501,6 @@ paths:
                                 this reservation ID as a reference.
                               allOf:
                                 - $ref: '#/definitions/promise:resource-capacity'
-                                - $ref: '#/definitions/promise:compute-capacity'
-                                - $ref: '#/definitions/promise:network-capacity'
-                                - $ref: '#/definitions/promise:storage-capacity'
                                 - properties:
                                     cores:
                                       default: '0'
@@ -7676,9 +7549,6 @@ paths:
                             capacity:
                               allOf:
                                 - $ref: '#/definitions/promise:resource-capacity'
-                                - $ref: '#/definitions/promise:compute-capacity'
-                                - $ref: '#/definitions/promise:network-capacity'
-                                - $ref: '#/definitions/promise:storage-capacity'
                                 - properties:
                                     cores:
                                       default: '0'
@@ -7796,9 +7666,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -7853,9 +7720,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -7908,9 +7772,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -7965,9 +7826,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -8020,9 +7878,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -8084,9 +7939,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -8141,9 +7993,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -8196,9 +8045,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -8253,9 +8099,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -8308,9 +8151,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -8372,9 +8212,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -8429,9 +8266,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -8484,9 +8318,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -8541,9 +8372,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -8596,9 +8424,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -8660,9 +8485,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -8717,9 +8539,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -8772,9 +8591,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -8829,9 +8645,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -8884,9 +8697,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -8951,7 +8761,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:temporal-resource-collection'
-              - $ref: '#/definitions/promise:resource-collection'
               - properties:
                   start:
                     type: string
@@ -8970,9 +8779,6 @@ paths:
                   capacity:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -9053,7 +8859,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:temporal-resource-collection'
-              - $ref: '#/definitions/promise:resource-collection'
               - properties:
                   start:
                     type: string
@@ -9072,9 +8877,6 @@ paths:
                   capacity:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -9153,8 +8955,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-usage-request'
-              - $ref: '#/definitions/promise:temporal-resource-collection'
-              - $ref: '#/definitions/promise:resource-collection'
               - properties:
                   zone:
                     description: Optional identifier to an Availability Zone
@@ -9177,9 +8977,6 @@ paths:
                   capacity:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -9367,9 +9164,6 @@ paths:
                         capacity:
                           allOf:
                             - $ref: '#/definitions/promise:resource-capacity'
-                            - $ref: '#/definitions/promise:compute-capacity'
-                            - $ref: '#/definitions/promise:network-capacity'
-                            - $ref: '#/definitions/promise:storage-capacity'
                             - properties:
                                 cores:
                                   default: '0'
@@ -9440,7 +9234,6 @@ paths:
                 window
               allOf:
                 - $ref: '#/definitions/promise:temporal-resource-collection'
-                - $ref: '#/definitions/promise:resource-collection'
                 - properties:
                     id:
                       type: string
@@ -9462,9 +9255,6 @@ paths:
                     capacity:
                       allOf:
                         - $ref: '#/definitions/promise:resource-capacity'
-                        - $ref: '#/definitions/promise:compute-capacity'
-                        - $ref: '#/definitions/promise:network-capacity'
-                        - $ref: '#/definitions/promise:storage-capacity'
                         - properties:
                             cores:
                               default: '0'
@@ -9529,7 +9319,6 @@ paths:
                 window
               allOf:
                 - $ref: '#/definitions/promise:temporal-resource-collection'
-                - $ref: '#/definitions/promise:resource-collection'
                 - properties:
                     id:
                       type: string
@@ -9551,9 +9340,6 @@ paths:
                     capacity:
                       allOf:
                         - $ref: '#/definitions/promise:resource-capacity'
-                        - $ref: '#/definitions/promise:compute-capacity'
-                        - $ref: '#/definitions/promise:network-capacity'
-                        - $ref: '#/definitions/promise:storage-capacity'
                         - properties:
                             cores:
                               default: '0'
@@ -9620,7 +9406,6 @@ paths:
                 window
               allOf:
                 - $ref: '#/definitions/promise:temporal-resource-collection'
-                - $ref: '#/definitions/promise:resource-collection'
                 - properties:
                     id:
                       type: string
@@ -9642,9 +9427,6 @@ paths:
                     capacity:
                       allOf:
                         - $ref: '#/definitions/promise:resource-capacity'
-                        - $ref: '#/definitions/promise:compute-capacity'
-                        - $ref: '#/definitions/promise:network-capacity'
-                        - $ref: '#/definitions/promise:storage-capacity'
                         - properties:
                             cores:
                               default: '0'
@@ -9716,7 +9498,6 @@ paths:
                 window
               allOf:
                 - $ref: '#/definitions/promise:temporal-resource-collection'
-                - $ref: '#/definitions/promise:resource-collection'
                 - properties:
                     id:
                       type: string
@@ -9738,9 +9519,6 @@ paths:
                     capacity:
                       allOf:
                         - $ref: '#/definitions/promise:resource-capacity'
-                        - $ref: '#/definitions/promise:compute-capacity'
-                        - $ref: '#/definitions/promise:network-capacity'
-                        - $ref: '#/definitions/promise:storage-capacity'
                         - properties:
                             cores:
                               default: '0'
@@ -9816,7 +9594,6 @@ paths:
                 window
               allOf:
                 - $ref: '#/definitions/promise:temporal-resource-collection'
-                - $ref: '#/definitions/promise:resource-collection'
                 - properties:
                     id:
                       type: string
@@ -9838,9 +9615,6 @@ paths:
                     capacity:
                       allOf:
                         - $ref: '#/definitions/promise:resource-capacity'
-                        - $ref: '#/definitions/promise:compute-capacity'
-                        - $ref: '#/definitions/promise:network-capacity'
-                        - $ref: '#/definitions/promise:storage-capacity'
                         - properties:
                             cores:
                               default: '0'
@@ -9913,7 +9687,6 @@ paths:
               window
             allOf:
               - $ref: '#/definitions/promise:temporal-resource-collection'
-              - $ref: '#/definitions/promise:resource-collection'
               - properties:
                   id:
                     type: string
@@ -9935,9 +9708,6 @@ paths:
                   capacity:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -10007,7 +9777,6 @@ paths:
               window
             allOf:
               - $ref: '#/definitions/promise:temporal-resource-collection'
-              - $ref: '#/definitions/promise:resource-collection'
               - properties:
                   id:
                     type: string
@@ -10029,9 +9798,6 @@ paths:
                   capacity:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -10094,7 +9860,6 @@ paths:
               window
             allOf:
               - $ref: '#/definitions/promise:temporal-resource-collection'
-              - $ref: '#/definitions/promise:resource-collection'
               - properties:
                   id:
                     type: string
@@ -10116,9 +9881,6 @@ paths:
                   capacity:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -10188,7 +9950,6 @@ paths:
               window
             allOf:
               - $ref: '#/definitions/promise:temporal-resource-collection'
-              - $ref: '#/definitions/promise:resource-collection'
               - properties:
                   id:
                     type: string
@@ -10210,9 +9971,6 @@ paths:
                   capacity:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -10275,7 +10033,6 @@ paths:
               window
             allOf:
               - $ref: '#/definitions/promise:temporal-resource-collection'
-              - $ref: '#/definitions/promise:resource-collection'
               - properties:
                   id:
                     type: string
@@ -10297,9 +10054,6 @@ paths:
                   capacity:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -10373,9 +10127,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -10430,9 +10181,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -10485,9 +10233,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -10542,9 +10287,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -10597,9 +10339,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -10724,7 +10463,6 @@ paths:
                 available at the time of allocation(s).
               allOf:
                 - $ref: '#/definitions/promise:temporal-resource-collection'
-                - $ref: '#/definitions/promise:resource-collection'
                 - properties:
                     id:
                       type: string
@@ -10760,9 +10498,6 @@ paths:
                         this reservation ID as a reference.
                       allOf:
                         - $ref: '#/definitions/promise:resource-capacity'
-                        - $ref: '#/definitions/promise:compute-capacity'
-                        - $ref: '#/definitions/promise:network-capacity'
-                        - $ref: '#/definitions/promise:storage-capacity'
                         - properties:
                             cores:
                               default: '0'
@@ -10811,9 +10546,6 @@ paths:
                     capacity:
                       allOf:
                         - $ref: '#/definitions/promise:resource-capacity'
-                        - $ref: '#/definitions/promise:compute-capacity'
-                        - $ref: '#/definitions/promise:network-capacity'
-                        - $ref: '#/definitions/promise:storage-capacity'
                         - properties:
                             cores:
                               default: '0'
@@ -10941,7 +10673,6 @@ paths:
                 available at the time of allocation(s).
               allOf:
                 - $ref: '#/definitions/promise:temporal-resource-collection'
-                - $ref: '#/definitions/promise:resource-collection'
                 - properties:
                     id:
                       type: string
@@ -10977,9 +10708,6 @@ paths:
                         this reservation ID as a reference.
                       allOf:
                         - $ref: '#/definitions/promise:resource-capacity'
-                        - $ref: '#/definitions/promise:compute-capacity'
-                        - $ref: '#/definitions/promise:network-capacity'
-                        - $ref: '#/definitions/promise:storage-capacity'
                         - properties:
                             cores:
                               default: '0'
@@ -11028,9 +10756,6 @@ paths:
                     capacity:
                       allOf:
                         - $ref: '#/definitions/promise:resource-capacity'
-                        - $ref: '#/definitions/promise:compute-capacity'
-                        - $ref: '#/definitions/promise:network-capacity'
-                        - $ref: '#/definitions/promise:storage-capacity'
                         - properties:
                             cores:
                               default: '0'
@@ -11160,7 +10885,6 @@ paths:
                 available at the time of allocation(s).
               allOf:
                 - $ref: '#/definitions/promise:temporal-resource-collection'
-                - $ref: '#/definitions/promise:resource-collection'
                 - properties:
                     id:
                       type: string
@@ -11196,9 +10920,6 @@ paths:
                         this reservation ID as a reference.
                       allOf:
                         - $ref: '#/definitions/promise:resource-capacity'
-                        - $ref: '#/definitions/promise:compute-capacity'
-                        - $ref: '#/definitions/promise:network-capacity'
-                        - $ref: '#/definitions/promise:storage-capacity'
                         - properties:
                             cores:
                               default: '0'
@@ -11247,9 +10968,6 @@ paths:
                     capacity:
                       allOf:
                         - $ref: '#/definitions/promise:resource-capacity'
-                        - $ref: '#/definitions/promise:compute-capacity'
-                        - $ref: '#/definitions/promise:network-capacity'
-                        - $ref: '#/definitions/promise:storage-capacity'
                         - properties:
                             cores:
                               default: '0'
@@ -11400,7 +11118,6 @@ paths:
                 available at the time of allocation(s).
               allOf:
                 - $ref: '#/definitions/promise:temporal-resource-collection'
-                - $ref: '#/definitions/promise:resource-collection'
                 - properties:
                     id:
                       type: string
@@ -11436,9 +11153,6 @@ paths:
                         this reservation ID as a reference.
                       allOf:
                         - $ref: '#/definitions/promise:resource-capacity'
-                        - $ref: '#/definitions/promise:compute-capacity'
-                        - $ref: '#/definitions/promise:network-capacity'
-                        - $ref: '#/definitions/promise:storage-capacity'
                         - properties:
                             cores:
                               default: '0'
@@ -11487,9 +11201,6 @@ paths:
                     capacity:
                       allOf:
                         - $ref: '#/definitions/promise:resource-capacity'
-                        - $ref: '#/definitions/promise:compute-capacity'
-                        - $ref: '#/definitions/promise:network-capacity'
-                        - $ref: '#/definitions/promise:storage-capacity'
                         - properties:
                             cores:
                               default: '0'
@@ -11644,7 +11355,6 @@ paths:
                 available at the time of allocation(s).
               allOf:
                 - $ref: '#/definitions/promise:temporal-resource-collection'
-                - $ref: '#/definitions/promise:resource-collection'
                 - properties:
                     id:
                       type: string
@@ -11680,9 +11390,6 @@ paths:
                         this reservation ID as a reference.
                       allOf:
                         - $ref: '#/definitions/promise:resource-capacity'
-                        - $ref: '#/definitions/promise:compute-capacity'
-                        - $ref: '#/definitions/promise:network-capacity'
-                        - $ref: '#/definitions/promise:storage-capacity'
                         - properties:
                             cores:
                               default: '0'
@@ -11731,9 +11438,6 @@ paths:
                     capacity:
                       allOf:
                         - $ref: '#/definitions/promise:resource-capacity'
-                        - $ref: '#/definitions/promise:compute-capacity'
-                        - $ref: '#/definitions/promise:network-capacity'
-                        - $ref: '#/definitions/promise:storage-capacity'
                         - properties:
                             cores:
                               default: '0'
@@ -11878,7 +11582,6 @@ paths:
               available at the time of allocation(s).
             allOf:
               - $ref: '#/definitions/promise:temporal-resource-collection'
-              - $ref: '#/definitions/promise:resource-collection'
               - properties:
                   id:
                     type: string
@@ -11913,9 +11616,6 @@ paths:
                       this reservation ID as a reference.
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -11964,9 +11664,6 @@ paths:
                   capacity:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -12115,7 +11812,6 @@ paths:
               available at the time of allocation(s).
             allOf:
               - $ref: '#/definitions/promise:temporal-resource-collection'
-              - $ref: '#/definitions/promise:resource-collection'
               - properties:
                   id:
                     type: string
@@ -12150,9 +11846,6 @@ paths:
                       this reservation ID as a reference.
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -12201,9 +11894,6 @@ paths:
                   capacity:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -12329,7 +12019,6 @@ paths:
               available at the time of allocation(s).
             allOf:
               - $ref: '#/definitions/promise:temporal-resource-collection'
-              - $ref: '#/definitions/promise:resource-collection'
               - properties:
                   id:
                     type: string
@@ -12364,9 +12053,6 @@ paths:
                       this reservation ID as a reference.
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -12415,9 +12101,6 @@ paths:
                   capacity:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -12566,7 +12249,6 @@ paths:
               available at the time of allocation(s).
             allOf:
               - $ref: '#/definitions/promise:temporal-resource-collection'
-              - $ref: '#/definitions/promise:resource-collection'
               - properties:
                   id:
                     type: string
@@ -12601,9 +12283,6 @@ paths:
                       this reservation ID as a reference.
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -12652,9 +12331,6 @@ paths:
                   capacity:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -12780,7 +12456,6 @@ paths:
               available at the time of allocation(s).
             allOf:
               - $ref: '#/definitions/promise:temporal-resource-collection'
-              - $ref: '#/definitions/promise:resource-collection'
               - properties:
                   id:
                     type: string
@@ -12815,9 +12490,6 @@ paths:
                       this reservation ID as a reference.
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -12866,9 +12538,6 @@ paths:
                   capacity:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
@@ -12997,9 +12666,6 @@ paths:
               this reservation ID as a reference.
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -13062,9 +12728,6 @@ paths:
               this reservation ID as a reference.
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -13121,9 +12784,6 @@ paths:
               this reservation ID as a reference.
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -13186,9 +12846,6 @@ paths:
               this reservation ID as a reference.
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -13245,9 +12902,6 @@ paths:
               this reservation ID as a reference.
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -13316,9 +12970,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -13373,9 +13024,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -13428,9 +13076,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -13485,9 +13130,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -13540,9 +13182,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-capacity'
-              - $ref: '#/definitions/promise:compute-capacity'
-              - $ref: '#/definitions/promise:network-capacity'
-              - $ref: '#/definitions/promise:storage-capacity'
               - properties:
                   cores:
                     default: '0'
@@ -13632,8 +13271,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/promise:resource-usage-request'
-              - $ref: '#/definitions/promise:temporal-resource-collection'
-              - $ref: '#/definitions/promise:resource-collection'
               - properties:
                   zone:
                     description: Optional identifier to an Availability Zone
@@ -13656,9 +13293,6 @@ paths:
                   capacity:
                     allOf:
                       - $ref: '#/definitions/promise:resource-capacity'
-                      - $ref: '#/definitions/promise:compute-capacity'
-                      - $ref: '#/definitions/promise:network-capacity'
-                      - $ref: '#/definitions/promise:storage-capacity'
                       - properties:
                           cores:
                             default: '0'
