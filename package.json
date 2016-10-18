@@ -24,9 +24,9 @@
   "models": {
     "ietf-yang-types": "yang-js",
     "ietf-inet-types": "yang-js",
-    "access-control-models": "./schema/access-control-models.yang",
-    "openstack-core": "./lib/openstack-core.js",
-    "opnfv-iaas": "./schema/opnfv-iaas.yang",
+    "yang-meta-types": "yang-js",
+    "openstack-controller": "./lib/openstack-controller.js",
+    "opnfv-infrastructure": "./schema/opnfv-infrastructure.yang",
     "opnfv-promise": "./lib/opnfv-promise.js"
   },
   "main": "./lib/opnfv-promise.js",
@@ -52,7 +52,7 @@
     "clean": "rimraf dist/* lib/*",
     "prebuild": "npm run clean -s && mkdir -p dist",
     "build:src": "coffee -o lib -c src",
-    "build:api": "yang-swagger -f yaml -o swagger.yaml opnfv-promise opnfv-iaas",
+    "build:api": "yang-swagger -f yaml -o swagger.yaml opnfv-promise opnfv-infrastructure",
     "build": "npm run build:src && npm run build:api",
     "prepublish": "npm run build",
     "pretest": "npm run build",

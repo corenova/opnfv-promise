@@ -1,9 +1,9 @@
-module openstack-nova {
+submodule openstack-nova {
+  namespace "urn:ietf:params:xml:ns:yang:openstack-nova";
+  belongs-to openstack-controller { prefix ostack; }
   yang-version 1.1;
-  namespace "urn:opnfv:promise:openstack:compute:nova";
-  prefix nova;
 
-  import nfv-infrastructure { prefix nfvi; }
+  import opnfv-infrastructure { prefix nfvi; }
 
   revision 2016-07-07 {
     description
@@ -22,25 +22,19 @@ module openstack-nova {
     description "Specifies whether security groups functionality is available.";
   }
 
-  augment "/nfvi:stack/nfvi:compute" {
-    if-feature security-groups;
+  augment "/nfvi:controller/nfvi:compute" {
     list security-group {
+      if-feature security-groups;
       uses nfvi:resource-element;
       // TBD
     }
   }
   
-  augment "/nfvi:stack/nfvi:compute/nfvi:server" {
+  augment "/nfvi:controller/nfvi:compute/nfvi:server" {
     leaf zone {
       if-feature availability-zone;
       type string;
     }
-
-    leaf project {
-      type instance-identifier;
-      mandatory true;
-    }
-
     container extended-status {
       if-feature extended-status;
       leaf locked-by;
@@ -48,7 +42,6 @@ module openstack-nova {
       leaf task;
       leaf vm;
     }
-
     leaf-list security-groups {
       if-feature security-groups;
       type leafref {
@@ -57,16 +50,7 @@ module openstack-nova {
     }
 
     // OpenStack Nova specific RPC calls
-    action resize {
-      input {
-        leaf server-id {
-          type leafref {
-            path "/nfvi:stack/nfvi:compute/nfvi:server/nfvi:id";
-          }
-        }
-        // other params for resize
-      }
-    }
+    action resize;
     action backup;
     action migrate;
     action restore;

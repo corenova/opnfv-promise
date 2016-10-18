@@ -10,7 +10,7 @@
 require('yang-js')
 uuid = require('node-uuid').v4
 
-module.exports = require('../schema/opnfv-iaas.yang').bind {
+module.exports = require('../schema/opnfv-infrastructure.yang').bind {
   
   '/{resource-element}/id': -> @content ?= uuid()
 

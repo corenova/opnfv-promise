@@ -21,7 +21,7 @@ var config = require('config');
 var express = require('yang-express').eval(config);
 var yaml = require('js-yaml');
 
-argv.modules = [ 'opnfv-iaas' ].concat(argv._)
+argv.modules = [ 'opnfv-infrastructure' ].concat(argv._)
 argv.feature = [ 'restjson', 'openapi' ]
 
 express.in('run')

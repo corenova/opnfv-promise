@@ -9,11 +9,11 @@
 
 require('yang-js').register()
 
-module.exports = require('../schema/openstack-core.yang').bind {
+module.exports = require('../schema/openstack/openstack-controller.yang').bind {
 
-  # RPC bindings
-  '/authenticate':     require './action/authenticate'
-  # '/create-instance':  require './action/create-instance'
-  # '/destroy-instance': require './action/destroy-instance'
+  '/admin/synchronize': require './action/openstack/synchronize'
+  
+  '/nfvi:controller/nfvi:compute/instantiate': require './action/openstack/instantiate'
+  '/nfvi:controller/nfvi:compute/destroy':     require './action/openstack/destroy'
     
 }

@@ -1,11 +1,11 @@
-module opnfv-iaas {
-  namespace "urn:ietf:params:xml:ns:yang:opnfv-iaas";
+module opnfv-infrastructure {
+  namespace "urn:ietf:params:xml:ns:yang:opnfv-infrastructure";
   prefix nfvi;
   yang-version 1.1;
 
-  import access-control-models { prefix acm; }
   import ietf-inet-types { prefix inet; }
   import ietf-yang-types { prefix yang; }
+  import yang-meta-types { prefix meta; }
 
   organization
     "Open Platform for NFV (OPNFV) / Corenova Technologies, Inc.";
@@ -43,6 +43,9 @@ module opnfv-iaas {
        for instance based management";
   }
 
+  /*
+   * Identities
+   */
   identity controller {
     description "used by specific modules implementing controller role for NFVI";
   }
@@ -56,36 +59,44 @@ module opnfv-iaas {
     description "used by specific modules implementing compute role for NFVI";
     base controller;
   }
-
+  /*
+   * Type definitions
+   */
+  typedef unique-identifier {
+    description "defines valid formats for external reference id";
+    type union {
+      type uint32;
+      type yang:uuid;
+      type inet:uri;
+    }
+  }
   /*
    * Groupings
    */
-  grouping compute-capacity {
-    leaf cores     { type int16; default 0; }
-    leaf ram       { type int32; default 0; units 'MB'; }
-    leaf instances { type int16; default 0; }
-  }
-  grouping network-capacity {
-    leaf networks  { type int16; default 0; }
-    leaf ports     { type int16; default 0; }
-    leaf routers   { type int16; default 0; }
-    leaf subnets   { type int16; default 0; }
-    leaf addresses { type int32; default 0; }
-  }
-  grouping storage-capacity {
-    leaf gigabytes { type int32; default 0; units 'GB'; }
-    leaf snapshots { type int16; default 0; }
-    leaf volumes   { type int16; default 0; }
-  }
-  grouping resource-capacity {
-    uses nfvi:compute-capacity;
-    uses nfvi:network-capacity;
-    uses nfvi:storage-capacity;
-  }
   grouping resource-element {
-    uses acm:access-identity;
-    leaf protected { type boolean; default false; }
-    leaf owner { type instance-identifier; }
+    description
+      "A resource element represents access managed data entity.";
+    leaf id {
+      type unique-identifier;
+      mandatory true;
+    }
+    leaf name {
+      type string;
+    }
+    leaf description {
+      type meta:description;
+    }
+    leaf enabled {
+      type boolean;
+      default true;
+    }
+    leaf protected {
+      type boolean;
+      default false;
+    }
+    leaf owner {
+      type instance-identifier;
+    }
     leaf visibility {
       description "Specify visibility level available from the perspective of 'owner'";
       type enumeration {
@@ -101,10 +112,8 @@ module opnfv-iaas {
       type string;
     }
     leaf-list members {
-      description "Optionally share with explicit list of members of AccessIdentity complex-type";
-      type instance-identifier {
-        //ct:instance-type acm:Identity;
-      }
+      description "Optionally share with other identified entities";
+      type instance-identifier;
     }
   }
   grouping resource-instance {
@@ -119,19 +128,6 @@ module opnfv-iaas {
     leaf progress {
       type uint8 { range 0..100; }
       default 0;
-    }
-  }
-  grouping resource-collection {
-    description
-      "Information model capturing parameters for describing a collection of
-       resource capacity and resource elements";
-    
-    container capacity { uses nfvi:resource-capacity; }
-    leaf-list elements {
-      type instance-identifier {
-        //ct:instance-type nfvi:ResourceElement;
-        require-instance true;
-      }
     }
   }
   grouping compute-host {
@@ -196,49 +192,6 @@ module opnfv-iaas {
     //      connected with.";
     //   type instance-identifier { ct:instance-type NetworkElement; }
     // }
-    action create {
-      input {
-        leaf name {
-          type string;
-          mandatory true;
-        }
-        leaf flavor {
-          type leafref {
-            path "/nfvi:controller/compute/flavor/id";
-          }
-          mandatory true;
-        }
-        leaf image {
-          type leafref {
-            path "/nfvi:controller/compute/image/id";
-          }
-          mandatory true;
-        }
-        leaf-list networks {
-          type leafref {
-            path "/nfvi:controller/fabric/network/id";
-          }
-          description "optional, will assign default network if not provided";
-        }
-      }
-      output {
-        leaf server-id {
-          type leafref {
-            path "/nfvi:controller/compute/server/id";
-          }
-        }
-      }
-    }
-    action destroy {
-      description "Destroy an instance of server allocation";
-      input {
-        leaf server-id {
-          type leafref {
-            path "/nfvi:controller/compute/server/id";
-          }
-        }
-      }
-    }
   }
   grouping server-image {
     uses nfvi:resource-element;
@@ -290,17 +243,9 @@ module opnfv-iaas {
       "Information model describing a NFVI resource stack comprising of
        various resource elements across compute, network, and storage";
 
-    container identity {
-      list domain {
-        uses acm:access-domain;
-      }
-    }
     container compute {
       description
         "Contains compute related resources";
-      container capacity {
-        uses nfvi:compute-capacity;
-      }
       list host {
         key id;
         uses nfvi:compute-host;
@@ -317,13 +262,46 @@ module opnfv-iaas {
         key id;
         uses nfvi:resource-flavor;
       }
+      action instantiate {
+        input {
+          leaf name {
+            type string;
+            mandatory true;
+          }
+          leaf flavor {
+            type leafref {
+              path "../../../flavor/id";
+            }
+            mandatory true;
+          }
+          leaf image {
+            type leafref {
+              path "../../../image/id";
+            }
+            mandatory true;
+          }
+          leaf-list networks {
+            type leafref {
+              path "/nfvi:controller/fabric/network/id";
+            }
+            description "optional, will assign default network if not provided";
+          }
+        }
+        output {
+          leaf server-id {
+            type leafref {
+              path "../../../server/id";
+            }
+          }
+        }
+      }
+      action destroy {
+        
+      }
     }
     container fabric {
       description
         "Contains networking related resources";
-      container capacity {
-        uses nfvi:network-capacity;
-      }
       list network {
         key id;
         uses nfvi:resource-element;
@@ -358,9 +336,6 @@ module opnfv-iaas {
     container storage {
       description
         "Contains storage related resources";
-      container capacity {
-        uses nfvi:storage-capacity;
-      }
       // TBD
     }
     container policy {

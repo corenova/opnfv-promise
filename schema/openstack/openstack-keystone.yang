@@ -1,0 +1,130 @@
+submodule openstack-keystone {
+  namespace "urn:ietf:params:xml:ns:yang:openstack-keystone";
+  belongs-to openstack-controller { prefix ostack; }
+  yang-version 1.1;
+  
+  import opnfv-infrastructure { prefix nfvi; }
+  import yang-meta-types { prefix meta; }
+
+  description
+    "OpenStack Identity Data Models with complex types and typed instance
+     identifiers represent the various Access Control Models available
+     within OpenStack.";
+
+  revision 2016-07-07 {
+    description
+      "Updated to remove dependency to complex-types and adopt YANG 1.1";
+  }
+  
+  revision 2015-09-03 {
+    description
+      "This YANG module is modeled using 'yangforge' which natively provides
+       complex types and typed instance identifiers.  This module
+       provides various collections of resource management data models
+       for instance based management";
+  }
+
+  /*
+   * Groupings
+   */
+  grouping access-identity {
+    description
+      "Contains administrative identity related resources";
+    leaf id {
+      type nfvi:unique-identifier;
+      mandatory true;
+    }
+    leaf name {
+      type string;
+    }
+    leaf description {
+      type meta:description;
+    }
+    leaf enabled {
+      type boolean;
+      default true;
+    }
+  }
+  grouping domains-list {
+    list domain {
+      description
+        "Domain represent a distinct administrative domain across
+           collection of users and groups.";
+      key "id";
+      uses access-identity;
+
+      list user {
+        uses access-identity;
+        leaf password {
+          type meta:password ;
+          mandatory true;
+        }
+        container person {
+          leaf name  { type meta:person-name; }
+          leaf email { type meta:person-email; }
+        }
+        leaf-list groups {
+          type leafref {
+            path "../../group/id";
+          }
+        }
+        leaf-list projects {
+          type leafref {
+            path "../../project/id";
+          }
+        }
+      }
+      list group {
+        uses access-identity;
+        leaf-list users {
+          type leafref {
+            path "../../user/id";
+          }
+        }
+        leaf-list projects {
+          type leafref {
+            path "../../project/id";
+          }
+        }
+      }
+      list project {
+        description
+          "OpenStack Project represent a distinct resource consumption space across
+           collection of users and groups that can reserve and allocate
+           resources.";
+        uses access-identity;
+        leaf-list groups {
+          type leafref {
+            path "../../group/id";
+          }
+        }
+        leaf-list images {
+          type leafref {
+            path "/nfvi:controller/nfvi:compute/nfvi:image/nfvi:id";
+          }
+        }
+        leaf-list flavors {
+          type leafref {
+            path "/nfvi:controller/nfvi:compute/nfvi:flavor/nfvi:id";
+          }
+        }
+      }
+    }
+  }
+  /*
+   * Augmentations to NFVI Controller
+   */ 
+  augment "/nfvi:controller" {
+    container identity {
+      uses domains-list;
+    }
+  }
+  augment "/nfvi:controller/nfvi:compute/nfvi:server" {
+    leaf project {
+      type leafref {
+        path "/nfvi:controller/ostack:identity/ostack:domain/ostack:project/ostack:id";
+      }
+      mandatory true;
+    }
+  }
+}

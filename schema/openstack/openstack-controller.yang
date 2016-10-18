@@ -1,0 +1,97 @@
+module openstack-controller {
+  namespace "urn:ietf:params:xml:ns:yang:openstack-controller";
+  yang-version 1.1;
+  prefix ostack;
+
+  include openstack-keystone;
+  include openstack-nova;
+  //include openstack-neutron;
+  //include openstack-glance;
+  
+  import ietf-yang-types { prefix yang; }
+  import ietf-inet-types { prefix inet; }
+  import yang-meta-types { prefix meta; }
+  import opnfv-infrastructure { prefix nfvi; }
+
+  description
+    "OpenStack controller module";
+
+  revision 2016-01-19 {
+    description "Basic coverage of limited intents needed for Promise";
+  }
+  
+  identity openstack { base nfvi:controller; }
+
+  feature os-system-admin {
+    description "OpenStack system administration capability";
+  }
+
+  /*
+   * Groupings
+   */
+  grouping os-credentials {
+    leaf strategy {
+      type enumeration {
+        enum oauth;
+        enum keystone;
+      }
+      default keystone;
+    }
+    leaf endpoint {
+      type inet:uri;
+      description "The target endpoint for authentication";
+      mandatory true;
+    }
+    leaf username {
+      type meta:meta-identifier;
+      mandatory true;
+    }
+    leaf password {
+      type string;
+      mandatory true;
+    }
+    container tenant {
+      leaf id { type string; }
+      leaf name { type string; }
+    }
+  }
+  /*
+   * Configuration data nodes
+   */
+  container admin {
+    if-feature os-system-admin;
+    container auth {
+      uses os-credentials;
+      leaf token {
+        // meta:private true;
+        config false;
+        type yang:uuid;
+      }
+    }
+    action synchronize;
+  }
+  /*
+   * Augmentations to NFVI Controller
+   */ 
+  augment "/nfvi:controller" {
+    leaf release { type identityref { base nfvi:release; } }
+    leaf distro  { type identityref { base nfvi:distro; } }
+
+    leaf token {
+      type string;
+      mandatory true;
+    }
+    
+    container services {
+      container compute {
+        leaf endpoint { type inet:uri; }
+        leaf-list flavors {
+          type leafref {
+            path "/nfvi:controller/nfvi:compute/nfvi:flavor/nfvi:id";
+          }
+        }
+      }
+    }
+    //list endpoints { ct:instance-type ServiceEndpoint; }
+  }
+}
