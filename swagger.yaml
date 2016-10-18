@@ -645,7 +645,7 @@ paths:
       responses:
         '201':
           description: Expected response for merging into collection
-  '/opnfv-iaas:controller/identity/domain/{index}':
+  '/opnfv-iaas:controller/identity/domain/{domain-index}':
     get:
       summary: View detail on domain
       deprecated: false
@@ -689,13 +689,13 @@ paths:
         '204':
           description: Expected response for delete
     parameters:
-      - name: index
+      - name: domain-index
         in: path
         required: true
         type: integer
         format: int64
         description: An index key identifying domain item (may change over time)
-  '/opnfv-iaas:controller/identity/domain/{index}/user':
+  '/opnfv-iaas:controller/identity/domain/{domain-index}/user':
     post:
       summary: Creates one or more new user in access-domain
       deprecated: false
@@ -948,13 +948,13 @@ paths:
         '201':
           description: Expected response for merging into collection
     parameters:
-      - name: index
+      - name: domain-index
         in: path
         required: true
         type: integer
         format: int64
         description: An index key identifying domain item (may change over time)
-  '/opnfv-iaas:controller/identity/domain/{index}/user/{index}':
+  '/opnfv-iaas:controller/identity/domain/{domain-index}/user/{index}':
     get:
       summary: View detail on user
       deprecated: false
@@ -1199,25 +1199,13 @@ paths:
         type: integer
         format: int64
         description: An index key identifying user item (may change over time)
-      - name: index
+      - name: domain-index
         in: path
         required: true
         type: integer
         format: int64
         description: An index key identifying domain item (may change over time)
-      - name: index
-        in: path
-        required: true
-        type: integer
-        format: int64
-        description: An index key identifying domain item (may change over time)
-      - name: index
-        in: path
-        required: true
-        type: integer
-        format: int64
-        description: An index key identifying domain item (may change over time)
-  '/opnfv-iaas:controller/identity/domain/{index}/user/{index}/create':
+  '/opnfv-iaas:controller/identity/domain/{domain-index}/user/{index}/create':
     post:
       summary: Invokes create in user
       deprecated: false
@@ -1237,25 +1225,13 @@ paths:
         type: integer
         format: int64
         description: An index key identifying user item (may change over time)
-      - name: index
+      - name: domain-index
         in: path
         required: true
         type: integer
         format: int64
         description: An index key identifying domain item (may change over time)
-      - name: index
-        in: path
-        required: true
-        type: integer
-        format: int64
-        description: An index key identifying domain item (may change over time)
-      - name: index
-        in: path
-        required: true
-        type: integer
-        format: int64
-        description: An index key identifying domain item (may change over time)
-  '/opnfv-iaas:controller/identity/domain/{index}/user/{index}/remove':
+  '/opnfv-iaas:controller/identity/domain/{domain-index}/user/{index}/remove':
     post:
       summary: Invokes remove in user
       deprecated: false
@@ -1275,25 +1251,13 @@ paths:
         type: integer
         format: int64
         description: An index key identifying user item (may change over time)
-      - name: index
+      - name: domain-index
         in: path
         required: true
         type: integer
         format: int64
         description: An index key identifying domain item (may change over time)
-      - name: index
-        in: path
-        required: true
-        type: integer
-        format: int64
-        description: An index key identifying domain item (may change over time)
-      - name: index
-        in: path
-        required: true
-        type: integer
-        format: int64
-        description: An index key identifying domain item (may change over time)
-  '/opnfv-iaas:controller/identity/domain/{index}/group':
+  '/opnfv-iaas:controller/identity/domain/{domain-index}/group':
     post:
       summary: Creates one or more new group in access-domain
       deprecated: false
@@ -1496,13 +1460,13 @@ paths:
         '201':
           description: Expected response for merging into collection
     parameters:
-      - name: index
+      - name: domain-index
         in: path
         required: true
         type: integer
         format: int64
         description: An index key identifying domain item (may change over time)
-  '/opnfv-iaas:controller/identity/domain/{index}/group/{index}':
+  '/opnfv-iaas:controller/identity/domain/{domain-index}/group/{index}':
     get:
       summary: View detail on group
       deprecated: false
@@ -1697,25 +1661,13 @@ paths:
         type: integer
         format: int64
         description: An index key identifying group item (may change over time)
-      - name: index
+      - name: domain-index
         in: path
         required: true
         type: integer
         format: int64
         description: An index key identifying domain item (may change over time)
-      - name: index
-        in: path
-        required: true
-        type: integer
-        format: int64
-        description: An index key identifying domain item (may change over time)
-      - name: index
-        in: path
-        required: true
-        type: integer
-        format: int64
-        description: An index key identifying domain item (may change over time)
-  '/opnfv-iaas:controller/identity/domain/{index}/group/{index}/create':
+  '/opnfv-iaas:controller/identity/domain/{domain-index}/group/{index}/create':
     post:
       summary: Invokes create in group
       deprecated: false
@@ -1735,25 +1687,13 @@ paths:
         type: integer
         format: int64
         description: An index key identifying group item (may change over time)
-      - name: index
+      - name: domain-index
         in: path
         required: true
         type: integer
         format: int64
         description: An index key identifying domain item (may change over time)
-      - name: index
-        in: path
-        required: true
-        type: integer
-        format: int64
-        description: An index key identifying domain item (may change over time)
-      - name: index
-        in: path
-        required: true
-        type: integer
-        format: int64
-        description: An index key identifying domain item (may change over time)
-  '/opnfv-iaas:controller/identity/domain/{index}/group/{index}/remove':
+  '/opnfv-iaas:controller/identity/domain/{domain-index}/group/{index}/remove':
     post:
       summary: Invokes remove in group
       deprecated: false
@@ -1773,19 +1713,7 @@ paths:
         type: integer
         format: int64
         description: An index key identifying group item (may change over time)
-      - name: index
-        in: path
-        required: true
-        type: integer
-        format: int64
-        description: An index key identifying domain item (may change over time)
-      - name: index
-        in: path
-        required: true
-        type: integer
-        format: int64
-        description: An index key identifying domain item (may change over time)
-      - name: index
+      - name: domain-index
         in: path
         required: true
         type: integer
@@ -2587,12 +2515,6 @@ paths:
         description: A key uniquely identifying host item
         type: string
         format: unique-identifier
-      - name: id
-        in: path
-        required: true
-        description: A key uniquely identifying host item
-        type: string
-        format: unique-identifier
   '/opnfv-iaas:controller/compute/host/{id}/hypervisor/{index}/vcpu':
     get:
       summary: View detail on vcpu
@@ -2693,12 +2615,6 @@ paths:
         type: integer
         format: int64
         description: An index key identifying hypervisor item (may change over time)
-      - name: id
-        in: path
-        required: true
-        description: A key uniquely identifying host item
-        type: string
-        format: unique-identifier
       - name: id
         in: path
         required: true
@@ -3854,7 +3770,7 @@ paths:
       responses:
         '201':
           description: Expected response for merging into collection
-  '/opnfv-iaas:controller/fabric/network/{id}':
+  '/opnfv-iaas:controller/fabric/network/{network-id}':
     get:
       summary: View detail on network
       deprecated: false
@@ -4068,13 +3984,13 @@ paths:
         '204':
           description: Expected response for delete
     parameters:
-      - name: id
+      - name: network-id
         in: path
         required: true
         description: A key uniquely identifying network item
         type: string
         format: unique-identifier
-  '/opnfv-iaas:controller/fabric/network/{id}/subnet':
+  '/opnfv-iaas:controller/fabric/network/{network-id}/subnet':
     post:
       summary: Creates one or more new subnet in network
       deprecated: false
@@ -4272,13 +4188,13 @@ paths:
         '201':
           description: Expected response for merging into collection
     parameters:
-      - name: id
+      - name: network-id
         in: path
         required: true
         description: A key uniquely identifying network item
         type: string
         format: unique-identifier
-  '/opnfv-iaas:controller/fabric/network/{id}/subnet/{id}':
+  '/opnfv-iaas:controller/fabric/network/{network-id}/subnet/{subnet-id}':
     get:
       summary: View detail on subnet
       deprecated: false
@@ -4462,37 +4378,19 @@ paths:
         '204':
           description: Expected response for delete
     parameters:
-      - name: id
+      - name: subnet-id
         in: path
         required: true
         description: A key uniquely identifying subnet item
         type: string
         format: unique-identifier
-      - name: id
+      - name: network-id
         in: path
         required: true
         description: A key uniquely identifying network item
         type: string
         format: unique-identifier
-      - name: id
-        in: path
-        required: true
-        description: A key uniquely identifying network item
-        type: string
-        format: unique-identifier
-      - name: id
-        in: path
-        required: true
-        description: A key uniquely identifying network item
-        type: string
-        format: unique-identifier
-      - name: id
-        in: path
-        required: true
-        description: A key uniquely identifying network item
-        type: string
-        format: unique-identifier
-  '/opnfv-iaas:controller/fabric/network/{id}/subnet/{id}/dhcp':
+  '/opnfv-iaas:controller/fabric/network/{network-id}/subnet/{subnet-id}/dhcp':
     get:
       summary: View detail on dhcp
       deprecated: false
@@ -4611,37 +4509,19 @@ paths:
         '204':
           description: Expected response for delete
     parameters:
-      - name: id
+      - name: subnet-id
         in: path
         required: true
         description: A key uniquely identifying subnet item
         type: string
         format: unique-identifier
-      - name: id
+      - name: network-id
         in: path
         required: true
         description: A key uniquely identifying network item
         type: string
         format: unique-identifier
-      - name: id
-        in: path
-        required: true
-        description: A key uniquely identifying network item
-        type: string
-        format: unique-identifier
-      - name: id
-        in: path
-        required: true
-        description: A key uniquely identifying network item
-        type: string
-        format: unique-identifier
-      - name: id
-        in: path
-        required: true
-        description: A key uniquely identifying network item
-        type: string
-        format: unique-identifier
-  '/opnfv-iaas:controller/fabric/network/{id}/subnet/{id}/dhcp/pool':
+  '/opnfv-iaas:controller/fabric/network/{network-id}/subnet/{subnet-id}/dhcp/pool':
     post:
       summary: Creates one or more new pool in dhcp
       deprecated: false
@@ -4734,37 +4614,19 @@ paths:
         '201':
           description: Expected response for merging into collection
     parameters:
-      - name: id
+      - name: subnet-id
         in: path
         required: true
         description: A key uniquely identifying subnet item
         type: string
         format: unique-identifier
-      - name: id
+      - name: network-id
         in: path
         required: true
         description: A key uniquely identifying network item
         type: string
         format: unique-identifier
-      - name: id
-        in: path
-        required: true
-        description: A key uniquely identifying network item
-        type: string
-        format: unique-identifier
-      - name: id
-        in: path
-        required: true
-        description: A key uniquely identifying network item
-        type: string
-        format: unique-identifier
-      - name: id
-        in: path
-        required: true
-        description: A key uniquely identifying network item
-        type: string
-        format: unique-identifier
-  '/opnfv-iaas:controller/fabric/network/{id}/subnet/{id}/dhcp/pool/{index}':
+  '/opnfv-iaas:controller/fabric/network/{network-id}/subnet/{subnet-id}/dhcp/pool/{index}':
     get:
       summary: View detail on pool
       deprecated: false
@@ -4849,19 +4711,19 @@ paths:
         type: integer
         format: int64
         description: An index key identifying pool item (may change over time)
-      - name: id
+      - name: subnet-id
         in: path
         required: true
         description: A key uniquely identifying subnet item
         type: string
         format: unique-identifier
-      - name: id
+      - name: network-id
         in: path
         required: true
         description: A key uniquely identifying network item
         type: string
         format: unique-identifier
-  '/opnfv-iaas:controller/fabric/network/{id}/subnet/{id}/port':
+  '/opnfv-iaas:controller/fabric/network/{network-id}/subnet/{subnet-id}/port':
     post:
       summary: Creates one or more new port in subnet
       deprecated: false
@@ -4919,37 +4781,19 @@ paths:
         '201':
           description: Expected response for merging into collection
     parameters:
-      - name: id
+      - name: subnet-id
         in: path
         required: true
         description: A key uniquely identifying subnet item
         type: string
         format: unique-identifier
-      - name: id
+      - name: network-id
         in: path
         required: true
         description: A key uniquely identifying network item
         type: string
         format: unique-identifier
-      - name: id
-        in: path
-        required: true
-        description: A key uniquely identifying network item
-        type: string
-        format: unique-identifier
-      - name: id
-        in: path
-        required: true
-        description: A key uniquely identifying network item
-        type: string
-        format: unique-identifier
-      - name: id
-        in: path
-        required: true
-        description: A key uniquely identifying network item
-        type: string
-        format: unique-identifier
-  '/opnfv-iaas:controller/fabric/network/{id}/subnet/{id}/port/{id}':
+  '/opnfv-iaas:controller/fabric/network/{network-id}/subnet/{subnet-id}/port/{id}':
     get:
       summary: View detail on port
       deprecated: false
@@ -4999,13 +4843,13 @@ paths:
         description: A key uniquely identifying port item
         type: string
         format: unique-identifier
-      - name: id
+      - name: subnet-id
         in: path
         required: true
         description: A key uniquely identifying subnet item
         type: string
         format: unique-identifier
-      - name: id
+      - name: network-id
         in: path
         required: true
         description: A key uniquely identifying network item
