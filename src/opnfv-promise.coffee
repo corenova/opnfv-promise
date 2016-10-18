@@ -21,6 +21,9 @@ module.exports = require('../schema/opnfv-promise.yang').bind {
         else now
       (@get '../enabled') and (start <= now <= end)
 
+  'create-reservation': require './action/create-reservation'
+  'query-reservation':  require './action/query-reservation'
+
   '/nfvi:controller/promise:capacity':
     total: ->
       combine = (a, b) ->
@@ -61,9 +64,9 @@ module.exports = require('../schema/opnfv-promise.yang').bind {
       available
     elements: -> #todo
     
-    '<action:query>':     require './action/query-capacity'
-    '<action:increase>':  require './action/increase-capacity'
-    '<action:decrease>':  require './action/decrease-capacity'
+    query:     require './action/query-capacity'
+    increase:  require './action/increase-capacity'
+    decrease:  require './action/decrease-capacity'
   
   '/nfvi:controller/promise:reservation':
     end: ->
@@ -83,11 +86,9 @@ module.exports = require('../schema/opnfv-promise.yang').bind {
         for k, v of usage
           total[k] -= v
       total
-    '<action:validate>': require './action/validate-reservation'
-    '<action:create>':   require './action/create-reservation'
-    '<action:query>':    require './action/query-reservation'
-    '<action:update>':   require './action/update-reservation'
-    '<action:cancel>':   require './action/cancel-reservation'
+    validate: require './action/validate-reservation'
+    update:   require './action/update-reservation'
+    cancel:   require './action/cancel-reservation'
 
   '/nfvi:controller/nfvi:compute/nfvi:server/promise:priority': ->
     switch

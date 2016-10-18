@@ -72,7 +72,7 @@ module opnfv-promise {
        usage request.";
     reference "OPNFV-PROMISE, Section 3.4.1";
 
-    uses temporal-resource-collection {
+    uses promise:temporal-resource-collection {
       refine elements {
         description
           "Reference to a list of 'pre-existing' resource elements that are
@@ -114,7 +114,7 @@ module opnfv-promise {
     }
   }
   grouping query-resource-collection {
-    uses query-start-end-window {
+    uses promise:query-start-end-window {
       description "Match for ResourceCollection(s) that are within the specified start/end time window";
     }
     leaf-list without {
@@ -151,84 +151,16 @@ module opnfv-promise {
     }
     leaf message { type string; }
   }
-
-  // EXTEND nfvi module with capacity and reservation facilities
-  augment "/nfvi:controller" {
-
-    container capacity {
-      if-feature capacity-management;
-      config false;
-      
-      description "Describes current state info about capacity utilization info";
-      
-      container total     { uses nfvi:resource-capacity; }
-      container reserved  { uses nfvi:resource-capacity; }
-      container usage     { uses nfvi:resource-capacity; }
-      container available { uses nfvi:resource-capacity; }
-      
-      leaf-list elements {
-        config false;
-        description "aggregate reference to all resource-element identifiers";
-        type instance-identifier;
-      }
-      action increase {
-        description "Increase total capacity available for reservations between a window in time";
-        input {
-          uses temporal-resource-collection;
-        }
-        output {
-          uses common-action-output;
-          leaf pool-id {
-            type leafref {
-              path "/nfvi:controller/promise:pool/promise:id";
-            }
-          }
-        }
-      }
-      action decrease {
-        description "Decrease total capacity available for reservations between a window in time";
-        input {
-          uses temporal-resource-collection;
-        }
-        output {
-          uses common-action-output;
-          leaf pool-id {
-            type leafref {
-              path "/nfvi:controller/promise:pool/promise:id";
-            }
-          }
-        }
-      }
-      action query {
-        description "Check available capacity information about a specified resource collection";
-        input {
-          leaf capacity {
-            type enumeration {
-              enum 'total';
-              enum 'reserved';
-              enum 'usage';
-              enum 'available';
-            }
-            default 'available';
-          }
-          leaf zone { type string; }
-          uses query-resource-collection;
-          // TBD: additional parameters for query-capacity
-        }
-        output {
-          leaf-list collections { type instance-identifier; }
-          uses utilization-output;
-        }
-      }
-    }
-
+  grouping pools-list {
     list pool {
       description
         "Describes an instance of an active ResourcePool record, which
          represents total available capacity and elements for a given
          time window";
 
-      uses temporal-resource-collection {
+      key "id";
+      leaf id { type yang:uuid; }
+      uses promise:temporal-resource-collection {
         refine elements {
           // following 'must' statement applies to each element
           // NOTE: just a non-working example for now...
@@ -238,7 +170,8 @@ module opnfv-promise {
         }
       }
     }
-
+  }
+  grouping reservations-list {
     list reservation {
       description
         "Describes an instance of an accepted resource reservation request,
@@ -255,7 +188,9 @@ module opnfv-promise {
     
       reference "OPNFV-PROMISE, Section 3.4.1";
 
-      uses temporal-resource-collection;
+      key "id";
+      leaf id { type yang:uuid; }
+      uses promise:temporal-resource-collection;
 
       leaf created-on  { type yang:date-and-time; config false; }
       leaf modified-on { type yang:date-and-time; config false; }
@@ -293,26 +228,9 @@ module opnfv-promise {
           path "/nfvi:controller/nfvi:compute/nfvi:server/nfvi:id";
         }
       }
-
       action validate {
         
       }
-      
-      action create {
-        description "Make a request to the reservation system to reserve resources";
-        input {
-          uses resource-usage-request;
-        }
-        output {
-          uses common-action-output;
-          leaf reservation-id {
-            type leafref {
-              path "/nfvi:controller/promise:reservation/promise:id";
-            }
-          }
-        }
-      }
-
       action update {
         description "Update reservation details for an existing reservation";
         input {
@@ -322,10 +240,10 @@ module opnfv-promise {
             }
             mandatory true;
           }
-          uses resource-usage-request;
+          uses promise:resource-usage-request;
         }
         output {
-          uses common-action-output;
+          uses promise:common-action-output;
         }
       }
 
@@ -338,18 +256,104 @@ module opnfv-promise {
             }
             mandatory true;
           }
-          uses resource-usage-request;
+          uses promise:resource-usage-request;
         }
         output {
-          uses common-action-output;
+          uses promise:common-action-output;
         }
       }
+    }
+  }
+  
+  // EXTEND nfvi module with capacity and reservation facilities
+  augment "/nfvi:controller" {
 
+    container capacity {
+      if-feature capacity-management;
+      config false;
+      
+      description "Describes current state info about capacity utilization info";
+      
+      container total     { uses nfvi:resource-capacity; }
+      container reserved  { uses nfvi:resource-capacity; }
+      container usage     { uses nfvi:resource-capacity; }
+      container available { uses nfvi:resource-capacity; }
+      
+      leaf-list elements {
+        config false;
+        description "aggregate reference to all resource-element identifiers";
+        type instance-identifier;
+      }
+      uses promise:pools-list;
+      uses promise:reservations-list;
+      action increase {
+        description "Increase total capacity available for reservations between a window in time";
+        input {
+          uses promise:temporal-resource-collection;
+        }
+        output {
+          uses promise:common-action-output;
+          leaf pool-id {
+            type leafref {
+              path "../../../pool/id";
+            }
+          }
+        }
+      }
+      action decrease {
+        description "Decrease total capacity available for reservations between a window in time";
+        input {
+          uses promise:temporal-resource-collection;
+        }
+        output {
+          uses promise:common-action-output;
+          leaf pool-id {
+            type leafref {
+              path "../../../pool/id";
+            }
+          }
+        }
+      }
+      action reserve {
+        description "Make a request to the reservation system to reserve resources";
+        input {
+          uses promise:resource-usage-request;
+        }
+        output {
+          uses promise:common-action-output;
+          leaf reservation-id {
+            type leafref {
+              path "/nfvi:controller/promise:reservation/promise:id";
+            }
+          }
+        }
+      }
+      action query {
+        description "Check available capacity information about a specified resource collection";
+        input {
+          leaf capacity {
+            type enumeration {
+              enum 'total';
+              enum 'reserved';
+              enum 'usage';
+              enum 'available';
+            }
+            default 'available';
+          }
+          leaf zone { type string; }
+          uses promise:query-resource-collection;
+          // TBD: additional parameters for query-capacity
+        }
+        output {
+          leaf-list collections { type instance-identifier; }
+          uses promise:utilization-output;
+        }
+      }
       action query {
         description "Query the reservation system to return matching reservation(s)";
         input {
           leaf zone { type string; }
-          uses query-resource-collection;
+          uses promise:query-resource-collection;
         }
         output {
           leaf-list reservations {
@@ -357,16 +361,14 @@ module opnfv-promise {
               path "/nfvi:controller/promise:reservation/promise:id";
             }
           }
-          uses utilization-output;
+          uses promise:utilization-output;
         }
       }
-
       notification failure {
         description "Notify when failure occurs for an existing reservation";
       }
     }
   }
-
   augment "/nfvi:controller/nfvi:compute/nfvi:server" {
     description
       "A ResourceAllocation record denotes consumption of resources from a
@@ -415,7 +417,6 @@ module opnfv-promise {
       default "normal";
     }
   }
-
   augment "/nfvi:controller/nfvi:compute/nfvi:server/nfvi:create/nfvi:input" {
     leaf reservation-id {
       type leafref {
@@ -423,7 +424,6 @@ module opnfv-promise {
       }
     }
   }
-
   augment "/nfvi:controller/nfvi:policy" {
     container reservation {
       leaf max-future-start-range {

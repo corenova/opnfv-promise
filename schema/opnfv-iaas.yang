@@ -78,9 +78,9 @@ module opnfv-iaas {
     leaf volumes   { type int16; default 0; }
   }
   grouping resource-capacity {
-    uses compute-capacity;
-    uses network-capacity;
-    uses storage-capacity;
+    uses nfvi:compute-capacity;
+    uses nfvi:network-capacity;
+    uses nfvi:storage-capacity;
   }
   grouping resource-element {
     uses acm:access-identity;
@@ -108,7 +108,7 @@ module opnfv-iaas {
     }
   }
   grouping resource-instance {
-    uses resource-element;
+    uses nfvi:resource-element;
     leaf status {
       type enumeration {
         enum active;
@@ -126,7 +126,7 @@ module opnfv-iaas {
       "Information model capturing parameters for describing a collection of
        resource capacity and resource elements";
     
-    container capacity { uses resource-capacity; }
+    container capacity { uses nfvi:resource-capacity; }
     leaf-list elements {
       type instance-identifier {
         //ct:instance-type nfvi:ResourceElement;
@@ -135,7 +135,7 @@ module opnfv-iaas {
     }
   }
   grouping compute-host {
-    uses resource-element;
+    uses nfvi:resource-element;
     leaf type { type string; }
     leaf version { type string; }
     leaf cpu { type uint8; }
@@ -152,6 +152,8 @@ module opnfv-iaas {
       leaf free { type uint32; units 'GB'; }
     }
     list hypervisor {
+      key "id";
+      uses nfvi:resource-element;
       container vcpu {
         leaf total { type uint16; }
         leaf used  { type uint16; }
@@ -165,7 +167,7 @@ module opnfv-iaas {
     }
   }
   grouping virtual-server {
-    uses resource-instance;
+    uses nfvi:resource-instance;
     leaf flavor {
       config false;
       type leafref {
@@ -239,7 +241,7 @@ module opnfv-iaas {
     }
   }
   grouping server-image {
-    uses resource-element;
+    uses nfvi:resource-element;
     leaf checksum {
       type string;
       mandatory true;
@@ -274,7 +276,7 @@ module opnfv-iaas {
     }
   }
   grouping resource-flavor {
-    uses resource-element;
+    uses nfvi:resource-element;
     leaf disk  { type uint32; units 'GB'; default 0; }
     leaf ram   { type uint32; units 'MB'; default 0; }
     leaf vcpus { type uint16; default 0; }
@@ -297,7 +299,7 @@ module opnfv-iaas {
       description
         "Contains compute related resources";
       container capacity {
-        uses compute-capacity;
+        uses nfvi:compute-capacity;
       }
       list host {
         key id;
@@ -320,15 +322,15 @@ module opnfv-iaas {
       description
         "Contains networking related resources";
       container capacity {
-        uses network-capacity;
+        uses nfvi:network-capacity;
       }
       list network {
         key id;
-        uses resource-element;
+        uses nfvi:resource-element;
 
         list subnet {
           key id;
-          uses resource-element;
+          uses nfvi:resource-element;
           
           leaf-list nameservers {
             type string;
@@ -342,14 +344,14 @@ module opnfv-iaas {
           }
           list port {
             key id;
-            uses resource-element;
+            uses nfvi:resource-element;
             // TBD
           }
         }
       }
       list router {
         key id;
-        uses resource-instance;
+        uses nfvi:resource-instance;
         // TBD
       }
     }
@@ -357,7 +359,7 @@ module opnfv-iaas {
       description
         "Contains storage related resources";
       container capacity {
-        uses storage-capacity;
+        uses nfvi:storage-capacity;
       }
       // TBD
     }
