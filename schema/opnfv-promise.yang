@@ -269,11 +269,8 @@ module opnfv-promise {
   augment "/nfvi:controller" {
 
     container capacity {
-      if-feature capacity-management;
-      config false;
-      
       description "Describes current state info about capacity utilization info";
-      
+      config false;
       container total     { uses promise:resource-capacity; }
       container reserved  { uses promise:resource-capacity; }
       container usage     { uses promise:resource-capacity; }
@@ -284,9 +281,7 @@ module opnfv-promise {
         description "aggregate reference to all resource-element identifiers";
         type instance-identifier;
       }
-      uses promise:reservations-list {
-        if-feature reservation-management;
-      }
+      uses promise:reservations-list;
       
       action increase {
         description "Increase total capacity available for reservations between a window in time";
