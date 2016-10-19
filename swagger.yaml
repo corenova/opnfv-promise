@@ -4379,7 +4379,7 @@ paths:
         '200':
           description: 'Expected response of opnfv-promise:capacity'
           schema:
-            type: object
+            $ref: '#/definitions/promise:storage-capacity'
     put:
       summary: 'Update details on opnfv-promise:capacity'
       deprecated: false
@@ -4387,13 +4387,13 @@ paths:
         - name: 'opnfv-promise:capacity'
           in: body
           schema:
-            type: object
+            $ref: '#/definitions/promise:storage-capacity'
           required: false
       responses:
         '200':
           description: 'Expected response of opnfv-promise:capacity'
           schema:
-            type: object
+            $ref: '#/definitions/promise:storage-capacity'
     patch:
       summary: 'Merge details on opnfv-promise:capacity'
       deprecated: false
@@ -4401,13 +4401,13 @@ paths:
         - name: 'opnfv-promise:capacity'
           in: body
           schema:
-            type: object
+            $ref: '#/definitions/promise:storage-capacity'
           required: false
       responses:
         '200':
           description: 'Expected response of opnfv-promise:capacity'
           schema:
-            type: object
+            $ref: '#/definitions/promise:storage-capacity'
     delete:
       summary: 'Delete opnfv-promise:capacity from storage'
       deprecated: false
@@ -4589,6 +4589,26 @@ paths:
           description: 'Expected response of opnfv-promise:reservation'
           schema:
             type: object
+            properties:
+              max-future-start-range:
+                description: Enforce reservation request 'start' time is within allowed range from now
+                type: integer
+                format: uint16
+              max-future-end-range:
+                description: Enforce reservation request 'end' time is within allowed range from now
+                type: integer
+                format: uint16
+              max-duration:
+                description: Enforce reservation duration (end-start) does not exceed specified threshold
+                default: '8760'
+                type: integer
+                format: uint16
+              expiry:
+                description: |-
+                  Duration in minutes from start when unallocated reserved resources
+                    will be released back into the pool
+                type: integer
+                format: uint32
     put:
       summary: 'Update details on opnfv-promise:reservation'
       deprecated: false
@@ -4597,12 +4617,52 @@ paths:
           in: body
           schema:
             type: object
+            properties:
+              max-future-start-range:
+                description: Enforce reservation request 'start' time is within allowed range from now
+                type: integer
+                format: uint16
+              max-future-end-range:
+                description: Enforce reservation request 'end' time is within allowed range from now
+                type: integer
+                format: uint16
+              max-duration:
+                description: Enforce reservation duration (end-start) does not exceed specified threshold
+                default: '8760'
+                type: integer
+                format: uint16
+              expiry:
+                description: |-
+                  Duration in minutes from start when unallocated reserved resources
+                    will be released back into the pool
+                type: integer
+                format: uint32
           required: false
       responses:
         '200':
           description: 'Expected response of opnfv-promise:reservation'
           schema:
             type: object
+            properties:
+              max-future-start-range:
+                description: Enforce reservation request 'start' time is within allowed range from now
+                type: integer
+                format: uint16
+              max-future-end-range:
+                description: Enforce reservation request 'end' time is within allowed range from now
+                type: integer
+                format: uint16
+              max-duration:
+                description: Enforce reservation duration (end-start) does not exceed specified threshold
+                default: '8760'
+                type: integer
+                format: uint16
+              expiry:
+                description: |-
+                  Duration in minutes from start when unallocated reserved resources
+                    will be released back into the pool
+                type: integer
+                format: uint32
     patch:
       summary: 'Merge details on opnfv-promise:reservation'
       deprecated: false
@@ -4611,12 +4671,52 @@ paths:
           in: body
           schema:
             type: object
+            properties:
+              max-future-start-range:
+                description: Enforce reservation request 'start' time is within allowed range from now
+                type: integer
+                format: uint16
+              max-future-end-range:
+                description: Enforce reservation request 'end' time is within allowed range from now
+                type: integer
+                format: uint16
+              max-duration:
+                description: Enforce reservation duration (end-start) does not exceed specified threshold
+                default: '8760'
+                type: integer
+                format: uint16
+              expiry:
+                description: |-
+                  Duration in minutes from start when unallocated reserved resources
+                    will be released back into the pool
+                type: integer
+                format: uint32
           required: false
       responses:
         '200':
           description: 'Expected response of opnfv-promise:reservation'
           schema:
             type: object
+            properties:
+              max-future-start-range:
+                description: Enforce reservation request 'start' time is within allowed range from now
+                type: integer
+                format: uint16
+              max-future-end-range:
+                description: Enforce reservation request 'end' time is within allowed range from now
+                type: integer
+                format: uint16
+              max-duration:
+                description: Enforce reservation duration (end-start) does not exceed specified threshold
+                default: '8760'
+                type: integer
+                format: uint16
+              expiry:
+                description: |-
+                  Duration in minutes from start when unallocated reserved resources
+                    will be released back into the pool
+                type: integer
+                format: uint32
     delete:
       summary: 'Delete opnfv-promise:reservation from policy'
       deprecated: false
@@ -4633,7 +4733,23 @@ paths:
           description: 'Expected response of opnfv-promise:capacity'
           schema:
             description: Describes current state info about capacity utilization info
-            type: object
+            allOf:
+              - $ref: '#/definitions/promise:reservations-list'
+              - properties:
+                  total:
+                    $ref: '#/definitions/promise:resource-capacity'
+                  reserved:
+                    $ref: '#/definitions/promise:resource-capacity'
+                  usage:
+                    $ref: '#/definitions/promise:resource-capacity'
+                  available:
+                    $ref: '#/definitions/promise:resource-capacity'
+                  elements:
+                    type: array
+                    items:
+                      description: aggregate reference to all resource-element identifiers
+                      type: string
+                      format: instance-identifier
     put:
       summary: 'Update details on opnfv-promise:capacity'
       deprecated: false
@@ -4643,14 +4759,46 @@ paths:
           description: Describes current state info about capacity utilization info
           schema:
             description: Describes current state info about capacity utilization info
-            type: object
+            allOf:
+              - $ref: '#/definitions/promise:reservations-list'
+              - properties:
+                  total:
+                    $ref: '#/definitions/promise:resource-capacity'
+                  reserved:
+                    $ref: '#/definitions/promise:resource-capacity'
+                  usage:
+                    $ref: '#/definitions/promise:resource-capacity'
+                  available:
+                    $ref: '#/definitions/promise:resource-capacity'
+                  elements:
+                    type: array
+                    items:
+                      description: aggregate reference to all resource-element identifiers
+                      type: string
+                      format: instance-identifier
           required: false
       responses:
         '200':
           description: 'Expected response of opnfv-promise:capacity'
           schema:
             description: Describes current state info about capacity utilization info
-            type: object
+            allOf:
+              - $ref: '#/definitions/promise:reservations-list'
+              - properties:
+                  total:
+                    $ref: '#/definitions/promise:resource-capacity'
+                  reserved:
+                    $ref: '#/definitions/promise:resource-capacity'
+                  usage:
+                    $ref: '#/definitions/promise:resource-capacity'
+                  available:
+                    $ref: '#/definitions/promise:resource-capacity'
+                  elements:
+                    type: array
+                    items:
+                      description: aggregate reference to all resource-element identifiers
+                      type: string
+                      format: instance-identifier
     patch:
       summary: 'Merge details on opnfv-promise:capacity'
       deprecated: false
@@ -4660,14 +4808,46 @@ paths:
           description: Describes current state info about capacity utilization info
           schema:
             description: Describes current state info about capacity utilization info
-            type: object
+            allOf:
+              - $ref: '#/definitions/promise:reservations-list'
+              - properties:
+                  total:
+                    $ref: '#/definitions/promise:resource-capacity'
+                  reserved:
+                    $ref: '#/definitions/promise:resource-capacity'
+                  usage:
+                    $ref: '#/definitions/promise:resource-capacity'
+                  available:
+                    $ref: '#/definitions/promise:resource-capacity'
+                  elements:
+                    type: array
+                    items:
+                      description: aggregate reference to all resource-element identifiers
+                      type: string
+                      format: instance-identifier
           required: false
       responses:
         '200':
           description: 'Expected response of opnfv-promise:capacity'
           schema:
             description: Describes current state info about capacity utilization info
-            type: object
+            allOf:
+              - $ref: '#/definitions/promise:reservations-list'
+              - properties:
+                  total:
+                    $ref: '#/definitions/promise:resource-capacity'
+                  reserved:
+                    $ref: '#/definitions/promise:resource-capacity'
+                  usage:
+                    $ref: '#/definitions/promise:resource-capacity'
+                  available:
+                    $ref: '#/definitions/promise:resource-capacity'
+                  elements:
+                    type: array
+                    items:
+                      description: aggregate reference to all resource-element identifiers
+                      type: string
+                      format: instance-identifier
     delete:
       summary: 'Delete opnfv-promise:capacity from controller'
       deprecated: false
@@ -4712,7 +4892,7 @@ paths:
           schema:
             $ref: '#/definitions/promise:resource-capacity'
     delete:
-      summary: Delete total from capacity
+      summary: 'Delete total from opnfv-promise:capacity'
       deprecated: false
       responses:
         '204':
@@ -4755,7 +4935,7 @@ paths:
           schema:
             $ref: '#/definitions/promise:resource-capacity'
     delete:
-      summary: Delete reserved from capacity
+      summary: 'Delete reserved from opnfv-promise:capacity'
       deprecated: false
       responses:
         '204':
@@ -4798,7 +4978,7 @@ paths:
           schema:
             $ref: '#/definitions/promise:resource-capacity'
     delete:
-      summary: Delete usage from capacity
+      summary: 'Delete usage from opnfv-promise:capacity'
       deprecated: false
       responses:
         '204':
@@ -4841,7 +5021,7 @@ paths:
           schema:
             $ref: '#/definitions/promise:resource-capacity'
     delete:
-      summary: Delete available from capacity
+      summary: 'Delete available from opnfv-promise:capacity'
       deprecated: false
       responses:
         '204':
@@ -4849,7 +5029,7 @@ paths:
   '/opnfv-infrastructure:controller/opnfv-promise:capacity/increase':
     post:
       description: Increase total capacity available for reservations between a window in time
-      summary: Invokes increase in capacity
+      summary: 'Invokes increase in opnfv-promise:capacity'
       deprecated: false
       parameters:
         - name: 'increase:input'
@@ -4870,7 +5050,7 @@ paths:
   '/opnfv-infrastructure:controller/opnfv-promise:capacity/decrease':
     post:
       description: Decrease total capacity available for reservations between a window in time
-      summary: Invokes decrease in capacity
+      summary: 'Invokes decrease in opnfv-promise:capacity'
       deprecated: false
       parameters:
         - name: 'decrease:input'
@@ -4891,7 +5071,7 @@ paths:
   '/opnfv-infrastructure:controller/opnfv-promise:capacity/reserve':
     post:
       description: Make a request to reserve resources
-      summary: Invokes reserve in capacity
+      summary: 'Invokes reserve in opnfv-promise:capacity'
       deprecated: false
       parameters:
         - name: 'reserve:input'
@@ -4912,7 +5092,7 @@ paths:
   '/opnfv-infrastructure:controller/opnfv-promise:capacity/query':
     post:
       description: Check capacity information about a specified resource collection
-      summary: Invokes query in capacity
+      summary: 'Invokes query in opnfv-promise:capacity'
       deprecated: false
       parameters:
         - name: 'query:input'
