@@ -32,148 +32,149 @@ paths:
             description: |-
               Information model describing a NFVI resource stack comprising of
               various resource elements across compute, network, and storage
-            type: object
-            properties:
-              compute:
-                description: Contains compute related resources
-                type: object
-                properties:
-                  host:
-                    type: array
-                    items:
-                      $ref: '#/definitions/nfvi:compute-host'
-                  server:
-                    type: array
-                    items:
-                      allOf:
-                        - $ref: '#/definitions/nfvi:virtual-server'
-                        - properties:
-                            'opnfv-promise:reservation-id':
-                              description: Reference to an existing reservation identifier (optional)
-                              type: string
-                              format: leafref
-                            'opnfv-promise:pool-id':
-                              description: Reference to an existing resource pool from which allocation is drawn
-                              type: string
-                              format: leafref
-                            'opnfv-promise:priority':
-                              description: Reflects current priority level of the allocation according to classification rules
-                              default: normal
-                              type: string
-                              format: enumeration
-                              enum:
-                                - high
-                                - normal
-                                - low
-                  image:
-                    type: array
-                    items:
-                      $ref: '#/definitions/nfvi:server-image'
-                  flavor:
-                    type: array
-                    items:
-                      $ref: '#/definitions/nfvi:resource-flavor'
-                  'opnfv-promise:capacity':
-                    $ref: '#/definitions/promise:compute-capacity'
-              fabric:
-                description: Contains networking related resources
-                type: object
-                properties:
-                  network:
-                    type: array
-                    items:
-                      allOf:
-                        - $ref: '#/definitions/nfvi:resource-element'
-                        - properties:
-                            subnet:
-                              type: array
-                              items:
-                                allOf:
-                                  - $ref: '#/definitions/nfvi:resource-element'
-                                  - properties:
-                                      nameservers:
-                                        type: array
-                                        items:
-                                          type: string
-                                          format: string
-                                      dhcp:
-                                        type: object
-                                        properties:
-                                          enabled:
-                                            type: boolean
-                                            format: boolean
-                                          pool:
-                                            type: array
-                                            items:
-                                              type: object
-                                              properties:
-                                                start:
-                                                  type: string
-                                                  format: 'inet:ip-address'
-                                                end:
-                                                  type: string
-                                                  format: 'inet:ip-address'
-                                      port:
-                                        type: array
-                                        items:
-                                          $ref: '#/definitions/nfvi:resource-element'
-                  router:
-                    type: array
-                    items:
-                      $ref: '#/definitions/nfvi:resource-instance'
-                  'opnfv-promise:capacity':
-                    $ref: '#/definitions/promise:network-capacity'
-              storage:
-                description: Contains storage related resources
-                type: object
-                properties:
-                  'opnfv-promise:capacity':
-                    $ref: '#/definitions/promise:storage-capacity'
-              policy:
-                description: Contains NFVI policy configurations
-                type: object
-                properties:
-                  'opnfv-promise:reservation':
+            allOf:
+              - $ref: '#/definitions/nfvi:resource-element'
+              - properties:
+                  compute:
+                    description: Contains compute related resources
                     type: object
                     properties:
-                      max-future-start-range:
-                        description: Enforce reservation request 'start' time is within allowed range from now
-                        type: integer
-                        format: uint16
-                      max-future-end-range:
-                        description: Enforce reservation request 'end' time is within allowed range from now
-                        type: integer
-                        format: uint16
-                      max-duration:
-                        description: Enforce reservation duration (end-start) does not exceed specified threshold
-                        default: '8760'
-                        type: integer
-                        format: uint16
-                      expiry:
-                        description: |-
-                          Duration in minutes from start when unallocated reserved resources
-                            will be released back into the pool
-                        type: integer
-                        format: uint32
-              'opnfv-promise:capacity':
-                description: Describes current state info about capacity utilization info
-                allOf:
-                  - $ref: '#/definitions/promise:reservations-list'
-                  - properties:
-                      total:
-                        $ref: '#/definitions/promise:resource-capacity'
-                      reserved:
-                        $ref: '#/definitions/promise:resource-capacity'
-                      usage:
-                        $ref: '#/definitions/promise:resource-capacity'
-                      available:
-                        $ref: '#/definitions/promise:resource-capacity'
-                      elements:
+                      host:
                         type: array
                         items:
-                          description: aggregate reference to all resource-element identifiers
-                          type: string
-                          format: instance-identifier
+                          $ref: '#/definitions/nfvi:compute-host'
+                      server:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: '#/definitions/nfvi:virtual-server'
+                            - properties:
+                                'opnfv-promise:reservation-id':
+                                  description: Reference to an existing reservation identifier (optional)
+                                  type: string
+                                  format: leafref
+                                'opnfv-promise:pool-id':
+                                  description: Reference to an existing resource pool from which allocation is drawn
+                                  type: string
+                                  format: leafref
+                                'opnfv-promise:priority':
+                                  description: Reflects current priority level of the allocation according to classification rules
+                                  default: normal
+                                  type: string
+                                  format: enumeration
+                                  enum:
+                                    - high
+                                    - normal
+                                    - low
+                      image:
+                        type: array
+                        items:
+                          $ref: '#/definitions/nfvi:server-image'
+                      flavor:
+                        type: array
+                        items:
+                          $ref: '#/definitions/nfvi:resource-flavor'
+                      'opnfv-promise:capacity':
+                        $ref: '#/definitions/promise:compute-capacity'
+                  fabric:
+                    description: Contains networking related resources
+                    type: object
+                    properties:
+                      network:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: '#/definitions/nfvi:resource-element'
+                            - properties:
+                                subnet:
+                                  type: array
+                                  items:
+                                    allOf:
+                                      - $ref: '#/definitions/nfvi:resource-element'
+                                      - properties:
+                                          nameservers:
+                                            type: array
+                                            items:
+                                              type: string
+                                              format: string
+                                          dhcp:
+                                            type: object
+                                            properties:
+                                              enabled:
+                                                type: boolean
+                                                format: boolean
+                                              pool:
+                                                type: array
+                                                items:
+                                                  type: object
+                                                  properties:
+                                                    start:
+                                                      type: string
+                                                      format: 'inet:ip-address'
+                                                    end:
+                                                      type: string
+                                                      format: 'inet:ip-address'
+                                          port:
+                                            type: array
+                                            items:
+                                              $ref: '#/definitions/nfvi:resource-element'
+                      router:
+                        type: array
+                        items:
+                          $ref: '#/definitions/nfvi:resource-instance'
+                      'opnfv-promise:capacity':
+                        $ref: '#/definitions/promise:network-capacity'
+                  storage:
+                    description: Contains storage related resources
+                    type: object
+                    properties:
+                      'opnfv-promise:capacity':
+                        $ref: '#/definitions/promise:storage-capacity'
+                  policy:
+                    description: Contains NFVI policy configurations
+                    type: object
+                    properties:
+                      'opnfv-promise:reservation':
+                        type: object
+                        properties:
+                          max-future-start-range:
+                            description: Enforce reservation request 'start' time is within allowed range from now
+                            type: integer
+                            format: uint16
+                          max-future-end-range:
+                            description: Enforce reservation request 'end' time is within allowed range from now
+                            type: integer
+                            format: uint16
+                          max-duration:
+                            description: Enforce reservation duration (end-start) does not exceed specified threshold
+                            default: '8760'
+                            type: integer
+                            format: uint16
+                          expiry:
+                            description: |-
+                              Duration in minutes from start when unallocated reserved resources
+                                will be released back into the pool
+                            type: integer
+                            format: uint32
+                  'opnfv-promise:capacity':
+                    description: Describes current state info about capacity utilization info
+                    allOf:
+                      - $ref: '#/definitions/promise:reservations-list'
+                      - properties:
+                          total:
+                            $ref: '#/definitions/promise:resource-capacity'
+                          reserved:
+                            $ref: '#/definitions/promise:resource-capacity'
+                          usage:
+                            $ref: '#/definitions/promise:resource-capacity'
+                          available:
+                            $ref: '#/definitions/promise:resource-capacity'
+                          elements:
+                            type: array
+                            items:
+                              description: aggregate reference to all resource-element identifiers
+                              type: string
+                              format: instance-identifier
     put:
       summary: Update details on controller
       deprecated: false
@@ -187,148 +188,149 @@ paths:
             description: |-
               Information model describing a NFVI resource stack comprising of
               various resource elements across compute, network, and storage
-            type: object
-            properties:
-              compute:
-                description: Contains compute related resources
-                type: object
-                properties:
-                  host:
-                    type: array
-                    items:
-                      $ref: '#/definitions/nfvi:compute-host'
-                  server:
-                    type: array
-                    items:
-                      allOf:
-                        - $ref: '#/definitions/nfvi:virtual-server'
-                        - properties:
-                            'opnfv-promise:reservation-id':
-                              description: Reference to an existing reservation identifier (optional)
-                              type: string
-                              format: leafref
-                            'opnfv-promise:pool-id':
-                              description: Reference to an existing resource pool from which allocation is drawn
-                              type: string
-                              format: leafref
-                            'opnfv-promise:priority':
-                              description: Reflects current priority level of the allocation according to classification rules
-                              default: normal
-                              type: string
-                              format: enumeration
-                              enum:
-                                - high
-                                - normal
-                                - low
-                  image:
-                    type: array
-                    items:
-                      $ref: '#/definitions/nfvi:server-image'
-                  flavor:
-                    type: array
-                    items:
-                      $ref: '#/definitions/nfvi:resource-flavor'
-                  'opnfv-promise:capacity':
-                    $ref: '#/definitions/promise:compute-capacity'
-              fabric:
-                description: Contains networking related resources
-                type: object
-                properties:
-                  network:
-                    type: array
-                    items:
-                      allOf:
-                        - $ref: '#/definitions/nfvi:resource-element'
-                        - properties:
-                            subnet:
-                              type: array
-                              items:
-                                allOf:
-                                  - $ref: '#/definitions/nfvi:resource-element'
-                                  - properties:
-                                      nameservers:
-                                        type: array
-                                        items:
-                                          type: string
-                                          format: string
-                                      dhcp:
-                                        type: object
-                                        properties:
-                                          enabled:
-                                            type: boolean
-                                            format: boolean
-                                          pool:
-                                            type: array
-                                            items:
-                                              type: object
-                                              properties:
-                                                start:
-                                                  type: string
-                                                  format: 'inet:ip-address'
-                                                end:
-                                                  type: string
-                                                  format: 'inet:ip-address'
-                                      port:
-                                        type: array
-                                        items:
-                                          $ref: '#/definitions/nfvi:resource-element'
-                  router:
-                    type: array
-                    items:
-                      $ref: '#/definitions/nfvi:resource-instance'
-                  'opnfv-promise:capacity':
-                    $ref: '#/definitions/promise:network-capacity'
-              storage:
-                description: Contains storage related resources
-                type: object
-                properties:
-                  'opnfv-promise:capacity':
-                    $ref: '#/definitions/promise:storage-capacity'
-              policy:
-                description: Contains NFVI policy configurations
-                type: object
-                properties:
-                  'opnfv-promise:reservation':
+            allOf:
+              - $ref: '#/definitions/nfvi:resource-element'
+              - properties:
+                  compute:
+                    description: Contains compute related resources
                     type: object
                     properties:
-                      max-future-start-range:
-                        description: Enforce reservation request 'start' time is within allowed range from now
-                        type: integer
-                        format: uint16
-                      max-future-end-range:
-                        description: Enforce reservation request 'end' time is within allowed range from now
-                        type: integer
-                        format: uint16
-                      max-duration:
-                        description: Enforce reservation duration (end-start) does not exceed specified threshold
-                        default: '8760'
-                        type: integer
-                        format: uint16
-                      expiry:
-                        description: |-
-                          Duration in minutes from start when unallocated reserved resources
-                            will be released back into the pool
-                        type: integer
-                        format: uint32
-              'opnfv-promise:capacity':
-                description: Describes current state info about capacity utilization info
-                allOf:
-                  - $ref: '#/definitions/promise:reservations-list'
-                  - properties:
-                      total:
-                        $ref: '#/definitions/promise:resource-capacity'
-                      reserved:
-                        $ref: '#/definitions/promise:resource-capacity'
-                      usage:
-                        $ref: '#/definitions/promise:resource-capacity'
-                      available:
-                        $ref: '#/definitions/promise:resource-capacity'
-                      elements:
+                      host:
                         type: array
                         items:
-                          description: aggregate reference to all resource-element identifiers
-                          type: string
-                          format: instance-identifier
+                          $ref: '#/definitions/nfvi:compute-host'
+                      server:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: '#/definitions/nfvi:virtual-server'
+                            - properties:
+                                'opnfv-promise:reservation-id':
+                                  description: Reference to an existing reservation identifier (optional)
+                                  type: string
+                                  format: leafref
+                                'opnfv-promise:pool-id':
+                                  description: Reference to an existing resource pool from which allocation is drawn
+                                  type: string
+                                  format: leafref
+                                'opnfv-promise:priority':
+                                  description: Reflects current priority level of the allocation according to classification rules
+                                  default: normal
+                                  type: string
+                                  format: enumeration
+                                  enum:
+                                    - high
+                                    - normal
+                                    - low
+                      image:
+                        type: array
+                        items:
+                          $ref: '#/definitions/nfvi:server-image'
+                      flavor:
+                        type: array
+                        items:
+                          $ref: '#/definitions/nfvi:resource-flavor'
+                      'opnfv-promise:capacity':
+                        $ref: '#/definitions/promise:compute-capacity'
+                  fabric:
+                    description: Contains networking related resources
+                    type: object
+                    properties:
+                      network:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: '#/definitions/nfvi:resource-element'
+                            - properties:
+                                subnet:
+                                  type: array
+                                  items:
+                                    allOf:
+                                      - $ref: '#/definitions/nfvi:resource-element'
+                                      - properties:
+                                          nameservers:
+                                            type: array
+                                            items:
+                                              type: string
+                                              format: string
+                                          dhcp:
+                                            type: object
+                                            properties:
+                                              enabled:
+                                                type: boolean
+                                                format: boolean
+                                              pool:
+                                                type: array
+                                                items:
+                                                  type: object
+                                                  properties:
+                                                    start:
+                                                      type: string
+                                                      format: 'inet:ip-address'
+                                                    end:
+                                                      type: string
+                                                      format: 'inet:ip-address'
+                                          port:
+                                            type: array
+                                            items:
+                                              $ref: '#/definitions/nfvi:resource-element'
+                      router:
+                        type: array
+                        items:
+                          $ref: '#/definitions/nfvi:resource-instance'
+                      'opnfv-promise:capacity':
+                        $ref: '#/definitions/promise:network-capacity'
+                  storage:
+                    description: Contains storage related resources
+                    type: object
+                    properties:
+                      'opnfv-promise:capacity':
+                        $ref: '#/definitions/promise:storage-capacity'
+                  policy:
+                    description: Contains NFVI policy configurations
+                    type: object
+                    properties:
+                      'opnfv-promise:reservation':
+                        type: object
+                        properties:
+                          max-future-start-range:
+                            description: Enforce reservation request 'start' time is within allowed range from now
+                            type: integer
+                            format: uint16
+                          max-future-end-range:
+                            description: Enforce reservation request 'end' time is within allowed range from now
+                            type: integer
+                            format: uint16
+                          max-duration:
+                            description: Enforce reservation duration (end-start) does not exceed specified threshold
+                            default: '8760'
+                            type: integer
+                            format: uint16
+                          expiry:
+                            description: |-
+                              Duration in minutes from start when unallocated reserved resources
+                                will be released back into the pool
+                            type: integer
+                            format: uint32
+                  'opnfv-promise:capacity':
+                    description: Describes current state info about capacity utilization info
+                    allOf:
+                      - $ref: '#/definitions/promise:reservations-list'
+                      - properties:
+                          total:
+                            $ref: '#/definitions/promise:resource-capacity'
+                          reserved:
+                            $ref: '#/definitions/promise:resource-capacity'
+                          usage:
+                            $ref: '#/definitions/promise:resource-capacity'
+                          available:
+                            $ref: '#/definitions/promise:resource-capacity'
+                          elements:
+                            type: array
+                            items:
+                              description: aggregate reference to all resource-element identifiers
+                              type: string
+                              format: instance-identifier
           required: false
       responses:
         '200':
@@ -337,148 +339,149 @@ paths:
             description: |-
               Information model describing a NFVI resource stack comprising of
               various resource elements across compute, network, and storage
-            type: object
-            properties:
-              compute:
-                description: Contains compute related resources
-                type: object
-                properties:
-                  host:
-                    type: array
-                    items:
-                      $ref: '#/definitions/nfvi:compute-host'
-                  server:
-                    type: array
-                    items:
-                      allOf:
-                        - $ref: '#/definitions/nfvi:virtual-server'
-                        - properties:
-                            'opnfv-promise:reservation-id':
-                              description: Reference to an existing reservation identifier (optional)
-                              type: string
-                              format: leafref
-                            'opnfv-promise:pool-id':
-                              description: Reference to an existing resource pool from which allocation is drawn
-                              type: string
-                              format: leafref
-                            'opnfv-promise:priority':
-                              description: Reflects current priority level of the allocation according to classification rules
-                              default: normal
-                              type: string
-                              format: enumeration
-                              enum:
-                                - high
-                                - normal
-                                - low
-                  image:
-                    type: array
-                    items:
-                      $ref: '#/definitions/nfvi:server-image'
-                  flavor:
-                    type: array
-                    items:
-                      $ref: '#/definitions/nfvi:resource-flavor'
-                  'opnfv-promise:capacity':
-                    $ref: '#/definitions/promise:compute-capacity'
-              fabric:
-                description: Contains networking related resources
-                type: object
-                properties:
-                  network:
-                    type: array
-                    items:
-                      allOf:
-                        - $ref: '#/definitions/nfvi:resource-element'
-                        - properties:
-                            subnet:
-                              type: array
-                              items:
-                                allOf:
-                                  - $ref: '#/definitions/nfvi:resource-element'
-                                  - properties:
-                                      nameservers:
-                                        type: array
-                                        items:
-                                          type: string
-                                          format: string
-                                      dhcp:
-                                        type: object
-                                        properties:
-                                          enabled:
-                                            type: boolean
-                                            format: boolean
-                                          pool:
-                                            type: array
-                                            items:
-                                              type: object
-                                              properties:
-                                                start:
-                                                  type: string
-                                                  format: 'inet:ip-address'
-                                                end:
-                                                  type: string
-                                                  format: 'inet:ip-address'
-                                      port:
-                                        type: array
-                                        items:
-                                          $ref: '#/definitions/nfvi:resource-element'
-                  router:
-                    type: array
-                    items:
-                      $ref: '#/definitions/nfvi:resource-instance'
-                  'opnfv-promise:capacity':
-                    $ref: '#/definitions/promise:network-capacity'
-              storage:
-                description: Contains storage related resources
-                type: object
-                properties:
-                  'opnfv-promise:capacity':
-                    $ref: '#/definitions/promise:storage-capacity'
-              policy:
-                description: Contains NFVI policy configurations
-                type: object
-                properties:
-                  'opnfv-promise:reservation':
+            allOf:
+              - $ref: '#/definitions/nfvi:resource-element'
+              - properties:
+                  compute:
+                    description: Contains compute related resources
                     type: object
                     properties:
-                      max-future-start-range:
-                        description: Enforce reservation request 'start' time is within allowed range from now
-                        type: integer
-                        format: uint16
-                      max-future-end-range:
-                        description: Enforce reservation request 'end' time is within allowed range from now
-                        type: integer
-                        format: uint16
-                      max-duration:
-                        description: Enforce reservation duration (end-start) does not exceed specified threshold
-                        default: '8760'
-                        type: integer
-                        format: uint16
-                      expiry:
-                        description: |-
-                          Duration in minutes from start when unallocated reserved resources
-                            will be released back into the pool
-                        type: integer
-                        format: uint32
-              'opnfv-promise:capacity':
-                description: Describes current state info about capacity utilization info
-                allOf:
-                  - $ref: '#/definitions/promise:reservations-list'
-                  - properties:
-                      total:
-                        $ref: '#/definitions/promise:resource-capacity'
-                      reserved:
-                        $ref: '#/definitions/promise:resource-capacity'
-                      usage:
-                        $ref: '#/definitions/promise:resource-capacity'
-                      available:
-                        $ref: '#/definitions/promise:resource-capacity'
-                      elements:
+                      host:
                         type: array
                         items:
-                          description: aggregate reference to all resource-element identifiers
-                          type: string
-                          format: instance-identifier
+                          $ref: '#/definitions/nfvi:compute-host'
+                      server:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: '#/definitions/nfvi:virtual-server'
+                            - properties:
+                                'opnfv-promise:reservation-id':
+                                  description: Reference to an existing reservation identifier (optional)
+                                  type: string
+                                  format: leafref
+                                'opnfv-promise:pool-id':
+                                  description: Reference to an existing resource pool from which allocation is drawn
+                                  type: string
+                                  format: leafref
+                                'opnfv-promise:priority':
+                                  description: Reflects current priority level of the allocation according to classification rules
+                                  default: normal
+                                  type: string
+                                  format: enumeration
+                                  enum:
+                                    - high
+                                    - normal
+                                    - low
+                      image:
+                        type: array
+                        items:
+                          $ref: '#/definitions/nfvi:server-image'
+                      flavor:
+                        type: array
+                        items:
+                          $ref: '#/definitions/nfvi:resource-flavor'
+                      'opnfv-promise:capacity':
+                        $ref: '#/definitions/promise:compute-capacity'
+                  fabric:
+                    description: Contains networking related resources
+                    type: object
+                    properties:
+                      network:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: '#/definitions/nfvi:resource-element'
+                            - properties:
+                                subnet:
+                                  type: array
+                                  items:
+                                    allOf:
+                                      - $ref: '#/definitions/nfvi:resource-element'
+                                      - properties:
+                                          nameservers:
+                                            type: array
+                                            items:
+                                              type: string
+                                              format: string
+                                          dhcp:
+                                            type: object
+                                            properties:
+                                              enabled:
+                                                type: boolean
+                                                format: boolean
+                                              pool:
+                                                type: array
+                                                items:
+                                                  type: object
+                                                  properties:
+                                                    start:
+                                                      type: string
+                                                      format: 'inet:ip-address'
+                                                    end:
+                                                      type: string
+                                                      format: 'inet:ip-address'
+                                          port:
+                                            type: array
+                                            items:
+                                              $ref: '#/definitions/nfvi:resource-element'
+                      router:
+                        type: array
+                        items:
+                          $ref: '#/definitions/nfvi:resource-instance'
+                      'opnfv-promise:capacity':
+                        $ref: '#/definitions/promise:network-capacity'
+                  storage:
+                    description: Contains storage related resources
+                    type: object
+                    properties:
+                      'opnfv-promise:capacity':
+                        $ref: '#/definitions/promise:storage-capacity'
+                  policy:
+                    description: Contains NFVI policy configurations
+                    type: object
+                    properties:
+                      'opnfv-promise:reservation':
+                        type: object
+                        properties:
+                          max-future-start-range:
+                            description: Enforce reservation request 'start' time is within allowed range from now
+                            type: integer
+                            format: uint16
+                          max-future-end-range:
+                            description: Enforce reservation request 'end' time is within allowed range from now
+                            type: integer
+                            format: uint16
+                          max-duration:
+                            description: Enforce reservation duration (end-start) does not exceed specified threshold
+                            default: '8760'
+                            type: integer
+                            format: uint16
+                          expiry:
+                            description: |-
+                              Duration in minutes from start when unallocated reserved resources
+                                will be released back into the pool
+                            type: integer
+                            format: uint32
+                  'opnfv-promise:capacity':
+                    description: Describes current state info about capacity utilization info
+                    allOf:
+                      - $ref: '#/definitions/promise:reservations-list'
+                      - properties:
+                          total:
+                            $ref: '#/definitions/promise:resource-capacity'
+                          reserved:
+                            $ref: '#/definitions/promise:resource-capacity'
+                          usage:
+                            $ref: '#/definitions/promise:resource-capacity'
+                          available:
+                            $ref: '#/definitions/promise:resource-capacity'
+                          elements:
+                            type: array
+                            items:
+                              description: aggregate reference to all resource-element identifiers
+                              type: string
+                              format: instance-identifier
     patch:
       summary: Merge details on controller
       deprecated: false
@@ -492,148 +495,149 @@ paths:
             description: |-
               Information model describing a NFVI resource stack comprising of
               various resource elements across compute, network, and storage
-            type: object
-            properties:
-              compute:
-                description: Contains compute related resources
-                type: object
-                properties:
-                  host:
-                    type: array
-                    items:
-                      $ref: '#/definitions/nfvi:compute-host'
-                  server:
-                    type: array
-                    items:
-                      allOf:
-                        - $ref: '#/definitions/nfvi:virtual-server'
-                        - properties:
-                            'opnfv-promise:reservation-id':
-                              description: Reference to an existing reservation identifier (optional)
-                              type: string
-                              format: leafref
-                            'opnfv-promise:pool-id':
-                              description: Reference to an existing resource pool from which allocation is drawn
-                              type: string
-                              format: leafref
-                            'opnfv-promise:priority':
-                              description: Reflects current priority level of the allocation according to classification rules
-                              default: normal
-                              type: string
-                              format: enumeration
-                              enum:
-                                - high
-                                - normal
-                                - low
-                  image:
-                    type: array
-                    items:
-                      $ref: '#/definitions/nfvi:server-image'
-                  flavor:
-                    type: array
-                    items:
-                      $ref: '#/definitions/nfvi:resource-flavor'
-                  'opnfv-promise:capacity':
-                    $ref: '#/definitions/promise:compute-capacity'
-              fabric:
-                description: Contains networking related resources
-                type: object
-                properties:
-                  network:
-                    type: array
-                    items:
-                      allOf:
-                        - $ref: '#/definitions/nfvi:resource-element'
-                        - properties:
-                            subnet:
-                              type: array
-                              items:
-                                allOf:
-                                  - $ref: '#/definitions/nfvi:resource-element'
-                                  - properties:
-                                      nameservers:
-                                        type: array
-                                        items:
-                                          type: string
-                                          format: string
-                                      dhcp:
-                                        type: object
-                                        properties:
-                                          enabled:
-                                            type: boolean
-                                            format: boolean
-                                          pool:
-                                            type: array
-                                            items:
-                                              type: object
-                                              properties:
-                                                start:
-                                                  type: string
-                                                  format: 'inet:ip-address'
-                                                end:
-                                                  type: string
-                                                  format: 'inet:ip-address'
-                                      port:
-                                        type: array
-                                        items:
-                                          $ref: '#/definitions/nfvi:resource-element'
-                  router:
-                    type: array
-                    items:
-                      $ref: '#/definitions/nfvi:resource-instance'
-                  'opnfv-promise:capacity':
-                    $ref: '#/definitions/promise:network-capacity'
-              storage:
-                description: Contains storage related resources
-                type: object
-                properties:
-                  'opnfv-promise:capacity':
-                    $ref: '#/definitions/promise:storage-capacity'
-              policy:
-                description: Contains NFVI policy configurations
-                type: object
-                properties:
-                  'opnfv-promise:reservation':
+            allOf:
+              - $ref: '#/definitions/nfvi:resource-element'
+              - properties:
+                  compute:
+                    description: Contains compute related resources
                     type: object
                     properties:
-                      max-future-start-range:
-                        description: Enforce reservation request 'start' time is within allowed range from now
-                        type: integer
-                        format: uint16
-                      max-future-end-range:
-                        description: Enforce reservation request 'end' time is within allowed range from now
-                        type: integer
-                        format: uint16
-                      max-duration:
-                        description: Enforce reservation duration (end-start) does not exceed specified threshold
-                        default: '8760'
-                        type: integer
-                        format: uint16
-                      expiry:
-                        description: |-
-                          Duration in minutes from start when unallocated reserved resources
-                            will be released back into the pool
-                        type: integer
-                        format: uint32
-              'opnfv-promise:capacity':
-                description: Describes current state info about capacity utilization info
-                allOf:
-                  - $ref: '#/definitions/promise:reservations-list'
-                  - properties:
-                      total:
-                        $ref: '#/definitions/promise:resource-capacity'
-                      reserved:
-                        $ref: '#/definitions/promise:resource-capacity'
-                      usage:
-                        $ref: '#/definitions/promise:resource-capacity'
-                      available:
-                        $ref: '#/definitions/promise:resource-capacity'
-                      elements:
+                      host:
                         type: array
                         items:
-                          description: aggregate reference to all resource-element identifiers
-                          type: string
-                          format: instance-identifier
+                          $ref: '#/definitions/nfvi:compute-host'
+                      server:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: '#/definitions/nfvi:virtual-server'
+                            - properties:
+                                'opnfv-promise:reservation-id':
+                                  description: Reference to an existing reservation identifier (optional)
+                                  type: string
+                                  format: leafref
+                                'opnfv-promise:pool-id':
+                                  description: Reference to an existing resource pool from which allocation is drawn
+                                  type: string
+                                  format: leafref
+                                'opnfv-promise:priority':
+                                  description: Reflects current priority level of the allocation according to classification rules
+                                  default: normal
+                                  type: string
+                                  format: enumeration
+                                  enum:
+                                    - high
+                                    - normal
+                                    - low
+                      image:
+                        type: array
+                        items:
+                          $ref: '#/definitions/nfvi:server-image'
+                      flavor:
+                        type: array
+                        items:
+                          $ref: '#/definitions/nfvi:resource-flavor'
+                      'opnfv-promise:capacity':
+                        $ref: '#/definitions/promise:compute-capacity'
+                  fabric:
+                    description: Contains networking related resources
+                    type: object
+                    properties:
+                      network:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: '#/definitions/nfvi:resource-element'
+                            - properties:
+                                subnet:
+                                  type: array
+                                  items:
+                                    allOf:
+                                      - $ref: '#/definitions/nfvi:resource-element'
+                                      - properties:
+                                          nameservers:
+                                            type: array
+                                            items:
+                                              type: string
+                                              format: string
+                                          dhcp:
+                                            type: object
+                                            properties:
+                                              enabled:
+                                                type: boolean
+                                                format: boolean
+                                              pool:
+                                                type: array
+                                                items:
+                                                  type: object
+                                                  properties:
+                                                    start:
+                                                      type: string
+                                                      format: 'inet:ip-address'
+                                                    end:
+                                                      type: string
+                                                      format: 'inet:ip-address'
+                                          port:
+                                            type: array
+                                            items:
+                                              $ref: '#/definitions/nfvi:resource-element'
+                      router:
+                        type: array
+                        items:
+                          $ref: '#/definitions/nfvi:resource-instance'
+                      'opnfv-promise:capacity':
+                        $ref: '#/definitions/promise:network-capacity'
+                  storage:
+                    description: Contains storage related resources
+                    type: object
+                    properties:
+                      'opnfv-promise:capacity':
+                        $ref: '#/definitions/promise:storage-capacity'
+                  policy:
+                    description: Contains NFVI policy configurations
+                    type: object
+                    properties:
+                      'opnfv-promise:reservation':
+                        type: object
+                        properties:
+                          max-future-start-range:
+                            description: Enforce reservation request 'start' time is within allowed range from now
+                            type: integer
+                            format: uint16
+                          max-future-end-range:
+                            description: Enforce reservation request 'end' time is within allowed range from now
+                            type: integer
+                            format: uint16
+                          max-duration:
+                            description: Enforce reservation duration (end-start) does not exceed specified threshold
+                            default: '8760'
+                            type: integer
+                            format: uint16
+                          expiry:
+                            description: |-
+                              Duration in minutes from start when unallocated reserved resources
+                                will be released back into the pool
+                            type: integer
+                            format: uint32
+                  'opnfv-promise:capacity':
+                    description: Describes current state info about capacity utilization info
+                    allOf:
+                      - $ref: '#/definitions/promise:reservations-list'
+                      - properties:
+                          total:
+                            $ref: '#/definitions/promise:resource-capacity'
+                          reserved:
+                            $ref: '#/definitions/promise:resource-capacity'
+                          usage:
+                            $ref: '#/definitions/promise:resource-capacity'
+                          available:
+                            $ref: '#/definitions/promise:resource-capacity'
+                          elements:
+                            type: array
+                            items:
+                              description: aggregate reference to all resource-element identifiers
+                              type: string
+                              format: instance-identifier
           required: false
       responses:
         '200':
@@ -642,148 +646,149 @@ paths:
             description: |-
               Information model describing a NFVI resource stack comprising of
               various resource elements across compute, network, and storage
-            type: object
-            properties:
-              compute:
-                description: Contains compute related resources
-                type: object
-                properties:
-                  host:
-                    type: array
-                    items:
-                      $ref: '#/definitions/nfvi:compute-host'
-                  server:
-                    type: array
-                    items:
-                      allOf:
-                        - $ref: '#/definitions/nfvi:virtual-server'
-                        - properties:
-                            'opnfv-promise:reservation-id':
-                              description: Reference to an existing reservation identifier (optional)
-                              type: string
-                              format: leafref
-                            'opnfv-promise:pool-id':
-                              description: Reference to an existing resource pool from which allocation is drawn
-                              type: string
-                              format: leafref
-                            'opnfv-promise:priority':
-                              description: Reflects current priority level of the allocation according to classification rules
-                              default: normal
-                              type: string
-                              format: enumeration
-                              enum:
-                                - high
-                                - normal
-                                - low
-                  image:
-                    type: array
-                    items:
-                      $ref: '#/definitions/nfvi:server-image'
-                  flavor:
-                    type: array
-                    items:
-                      $ref: '#/definitions/nfvi:resource-flavor'
-                  'opnfv-promise:capacity':
-                    $ref: '#/definitions/promise:compute-capacity'
-              fabric:
-                description: Contains networking related resources
-                type: object
-                properties:
-                  network:
-                    type: array
-                    items:
-                      allOf:
-                        - $ref: '#/definitions/nfvi:resource-element'
-                        - properties:
-                            subnet:
-                              type: array
-                              items:
-                                allOf:
-                                  - $ref: '#/definitions/nfvi:resource-element'
-                                  - properties:
-                                      nameservers:
-                                        type: array
-                                        items:
-                                          type: string
-                                          format: string
-                                      dhcp:
-                                        type: object
-                                        properties:
-                                          enabled:
-                                            type: boolean
-                                            format: boolean
-                                          pool:
-                                            type: array
-                                            items:
-                                              type: object
-                                              properties:
-                                                start:
-                                                  type: string
-                                                  format: 'inet:ip-address'
-                                                end:
-                                                  type: string
-                                                  format: 'inet:ip-address'
-                                      port:
-                                        type: array
-                                        items:
-                                          $ref: '#/definitions/nfvi:resource-element'
-                  router:
-                    type: array
-                    items:
-                      $ref: '#/definitions/nfvi:resource-instance'
-                  'opnfv-promise:capacity':
-                    $ref: '#/definitions/promise:network-capacity'
-              storage:
-                description: Contains storage related resources
-                type: object
-                properties:
-                  'opnfv-promise:capacity':
-                    $ref: '#/definitions/promise:storage-capacity'
-              policy:
-                description: Contains NFVI policy configurations
-                type: object
-                properties:
-                  'opnfv-promise:reservation':
+            allOf:
+              - $ref: '#/definitions/nfvi:resource-element'
+              - properties:
+                  compute:
+                    description: Contains compute related resources
                     type: object
                     properties:
-                      max-future-start-range:
-                        description: Enforce reservation request 'start' time is within allowed range from now
-                        type: integer
-                        format: uint16
-                      max-future-end-range:
-                        description: Enforce reservation request 'end' time is within allowed range from now
-                        type: integer
-                        format: uint16
-                      max-duration:
-                        description: Enforce reservation duration (end-start) does not exceed specified threshold
-                        default: '8760'
-                        type: integer
-                        format: uint16
-                      expiry:
-                        description: |-
-                          Duration in minutes from start when unallocated reserved resources
-                            will be released back into the pool
-                        type: integer
-                        format: uint32
-              'opnfv-promise:capacity':
-                description: Describes current state info about capacity utilization info
-                allOf:
-                  - $ref: '#/definitions/promise:reservations-list'
-                  - properties:
-                      total:
-                        $ref: '#/definitions/promise:resource-capacity'
-                      reserved:
-                        $ref: '#/definitions/promise:resource-capacity'
-                      usage:
-                        $ref: '#/definitions/promise:resource-capacity'
-                      available:
-                        $ref: '#/definitions/promise:resource-capacity'
-                      elements:
+                      host:
                         type: array
                         items:
-                          description: aggregate reference to all resource-element identifiers
-                          type: string
-                          format: instance-identifier
+                          $ref: '#/definitions/nfvi:compute-host'
+                      server:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: '#/definitions/nfvi:virtual-server'
+                            - properties:
+                                'opnfv-promise:reservation-id':
+                                  description: Reference to an existing reservation identifier (optional)
+                                  type: string
+                                  format: leafref
+                                'opnfv-promise:pool-id':
+                                  description: Reference to an existing resource pool from which allocation is drawn
+                                  type: string
+                                  format: leafref
+                                'opnfv-promise:priority':
+                                  description: Reflects current priority level of the allocation according to classification rules
+                                  default: normal
+                                  type: string
+                                  format: enumeration
+                                  enum:
+                                    - high
+                                    - normal
+                                    - low
+                      image:
+                        type: array
+                        items:
+                          $ref: '#/definitions/nfvi:server-image'
+                      flavor:
+                        type: array
+                        items:
+                          $ref: '#/definitions/nfvi:resource-flavor'
+                      'opnfv-promise:capacity':
+                        $ref: '#/definitions/promise:compute-capacity'
+                  fabric:
+                    description: Contains networking related resources
+                    type: object
+                    properties:
+                      network:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: '#/definitions/nfvi:resource-element'
+                            - properties:
+                                subnet:
+                                  type: array
+                                  items:
+                                    allOf:
+                                      - $ref: '#/definitions/nfvi:resource-element'
+                                      - properties:
+                                          nameservers:
+                                            type: array
+                                            items:
+                                              type: string
+                                              format: string
+                                          dhcp:
+                                            type: object
+                                            properties:
+                                              enabled:
+                                                type: boolean
+                                                format: boolean
+                                              pool:
+                                                type: array
+                                                items:
+                                                  type: object
+                                                  properties:
+                                                    start:
+                                                      type: string
+                                                      format: 'inet:ip-address'
+                                                    end:
+                                                      type: string
+                                                      format: 'inet:ip-address'
+                                          port:
+                                            type: array
+                                            items:
+                                              $ref: '#/definitions/nfvi:resource-element'
+                      router:
+                        type: array
+                        items:
+                          $ref: '#/definitions/nfvi:resource-instance'
+                      'opnfv-promise:capacity':
+                        $ref: '#/definitions/promise:network-capacity'
+                  storage:
+                    description: Contains storage related resources
+                    type: object
+                    properties:
+                      'opnfv-promise:capacity':
+                        $ref: '#/definitions/promise:storage-capacity'
+                  policy:
+                    description: Contains NFVI policy configurations
+                    type: object
+                    properties:
+                      'opnfv-promise:reservation':
+                        type: object
+                        properties:
+                          max-future-start-range:
+                            description: Enforce reservation request 'start' time is within allowed range from now
+                            type: integer
+                            format: uint16
+                          max-future-end-range:
+                            description: Enforce reservation request 'end' time is within allowed range from now
+                            type: integer
+                            format: uint16
+                          max-duration:
+                            description: Enforce reservation duration (end-start) does not exceed specified threshold
+                            default: '8760'
+                            type: integer
+                            format: uint16
+                          expiry:
+                            description: |-
+                              Duration in minutes from start when unallocated reserved resources
+                                will be released back into the pool
+                            type: integer
+                            format: uint32
+                  'opnfv-promise:capacity':
+                    description: Describes current state info about capacity utilization info
+                    allOf:
+                      - $ref: '#/definitions/promise:reservations-list'
+                      - properties:
+                          total:
+                            $ref: '#/definitions/promise:resource-capacity'
+                          reserved:
+                            $ref: '#/definitions/promise:resource-capacity'
+                          usage:
+                            $ref: '#/definitions/promise:resource-capacity'
+                          available:
+                            $ref: '#/definitions/promise:resource-capacity'
+                          elements:
+                            type: array
+                            items:
+                              description: aggregate reference to all resource-element identifiers
+                              type: string
+                              format: instance-identifier
     delete:
       summary: Delete controller from opnfv-infrastructure
       deprecated: false
@@ -5146,11 +5151,8 @@ paths:
                 Each entry describes available capacity and elements for a given time
                 window
               allOf:
+                - $ref: '#/definitions/nfvi:resource-element'
                 - $ref: '#/definitions/promise:temporal-resource-collection'
-                - properties:
-                    id:
-                      type: string
-                      format: 'yang:uuid'
           required: false
       responses:
         '200':
@@ -5162,11 +5164,8 @@ paths:
                 Each entry describes available capacity and elements for a given time
                 window
               allOf:
+                - $ref: '#/definitions/nfvi:resource-element'
                 - $ref: '#/definitions/promise:temporal-resource-collection'
-                - properties:
-                    id:
-                      type: string
-                      format: 'yang:uuid'
     get:
       summary: List all pools from reservations-list
       deprecated: false
@@ -5180,11 +5179,8 @@ paths:
                 Each entry describes available capacity and elements for a given time
                 window
               allOf:
+                - $ref: '#/definitions/nfvi:resource-element'
                 - $ref: '#/definitions/promise:temporal-resource-collection'
-                - properties:
-                    id:
-                      type: string
-                      format: 'yang:uuid'
     put:
       summary: Replace the entire pool collection
       deprecated: false
@@ -5201,11 +5197,8 @@ paths:
                 Each entry describes available capacity and elements for a given time
                 window
               allOf:
+                - $ref: '#/definitions/nfvi:resource-element'
                 - $ref: '#/definitions/promise:temporal-resource-collection'
-                - properties:
-                    id:
-                      type: string
-                      format: 'yang:uuid'
           required: false
       responses:
         '201':
@@ -5226,11 +5219,8 @@ paths:
                 Each entry describes available capacity and elements for a given time
                 window
               allOf:
+                - $ref: '#/definitions/nfvi:resource-element'
                 - $ref: '#/definitions/promise:temporal-resource-collection'
-                - properties:
-                    id:
-                      type: string
-                      format: 'yang:uuid'
           required: false
       responses:
         '201':
@@ -5250,11 +5240,8 @@ paths:
               Each entry describes available capacity and elements for a given time
               window
             allOf:
+              - $ref: '#/definitions/nfvi:resource-element'
               - $ref: '#/definitions/promise:temporal-resource-collection'
-              - properties:
-                  id:
-                    type: string
-                    format: 'yang:uuid'
     put:
       summary: Update details on pool
       deprecated: false
@@ -5269,11 +5256,8 @@ paths:
               Each entry describes available capacity and elements for a given time
               window
             allOf:
+              - $ref: '#/definitions/nfvi:resource-element'
               - $ref: '#/definitions/promise:temporal-resource-collection'
-              - properties:
-                  id:
-                    type: string
-                    format: 'yang:uuid'
           required: false
       responses:
         '200':
@@ -5283,11 +5267,8 @@ paths:
               Each entry describes available capacity and elements for a given time
               window
             allOf:
+              - $ref: '#/definitions/nfvi:resource-element'
               - $ref: '#/definitions/promise:temporal-resource-collection'
-              - properties:
-                  id:
-                    type: string
-                    format: 'yang:uuid'
     patch:
       summary: Merge details on pool
       deprecated: false
@@ -5302,11 +5283,8 @@ paths:
               Each entry describes available capacity and elements for a given time
               window
             allOf:
+              - $ref: '#/definitions/nfvi:resource-element'
               - $ref: '#/definitions/promise:temporal-resource-collection'
-              - properties:
-                  id:
-                    type: string
-                    format: 'yang:uuid'
           required: false
       responses:
         '200':
@@ -5316,11 +5294,8 @@ paths:
               Each entry describes available capacity and elements for a given time
               window
             allOf:
+              - $ref: '#/definitions/nfvi:resource-element'
               - $ref: '#/definitions/promise:temporal-resource-collection'
-              - properties:
-                  id:
-                    type: string
-                    format: 'yang:uuid'
     delete:
       summary: Delete pool from reservations-list
       deprecated: false
@@ -5333,7 +5308,7 @@ paths:
         required: true
         description: A key uniquely identifying pool item
         type: string
-        format: 'yang:uuid'
+        format: unique-identifier
   '/opnfv-infrastructure:controller/opnfv-promise:capacity/pool/{id}/capacity':
     get:
       summary: View detail on capacity
@@ -5383,7 +5358,7 @@ paths:
         required: true
         description: A key uniquely identifying pool item
         type: string
-        format: 'yang:uuid'
+        format: unique-identifier
   '/opnfv-infrastructure:controller/opnfv-promise:capacity/reservation':
     post:
       description: |-
@@ -5431,11 +5406,9 @@ paths:
                 reserved along with any resource elements that are needed to be
                 available at the time of allocation(s).
               allOf:
+                - $ref: '#/definitions/nfvi:resource-element'
                 - $ref: '#/definitions/promise:temporal-resource-collection'
                 - properties:
-                    id:
-                      type: string
-                      format: 'yang:uuid'
                     created-on:
                       type: string
                       format: 'yang:date-and-time'
@@ -5488,11 +5461,9 @@ paths:
                 reserved along with any resource elements that are needed to be
                 available at the time of allocation(s).
               allOf:
+                - $ref: '#/definitions/nfvi:resource-element'
                 - $ref: '#/definitions/promise:temporal-resource-collection'
                 - properties:
-                    id:
-                      type: string
-                      format: 'yang:uuid'
                     created-on:
                       type: string
                       format: 'yang:date-and-time'
@@ -5547,11 +5518,9 @@ paths:
                 reserved along with any resource elements that are needed to be
                 available at the time of allocation(s).
               allOf:
+                - $ref: '#/definitions/nfvi:resource-element'
                 - $ref: '#/definitions/promise:temporal-resource-collection'
                 - properties:
-                    id:
-                      type: string
-                      format: 'yang:uuid'
                     created-on:
                       type: string
                       format: 'yang:date-and-time'
@@ -5618,11 +5587,9 @@ paths:
                 reserved along with any resource elements that are needed to be
                 available at the time of allocation(s).
               allOf:
+                - $ref: '#/definitions/nfvi:resource-element'
                 - $ref: '#/definitions/promise:temporal-resource-collection'
                 - properties:
-                    id:
-                      type: string
-                      format: 'yang:uuid'
                     created-on:
                       type: string
                       format: 'yang:date-and-time'
@@ -5693,11 +5660,9 @@ paths:
                 reserved along with any resource elements that are needed to be
                 available at the time of allocation(s).
               allOf:
+                - $ref: '#/definitions/nfvi:resource-element'
                 - $ref: '#/definitions/promise:temporal-resource-collection'
                 - properties:
-                    id:
-                      type: string
-                      format: 'yang:uuid'
                     created-on:
                       type: string
                       format: 'yang:date-and-time'
@@ -5767,11 +5732,9 @@ paths:
               reserved along with any resource elements that are needed to be
               available at the time of allocation(s).
             allOf:
+              - $ref: '#/definitions/nfvi:resource-element'
               - $ref: '#/definitions/promise:temporal-resource-collection'
               - properties:
-                  id:
-                    type: string
-                    format: 'yang:uuid'
                   created-on:
                     type: string
                     format: 'yang:date-and-time'
@@ -5836,11 +5799,9 @@ paths:
               reserved along with any resource elements that are needed to be
               available at the time of allocation(s).
             allOf:
+              - $ref: '#/definitions/nfvi:resource-element'
               - $ref: '#/definitions/promise:temporal-resource-collection'
               - properties:
-                  id:
-                    type: string
-                    format: 'yang:uuid'
                   created-on:
                     type: string
                     format: 'yang:date-and-time'
@@ -5891,11 +5852,9 @@ paths:
               reserved along with any resource elements that are needed to be
               available at the time of allocation(s).
             allOf:
+              - $ref: '#/definitions/nfvi:resource-element'
               - $ref: '#/definitions/promise:temporal-resource-collection'
               - properties:
-                  id:
-                    type: string
-                    format: 'yang:uuid'
                   created-on:
                     type: string
                     format: 'yang:date-and-time'
@@ -5960,11 +5919,9 @@ paths:
               reserved along with any resource elements that are needed to be
               available at the time of allocation(s).
             allOf:
+              - $ref: '#/definitions/nfvi:resource-element'
               - $ref: '#/definitions/promise:temporal-resource-collection'
               - properties:
-                  id:
-                    type: string
-                    format: 'yang:uuid'
                   created-on:
                     type: string
                     format: 'yang:date-and-time'
@@ -6015,11 +5972,9 @@ paths:
               reserved along with any resource elements that are needed to be
               available at the time of allocation(s).
             allOf:
+              - $ref: '#/definitions/nfvi:resource-element'
               - $ref: '#/definitions/promise:temporal-resource-collection'
               - properties:
-                  id:
-                    type: string
-                    format: 'yang:uuid'
                   created-on:
                     type: string
                     format: 'yang:date-and-time'
@@ -6064,7 +6019,7 @@ paths:
         required: true
         description: A key uniquely identifying reservation item
         type: string
-        format: 'yang:uuid'
+        format: unique-identifier
   '/opnfv-infrastructure:controller/opnfv-promise:capacity/reservation/{id}/remaining':
     get:
       description: |-
@@ -6146,7 +6101,7 @@ paths:
         required: true
         description: A key uniquely identifying reservation item
         type: string
-        format: 'yang:uuid'
+        format: unique-identifier
   '/opnfv-infrastructure:controller/opnfv-promise:capacity/reservation/{id}/capacity':
     get:
       summary: View detail on capacity
@@ -6196,7 +6151,7 @@ paths:
         required: true
         description: A key uniquely identifying reservation item
         type: string
-        format: 'yang:uuid'
+        format: unique-identifier
   '/opnfv-infrastructure:controller/opnfv-promise:capacity/reservation/{id}/validate':
     post:
       summary: Invokes validate in reservation
@@ -6216,7 +6171,7 @@ paths:
         required: true
         description: A key uniquely identifying reservation item
         type: string
-        format: 'yang:uuid'
+        format: unique-identifier
   '/opnfv-infrastructure:controller/opnfv-promise:capacity/reservation/{id}/update':
     post:
       description: Update reservation details for an existing reservation
@@ -6239,7 +6194,7 @@ paths:
         required: true
         description: A key uniquely identifying reservation item
         type: string
-        format: 'yang:uuid'
+        format: unique-identifier
 definitions:
   'nfvi:compute-host':
     allOf:
@@ -6531,11 +6486,8 @@ definitions:
             Each entry describes available capacity and elements for a given time
             window
           allOf:
+            - $ref: '#/definitions/nfvi:resource-element'
             - $ref: '#/definitions/promise:temporal-resource-collection'
-            - properties:
-                id:
-                  type: string
-                  format: 'yang:uuid'
       reservation:
         type: array
         items:
@@ -6552,11 +6504,9 @@ definitions:
             reserved along with any resource elements that are needed to be
             available at the time of allocation(s).
           allOf:
+            - $ref: '#/definitions/nfvi:resource-element'
             - $ref: '#/definitions/promise:temporal-resource-collection'
             - properties:
-                id:
-                  type: string
-                  format: 'yang:uuid'
                 created-on:
                   type: string
                   format: 'yang:date-and-time'

@@ -7,7 +7,7 @@ opnfv-functest:
     lab: NODE_NAME
 
 # OpenStack config (native)
-openstack:
+openstack-controller:admin:
   auth:
     endpoint: OS_AUTH_URL
     strategy: OS_AUTH_STRATEGY

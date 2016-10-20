@@ -184,7 +184,7 @@ module opnfv-promise {
         "Each entry describes available capacity and elements for a given time
          window";
       key "id";
-      leaf id { type yang:uuid; }
+      uses nfvi:resource-element;
       uses promise:temporal-resource-collection {
         refine elements {
           // following 'must' statement applies to each element
@@ -212,10 +212,10 @@ module opnfv-promise {
       reference "OPNFV-PROMISE, Section 3.4.1";
 
       key "id";
-      leaf id { type yang:uuid; }
-      uses promise:temporal-resource-collection;
+      uses nfvi:resource-element;
       leaf created-on  { type yang:date-and-time; config false; }
       leaf modified-on { type yang:date-and-time; config false; }
+      uses promise:temporal-resource-collection;
       container remaining {
         config false;
         description

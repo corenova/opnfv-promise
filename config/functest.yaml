@@ -1,9 +1,7 @@
 # NODE_ENV=functest
 
-opnfv-functest:
-  environment:
-    images:
-      -
-        name: cirros
-        path: /home/opnfv/functest/data/cirros-0.3.4-x86_64-disk.img
+opnfv-functest:environment:
+  image:
+    - name: cirros
+      path: /home/opnfv/functest/data/cirros-0.3.4-x86_64-disk.img
 

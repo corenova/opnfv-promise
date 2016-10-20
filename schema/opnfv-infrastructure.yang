@@ -243,6 +243,7 @@ module opnfv-infrastructure {
       "Information model describing a NFVI resource stack comprising of
        various resource elements across compute, network, and storage";
 
+    uses nfvi:resource-element;
     container compute {
       description
         "Contains compute related resources";

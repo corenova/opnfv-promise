@@ -77,11 +77,6 @@ module openstack-controller {
     leaf release { type identityref { base nfvi:release; } }
     leaf distro  { type identityref { base nfvi:distro; } }
 
-    leaf token {
-      type string;
-      mandatory true;
-    }
-    
     container services {
       container compute {
         leaf endpoint { type inet:uri; }

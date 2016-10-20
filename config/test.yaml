@@ -1,0 +1,18 @@
+
+
+opnfv-infrastructure:controller:
+  opnfv-promise:capacity:
+    pool:
+      - id: "4085f0da-8030-4252-a0ff-c6f93870eb5f"
+        capacity:
+          cores: 100
+          ram: 262144
+          instances: 500
+          networks: 100
+          ports: 100
+          routers: 30
+          subnets: 1000
+          addresses: 500
+          gigabytes: 10000
+          snapshots: 100
+          volumes: 100

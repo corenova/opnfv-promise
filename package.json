@@ -26,7 +26,7 @@
     "ietf-inet-types": "yang-js",
     "yang-meta-types": "yang-js",
     "openstack-controller": "./lib/openstack-controller.js",
-    "opnfv-infrastructure": "./schema/opnfv-infrastructure.yang",
+    "opnfv-infrastructure": "./lib/opnfv-infrastructure.js",
     "opnfv-promise": "./lib/opnfv-promise.js"
   },
   "main": "./lib/opnfv-promise.js",
@@ -38,7 +38,7 @@
     "node-uuid": "^1.4.7",
     "superagent": "^2.0.0",
     "yang-express": "^0.4.5",
-    "yang-js": "^0.16.13"
+    "yang-js": "^0.16.14"
   },
   "devDependencies": {
     "coffee-script": ">=1.7.0",
