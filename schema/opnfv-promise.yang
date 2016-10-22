@@ -74,7 +74,9 @@ module opnfv-promise {
     description
       "Information model capturing parameters for describing a collection of
        resource capacity and resource elements";
-    container capacity { uses promise:resource-capacity; }
+    container capacity {
+      uses promise:resource-capacity;
+    }
     leaf-list elements {
       type instance-identifier {
         //ct:instance-type nfvi:ResourceElement;
@@ -82,20 +84,23 @@ module opnfv-promise {
       }
     }
   }
-  grouping temporal-resource-collection {
+  grouping time-window {
     description
-      "Describes a time bound resource collection data model, which
-       represents a grouping of capacity and elements available during
-       a given window in time which is used by other resource
-       collection related models";
-    uses promise:resource-collection;
+      "Describes a time bound start/end where start <= end";
     leaf start { type yang:date-and-time; }
     leaf end   { type yang:date-and-time; }
+  }
+  grouping temporal-resource-element {
+    description
+      "Describes a time bound resource element data model, which represents a
+       temporal resource only available during a given window in time.";
+    uses nfvi:resource-element;
+    uses promise:time-window;
     leaf active {
       config false;
       description
-        "Provides current state of this record whether it is enabled and within
-         specified start/end time";
+        "Provides current state of this element whether it is enabled and
+         within specified start/end time";
       type boolean;
     }
   }
@@ -104,26 +109,61 @@ module opnfv-promise {
       "Information model capturing available parameters to make a resource
        usage request.";
     reference "OPNFV-PROMISE, Section 3.4.1";
-    uses promise:temporal-resource-collection {
-      refine elements {
-        description
-          "Reference to a list of 'pre-existing' resource elements that are
-           required for fulfillment of the resource-usage-request.
-
-           It can contain any instance derived from ResourceElement,
-           such as ServerInstances or even other
-           ResourceReservations. If the resource-usage-request is
-           accepted, the ResourceElement(s) listed here will be placed
-           into 'protected' mode as to prevent accidental removal.
-
-           If any of these resource elements become 'unavailable' due to
-           environmental or administrative activity, a notification will
-           be issued informing of the issue.";
-      }
-    }
+    uses promise:time-window;
     leaf zone {
       description "Optional identifier to an Availability Zone";
       type instance-identifier;
+    }
+    choice strategy {
+      case bulk-quantity-request {
+        description
+          "The bulk-quantity-request usage strategy will perform a capacity
+           quantity based reservation along with an optional reference
+           to a list of *pre-existing* elements required for
+           fulfilling the reservation.
+
+           If the resource-usage-request is accepted, the referenced
+           elements will be placed into 'protected' mode as to prevent
+           accidental removal. If any of these reserved resource
+           elements become 'unavailable' due to environmental or
+           administrative activity, a notification will be issued
+           informing of the issue.";
+        uses promise:resource-collection;
+      }
+      case flavor-quantity-request {
+        description
+          "The flavor-quantity-request usage strategy will perform a reservation
+           based on explicit references to currently available flavors
+           and the number of such flavors that will be needed in the
+           future.
+
+           This form of resource-usage-request will factor in
+           available resource capacity on a per hypervisor basis in
+           addition to the projected total available capacity that
+           will be available in the requested start/end time window.
+
+           If the resource-usage-request is accepted, the required
+           hypervisor resource elements will be placed into
+           'protected' mode as to prevent accidental
+           removal. Furthermore, if any of the reserved hypervisor
+           resource elements are no longer able to satisfy the
+           instantiation requirements, a notification will be issued
+           informing of the issue.";
+        list instance {
+          key 'flavor';
+          leaf flavor {
+            type leafref {
+              path "/nfvi:controller/compute/flavor/id";
+            }
+          }
+          leaf count {
+            type uint16 {
+              range 1..max;
+            }
+            mandatory true;
+          }
+        }
+      }
     }
   }
   grouping query-resource-collection {
@@ -181,19 +221,10 @@ module opnfv-promise {
 
     list pool {
       description
-        "Each entry describes available capacity and elements for a given time
-         window";
+        "Each entry describes available capacity and elements for a given time window";
       key "id";
-      uses nfvi:resource-element;
-      uses promise:temporal-resource-collection {
-        refine elements {
-          // following 'must' statement applies to each element
-          // NOTE: just a non-working example for now...
-          // must "boolean(../source/elements/*[@id=id])" {
-          //   error-message "One or more of the ResourceElement(s) does not exist in the provider to be reserved";
-          // }
-        }
-      }
+      uses promise:temporal-resource-element;
+      uses promise:resource-collection;
     }
     list reservation {
       description
@@ -212,17 +243,14 @@ module opnfv-promise {
       reference "OPNFV-PROMISE, Section 3.4.1";
 
       key "id";
-      uses nfvi:resource-element;
-      leaf created-on  { type yang:date-and-time; config false; }
-      leaf modified-on { type yang:date-and-time; config false; }
-      uses promise:temporal-resource-collection;
+      uses promise:temporal-resource-element;
+      uses promise:resource-collection;
       container remaining {
         config false;
         description
           "Provides visibility into total remaining capacity for this
            reservation based on allocations that took effect utilizing
            this reservation ID as a reference.";
-
         uses promise:resource-capacity;
       }
       leaf-list pools {
@@ -247,6 +275,14 @@ module opnfv-promise {
           path "/nfvi:controller/nfvi:compute/nfvi:server/nfvi:id";
         }
       }
+      leaf created-on  {
+        config false;
+        type yang:date-and-time;
+      }
+      leaf modified-on {
+        config false;
+        type yang:date-and-time;
+      }
       action validate {
         
       }
@@ -264,20 +300,55 @@ module opnfv-promise {
       }
     }
   }
-  
-  // EXTEND nfvi module with capacity and reservation facilities
+  /*
+   * Configuration data nodes
+   */
+  container admin {
+    description
+      "Administrative configuration for managing the Promise module";
+    container policy {
+      leaf max-future-start-range {
+        description
+          "Enforce reservation request 'start' time is within allowed range from now";
+        type uint16 { range 0..365; }
+        units "days";
+      }
+      leaf max-future-end-range {
+        description
+          "Enforce reservation request 'end' time is within allowed range from now";
+        type uint16 { range 0..365; }
+        units "days";
+      }
+      leaf max-duration {
+        description
+          "Enforce reservation duration (end-start) does not exceed specified threshold";
+        type uint16;
+        units "hours";
+        default 8760; // for now cap it at max one year as default
+      }
+      leaf expiry {
+        description
+          "Duration in minutes from start when unallocated reserved resources
+           will be released back into the pool";
+        type uint32;
+        units "minutes";
+      }
+    }
+  }
+  /*
+   * Augmentations to NFVI module
+   * Extends nfvi module with capacity and reservation facilities
+   */
   augment "/nfvi:controller" {
-
     container capacity {
-      description "Describes current state info about capacity utilization info";
       config false;
+      description "Describes current state info about capacity utilization info";
       container total     { uses promise:resource-capacity; }
       container reserved  { uses promise:resource-capacity; }
       container usage     { uses promise:resource-capacity; }
       container available { uses promise:resource-capacity; }
       
       leaf-list elements {
-        config false;
         description "aggregate reference to all resource-element identifiers";
         type instance-identifier;
       }
@@ -286,7 +357,8 @@ module opnfv-promise {
       action increase {
         description "Increase total capacity available for reservations between a window in time";
         input {
-          uses promise:temporal-resource-collection;
+          uses promise:time-window;
+          uses promise:resource-capacity;
         }
         output {
           uses promise:common-action-output;
@@ -300,9 +372,11 @@ module opnfv-promise {
       action decrease {
         description "Decrease total capacity available for reservations between a window in time";
         input {
-          uses promise:temporal-resource-collection;
+          uses promise:time-window;
+          uses promise:resource-capacity;
         }
         output {
+          uses promise:time-window;
           uses promise:common-action-output;
           leaf pool-id {
             type leafref {
@@ -387,20 +461,11 @@ module opnfv-promise {
 
     leaf reservation-id {
       config false;
-      description "Reference to an existing reservation identifier (optional)";
+      description "Reference to an existing reservation identifier (if specified during instantiate)";
       type leafref {
         path "/nfvi:controller/promise:capacity/promise:reservation/promise:id";
       }
     }
-
-    leaf pool-id {
-      config false;
-      description "Reference to an existing resource pool from which allocation is drawn";
-      type leafref {
-        path "/nfvi:controller/promise:capacity/promise:pool/promise:id";
-      }
-    }
-
     leaf priority {
       config false;
       description
@@ -415,38 +480,9 @@ module opnfv-promise {
   }
   augment "/nfvi:controller/nfvi:compute/nfvi:instantiate/nfvi:input" {
     leaf reservation-id {
+      description "An optional reference to an existing reservation";
       type leafref {
         path "/nfvi:controller/promise:capacity/promise:reservation/promise:id";
-      }
-    }
-  }
-  augment "/nfvi:controller/nfvi:policy" {
-    container reservation {
-      leaf max-future-start-range {
-        description
-          "Enforce reservation request 'start' time is within allowed range from now";
-        type uint16 { range 0..365; }
-        units "days";
-      }
-      leaf max-future-end-range {
-        description
-          "Enforce reservation request 'end' time is within allowed range from now";
-        type uint16 { range 0..365; }
-        units "days";
-      }
-      leaf max-duration {
-        description
-          "Enforce reservation duration (end-start) does not exceed specified threshold";
-        type uint16;
-        units "hours";
-        default 8760; // for now cap it at max one year as default
-      }
-      leaf expiry {
-        description
-          "Duration in minutes from start when unallocated reserved resources
-             will be released back into the pool";
-        type uint32;
-        units "minutes";
       }
     }
   }

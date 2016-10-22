@@ -1,13 +1,11 @@
 # default configuration for 'npm test'
 
-opnfv-promise:
-  promise:
-    policy:
-      reservation:
-        max-future-start-range: 
-        max-future-end-range: 
-        max-duration:
-        expiry: 600
+opnfv-promise:admin:
+  policy:
+    max-future-start-range: 30
+    max-future-end-range: 120
+    max-duration: 
+    unused-expiry: 600
 
 yang-openapi:info:
   title: OPNFV Promise

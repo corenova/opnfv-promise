@@ -18,6 +18,310 @@ consumes:
 produces:
   - application/json
 paths:
+  '/opnfv-promise:admin':
+    get:
+      description: Administrative configuration for managing the Promise module
+      summary: View detail on admin
+      deprecated: false
+      responses:
+        '200':
+          description: Expected response of admin
+          schema:
+            type: object
+            properties:
+              policy:
+                type: object
+                properties:
+                  max-future-start-range:
+                    description: Enforce reservation request 'start' time is within allowed range from now
+                    type: integer
+                    format: uint16
+                  max-future-end-range:
+                    description: Enforce reservation request 'end' time is within allowed range from now
+                    type: integer
+                    format: uint16
+                  max-duration:
+                    description: Enforce reservation duration (end-start) does not exceed specified threshold
+                    default: '8760'
+                    type: integer
+                    format: uint16
+                  expiry:
+                    description: |-
+                      Duration in minutes from start when unallocated reserved resources
+                      will be released back into the pool
+                    type: integer
+                    format: uint32
+    put:
+      summary: Update details on admin
+      deprecated: false
+      parameters:
+        - name: admin
+          in: body
+          description: Administrative configuration for managing the Promise module
+          schema:
+            type: object
+            properties:
+              policy:
+                type: object
+                properties:
+                  max-future-start-range:
+                    description: Enforce reservation request 'start' time is within allowed range from now
+                    type: integer
+                    format: uint16
+                  max-future-end-range:
+                    description: Enforce reservation request 'end' time is within allowed range from now
+                    type: integer
+                    format: uint16
+                  max-duration:
+                    description: Enforce reservation duration (end-start) does not exceed specified threshold
+                    default: '8760'
+                    type: integer
+                    format: uint16
+                  expiry:
+                    description: |-
+                      Duration in minutes from start when unallocated reserved resources
+                      will be released back into the pool
+                    type: integer
+                    format: uint32
+          required: false
+      responses:
+        '200':
+          description: Expected response of admin
+          schema:
+            type: object
+            properties:
+              policy:
+                type: object
+                properties:
+                  max-future-start-range:
+                    description: Enforce reservation request 'start' time is within allowed range from now
+                    type: integer
+                    format: uint16
+                  max-future-end-range:
+                    description: Enforce reservation request 'end' time is within allowed range from now
+                    type: integer
+                    format: uint16
+                  max-duration:
+                    description: Enforce reservation duration (end-start) does not exceed specified threshold
+                    default: '8760'
+                    type: integer
+                    format: uint16
+                  expiry:
+                    description: |-
+                      Duration in minutes from start when unallocated reserved resources
+                      will be released back into the pool
+                    type: integer
+                    format: uint32
+    patch:
+      summary: Merge details on admin
+      deprecated: false
+      parameters:
+        - name: admin
+          in: body
+          description: Administrative configuration for managing the Promise module
+          schema:
+            type: object
+            properties:
+              policy:
+                type: object
+                properties:
+                  max-future-start-range:
+                    description: Enforce reservation request 'start' time is within allowed range from now
+                    type: integer
+                    format: uint16
+                  max-future-end-range:
+                    description: Enforce reservation request 'end' time is within allowed range from now
+                    type: integer
+                    format: uint16
+                  max-duration:
+                    description: Enforce reservation duration (end-start) does not exceed specified threshold
+                    default: '8760'
+                    type: integer
+                    format: uint16
+                  expiry:
+                    description: |-
+                      Duration in minutes from start when unallocated reserved resources
+                      will be released back into the pool
+                    type: integer
+                    format: uint32
+          required: false
+      responses:
+        '200':
+          description: Expected response of admin
+          schema:
+            type: object
+            properties:
+              policy:
+                type: object
+                properties:
+                  max-future-start-range:
+                    description: Enforce reservation request 'start' time is within allowed range from now
+                    type: integer
+                    format: uint16
+                  max-future-end-range:
+                    description: Enforce reservation request 'end' time is within allowed range from now
+                    type: integer
+                    format: uint16
+                  max-duration:
+                    description: Enforce reservation duration (end-start) does not exceed specified threshold
+                    default: '8760'
+                    type: integer
+                    format: uint16
+                  expiry:
+                    description: |-
+                      Duration in minutes from start when unallocated reserved resources
+                      will be released back into the pool
+                    type: integer
+                    format: uint32
+    delete:
+      summary: Delete admin from opnfv-promise
+      deprecated: false
+      responses:
+        '204':
+          description: Expected response for delete
+  '/opnfv-promise:admin/policy':
+    get:
+      summary: View detail on policy
+      deprecated: false
+      responses:
+        '200':
+          description: Expected response of policy
+          schema:
+            type: object
+            properties:
+              max-future-start-range:
+                description: Enforce reservation request 'start' time is within allowed range from now
+                type: integer
+                format: uint16
+              max-future-end-range:
+                description: Enforce reservation request 'end' time is within allowed range from now
+                type: integer
+                format: uint16
+              max-duration:
+                description: Enforce reservation duration (end-start) does not exceed specified threshold
+                default: '8760'
+                type: integer
+                format: uint16
+              expiry:
+                description: |-
+                  Duration in minutes from start when unallocated reserved resources
+                  will be released back into the pool
+                type: integer
+                format: uint32
+    put:
+      summary: Update details on policy
+      deprecated: false
+      parameters:
+        - name: policy
+          in: body
+          schema:
+            type: object
+            properties:
+              max-future-start-range:
+                description: Enforce reservation request 'start' time is within allowed range from now
+                type: integer
+                format: uint16
+              max-future-end-range:
+                description: Enforce reservation request 'end' time is within allowed range from now
+                type: integer
+                format: uint16
+              max-duration:
+                description: Enforce reservation duration (end-start) does not exceed specified threshold
+                default: '8760'
+                type: integer
+                format: uint16
+              expiry:
+                description: |-
+                  Duration in minutes from start when unallocated reserved resources
+                  will be released back into the pool
+                type: integer
+                format: uint32
+          required: false
+      responses:
+        '200':
+          description: Expected response of policy
+          schema:
+            type: object
+            properties:
+              max-future-start-range:
+                description: Enforce reservation request 'start' time is within allowed range from now
+                type: integer
+                format: uint16
+              max-future-end-range:
+                description: Enforce reservation request 'end' time is within allowed range from now
+                type: integer
+                format: uint16
+              max-duration:
+                description: Enforce reservation duration (end-start) does not exceed specified threshold
+                default: '8760'
+                type: integer
+                format: uint16
+              expiry:
+                description: |-
+                  Duration in minutes from start when unallocated reserved resources
+                  will be released back into the pool
+                type: integer
+                format: uint32
+    patch:
+      summary: Merge details on policy
+      deprecated: false
+      parameters:
+        - name: policy
+          in: body
+          schema:
+            type: object
+            properties:
+              max-future-start-range:
+                description: Enforce reservation request 'start' time is within allowed range from now
+                type: integer
+                format: uint16
+              max-future-end-range:
+                description: Enforce reservation request 'end' time is within allowed range from now
+                type: integer
+                format: uint16
+              max-duration:
+                description: Enforce reservation duration (end-start) does not exceed specified threshold
+                default: '8760'
+                type: integer
+                format: uint16
+              expiry:
+                description: |-
+                  Duration in minutes from start when unallocated reserved resources
+                  will be released back into the pool
+                type: integer
+                format: uint32
+          required: false
+      responses:
+        '200':
+          description: Expected response of policy
+          schema:
+            type: object
+            properties:
+              max-future-start-range:
+                description: Enforce reservation request 'start' time is within allowed range from now
+                type: integer
+                format: uint16
+              max-future-end-range:
+                description: Enforce reservation request 'end' time is within allowed range from now
+                type: integer
+                format: uint16
+              max-duration:
+                description: Enforce reservation duration (end-start) does not exceed specified threshold
+                default: '8760'
+                type: integer
+                format: uint16
+              expiry:
+                description: |-
+                  Duration in minutes from start when unallocated reserved resources
+                  will be released back into the pool
+                type: integer
+                format: uint32
+    delete:
+      summary: Delete policy from admin
+      deprecated: false
+      responses:
+        '204':
+          description: Expected response for delete
   '/opnfv-infrastructure:controller':
     get:
       description: |-
@@ -29,9 +333,6 @@ paths:
         '200':
           description: Expected response of controller
           schema:
-            description: |-
-              Information model describing a NFVI resource stack comprising of
-              various resource elements across compute, network, and storage
             allOf:
               - $ref: '#/definitions/nfvi:resource-element'
               - properties:
@@ -50,11 +351,7 @@ paths:
                             - $ref: '#/definitions/nfvi:virtual-server'
                             - properties:
                                 'opnfv-promise:reservation-id':
-                                  description: Reference to an existing reservation identifier (optional)
-                                  type: string
-                                  format: leafref
-                                'opnfv-promise:pool-id':
-                                  description: Reference to an existing resource pool from which allocation is drawn
+                                  description: Reference to an existing reservation identifier (if specified during instantiate)
                                   type: string
                                   format: leafref
                                 'opnfv-promise:priority':
@@ -130,32 +427,6 @@ paths:
                     properties:
                       'opnfv-promise:capacity':
                         $ref: '#/definitions/promise:storage-capacity'
-                  policy:
-                    description: Contains NFVI policy configurations
-                    type: object
-                    properties:
-                      'opnfv-promise:reservation':
-                        type: object
-                        properties:
-                          max-future-start-range:
-                            description: Enforce reservation request 'start' time is within allowed range from now
-                            type: integer
-                            format: uint16
-                          max-future-end-range:
-                            description: Enforce reservation request 'end' time is within allowed range from now
-                            type: integer
-                            format: uint16
-                          max-duration:
-                            description: Enforce reservation duration (end-start) does not exceed specified threshold
-                            default: '8760'
-                            type: integer
-                            format: uint16
-                          expiry:
-                            description: |-
-                              Duration in minutes from start when unallocated reserved resources
-                                will be released back into the pool
-                            type: integer
-                            format: uint32
                   'opnfv-promise:capacity':
                     description: Describes current state info about capacity utilization info
                     allOf:
@@ -185,9 +456,6 @@ paths:
             Information model describing a NFVI resource stack comprising of
             various resource elements across compute, network, and storage
           schema:
-            description: |-
-              Information model describing a NFVI resource stack comprising of
-              various resource elements across compute, network, and storage
             allOf:
               - $ref: '#/definitions/nfvi:resource-element'
               - properties:
@@ -206,11 +474,7 @@ paths:
                             - $ref: '#/definitions/nfvi:virtual-server'
                             - properties:
                                 'opnfv-promise:reservation-id':
-                                  description: Reference to an existing reservation identifier (optional)
-                                  type: string
-                                  format: leafref
-                                'opnfv-promise:pool-id':
-                                  description: Reference to an existing resource pool from which allocation is drawn
+                                  description: Reference to an existing reservation identifier (if specified during instantiate)
                                   type: string
                                   format: leafref
                                 'opnfv-promise:priority':
@@ -286,32 +550,6 @@ paths:
                     properties:
                       'opnfv-promise:capacity':
                         $ref: '#/definitions/promise:storage-capacity'
-                  policy:
-                    description: Contains NFVI policy configurations
-                    type: object
-                    properties:
-                      'opnfv-promise:reservation':
-                        type: object
-                        properties:
-                          max-future-start-range:
-                            description: Enforce reservation request 'start' time is within allowed range from now
-                            type: integer
-                            format: uint16
-                          max-future-end-range:
-                            description: Enforce reservation request 'end' time is within allowed range from now
-                            type: integer
-                            format: uint16
-                          max-duration:
-                            description: Enforce reservation duration (end-start) does not exceed specified threshold
-                            default: '8760'
-                            type: integer
-                            format: uint16
-                          expiry:
-                            description: |-
-                              Duration in minutes from start when unallocated reserved resources
-                                will be released back into the pool
-                            type: integer
-                            format: uint32
                   'opnfv-promise:capacity':
                     description: Describes current state info about capacity utilization info
                     allOf:
@@ -336,9 +574,6 @@ paths:
         '200':
           description: Expected response of controller
           schema:
-            description: |-
-              Information model describing a NFVI resource stack comprising of
-              various resource elements across compute, network, and storage
             allOf:
               - $ref: '#/definitions/nfvi:resource-element'
               - properties:
@@ -357,11 +592,7 @@ paths:
                             - $ref: '#/definitions/nfvi:virtual-server'
                             - properties:
                                 'opnfv-promise:reservation-id':
-                                  description: Reference to an existing reservation identifier (optional)
-                                  type: string
-                                  format: leafref
-                                'opnfv-promise:pool-id':
-                                  description: Reference to an existing resource pool from which allocation is drawn
+                                  description: Reference to an existing reservation identifier (if specified during instantiate)
                                   type: string
                                   format: leafref
                                 'opnfv-promise:priority':
@@ -437,32 +668,6 @@ paths:
                     properties:
                       'opnfv-promise:capacity':
                         $ref: '#/definitions/promise:storage-capacity'
-                  policy:
-                    description: Contains NFVI policy configurations
-                    type: object
-                    properties:
-                      'opnfv-promise:reservation':
-                        type: object
-                        properties:
-                          max-future-start-range:
-                            description: Enforce reservation request 'start' time is within allowed range from now
-                            type: integer
-                            format: uint16
-                          max-future-end-range:
-                            description: Enforce reservation request 'end' time is within allowed range from now
-                            type: integer
-                            format: uint16
-                          max-duration:
-                            description: Enforce reservation duration (end-start) does not exceed specified threshold
-                            default: '8760'
-                            type: integer
-                            format: uint16
-                          expiry:
-                            description: |-
-                              Duration in minutes from start when unallocated reserved resources
-                                will be released back into the pool
-                            type: integer
-                            format: uint32
                   'opnfv-promise:capacity':
                     description: Describes current state info about capacity utilization info
                     allOf:
@@ -492,9 +697,6 @@ paths:
             Information model describing a NFVI resource stack comprising of
             various resource elements across compute, network, and storage
           schema:
-            description: |-
-              Information model describing a NFVI resource stack comprising of
-              various resource elements across compute, network, and storage
             allOf:
               - $ref: '#/definitions/nfvi:resource-element'
               - properties:
@@ -513,11 +715,7 @@ paths:
                             - $ref: '#/definitions/nfvi:virtual-server'
                             - properties:
                                 'opnfv-promise:reservation-id':
-                                  description: Reference to an existing reservation identifier (optional)
-                                  type: string
-                                  format: leafref
-                                'opnfv-promise:pool-id':
-                                  description: Reference to an existing resource pool from which allocation is drawn
+                                  description: Reference to an existing reservation identifier (if specified during instantiate)
                                   type: string
                                   format: leafref
                                 'opnfv-promise:priority':
@@ -593,32 +791,6 @@ paths:
                     properties:
                       'opnfv-promise:capacity':
                         $ref: '#/definitions/promise:storage-capacity'
-                  policy:
-                    description: Contains NFVI policy configurations
-                    type: object
-                    properties:
-                      'opnfv-promise:reservation':
-                        type: object
-                        properties:
-                          max-future-start-range:
-                            description: Enforce reservation request 'start' time is within allowed range from now
-                            type: integer
-                            format: uint16
-                          max-future-end-range:
-                            description: Enforce reservation request 'end' time is within allowed range from now
-                            type: integer
-                            format: uint16
-                          max-duration:
-                            description: Enforce reservation duration (end-start) does not exceed specified threshold
-                            default: '8760'
-                            type: integer
-                            format: uint16
-                          expiry:
-                            description: |-
-                              Duration in minutes from start when unallocated reserved resources
-                                will be released back into the pool
-                            type: integer
-                            format: uint32
                   'opnfv-promise:capacity':
                     description: Describes current state info about capacity utilization info
                     allOf:
@@ -643,9 +815,6 @@ paths:
         '200':
           description: Expected response of controller
           schema:
-            description: |-
-              Information model describing a NFVI resource stack comprising of
-              various resource elements across compute, network, and storage
             allOf:
               - $ref: '#/definitions/nfvi:resource-element'
               - properties:
@@ -664,11 +833,7 @@ paths:
                             - $ref: '#/definitions/nfvi:virtual-server'
                             - properties:
                                 'opnfv-promise:reservation-id':
-                                  description: Reference to an existing reservation identifier (optional)
-                                  type: string
-                                  format: leafref
-                                'opnfv-promise:pool-id':
-                                  description: Reference to an existing resource pool from which allocation is drawn
+                                  description: Reference to an existing reservation identifier (if specified during instantiate)
                                   type: string
                                   format: leafref
                                 'opnfv-promise:priority':
@@ -744,32 +909,6 @@ paths:
                     properties:
                       'opnfv-promise:capacity':
                         $ref: '#/definitions/promise:storage-capacity'
-                  policy:
-                    description: Contains NFVI policy configurations
-                    type: object
-                    properties:
-                      'opnfv-promise:reservation':
-                        type: object
-                        properties:
-                          max-future-start-range:
-                            description: Enforce reservation request 'start' time is within allowed range from now
-                            type: integer
-                            format: uint16
-                          max-future-end-range:
-                            description: Enforce reservation request 'end' time is within allowed range from now
-                            type: integer
-                            format: uint16
-                          max-duration:
-                            description: Enforce reservation duration (end-start) does not exceed specified threshold
-                            default: '8760'
-                            type: integer
-                            format: uint16
-                          expiry:
-                            description: |-
-                              Duration in minutes from start when unallocated reserved resources
-                                will be released back into the pool
-                            type: integer
-                            format: uint32
                   'opnfv-promise:capacity':
                     description: Describes current state info about capacity utilization info
                     allOf:
@@ -804,7 +943,6 @@ paths:
         '200':
           description: Expected response of compute
           schema:
-            description: Contains compute related resources
             type: object
             properties:
               host:
@@ -818,11 +956,7 @@ paths:
                     - $ref: '#/definitions/nfvi:virtual-server'
                     - properties:
                         'opnfv-promise:reservation-id':
-                          description: Reference to an existing reservation identifier (optional)
-                          type: string
-                          format: leafref
-                        'opnfv-promise:pool-id':
-                          description: Reference to an existing resource pool from which allocation is drawn
+                          description: Reference to an existing reservation identifier (if specified during instantiate)
                           type: string
                           format: leafref
                         'opnfv-promise:priority':
@@ -852,7 +986,6 @@ paths:
           in: body
           description: Contains compute related resources
           schema:
-            description: Contains compute related resources
             type: object
             properties:
               host:
@@ -866,11 +999,7 @@ paths:
                     - $ref: '#/definitions/nfvi:virtual-server'
                     - properties:
                         'opnfv-promise:reservation-id':
-                          description: Reference to an existing reservation identifier (optional)
-                          type: string
-                          format: leafref
-                        'opnfv-promise:pool-id':
-                          description: Reference to an existing resource pool from which allocation is drawn
+                          description: Reference to an existing reservation identifier (if specified during instantiate)
                           type: string
                           format: leafref
                         'opnfv-promise:priority':
@@ -897,7 +1026,6 @@ paths:
         '200':
           description: Expected response of compute
           schema:
-            description: Contains compute related resources
             type: object
             properties:
               host:
@@ -911,11 +1039,7 @@ paths:
                     - $ref: '#/definitions/nfvi:virtual-server'
                     - properties:
                         'opnfv-promise:reservation-id':
-                          description: Reference to an existing reservation identifier (optional)
-                          type: string
-                          format: leafref
-                        'opnfv-promise:pool-id':
-                          description: Reference to an existing resource pool from which allocation is drawn
+                          description: Reference to an existing reservation identifier (if specified during instantiate)
                           type: string
                           format: leafref
                         'opnfv-promise:priority':
@@ -945,7 +1069,6 @@ paths:
           in: body
           description: Contains compute related resources
           schema:
-            description: Contains compute related resources
             type: object
             properties:
               host:
@@ -959,11 +1082,7 @@ paths:
                     - $ref: '#/definitions/nfvi:virtual-server'
                     - properties:
                         'opnfv-promise:reservation-id':
-                          description: Reference to an existing reservation identifier (optional)
-                          type: string
-                          format: leafref
-                        'opnfv-promise:pool-id':
-                          description: Reference to an existing resource pool from which allocation is drawn
+                          description: Reference to an existing reservation identifier (if specified during instantiate)
                           type: string
                           format: leafref
                         'opnfv-promise:priority':
@@ -990,7 +1109,6 @@ paths:
         '200':
           description: Expected response of compute
           schema:
-            description: Contains compute related resources
             type: object
             properties:
               host:
@@ -1004,11 +1122,7 @@ paths:
                     - $ref: '#/definitions/nfvi:virtual-server'
                     - properties:
                         'opnfv-promise:reservation-id':
-                          description: Reference to an existing reservation identifier (optional)
-                          type: string
-                          format: leafref
-                        'opnfv-promise:pool-id':
-                          description: Reference to an existing resource pool from which allocation is drawn
+                          description: Reference to an existing reservation identifier (if specified during instantiate)
                           type: string
                           format: leafref
                         'opnfv-promise:priority':
@@ -1773,11 +1887,7 @@ paths:
                 - $ref: '#/definitions/nfvi:virtual-server'
                 - properties:
                     'opnfv-promise:reservation-id':
-                      description: Reference to an existing reservation identifier (optional)
-                      type: string
-                      format: leafref
-                    'opnfv-promise:pool-id':
-                      description: Reference to an existing resource pool from which allocation is drawn
+                      description: Reference to an existing reservation identifier (if specified during instantiate)
                       type: string
                       format: leafref
                     'opnfv-promise:priority':
@@ -1800,11 +1910,7 @@ paths:
                 - $ref: '#/definitions/nfvi:virtual-server'
                 - properties:
                     'opnfv-promise:reservation-id':
-                      description: Reference to an existing reservation identifier (optional)
-                      type: string
-                      format: leafref
-                    'opnfv-promise:pool-id':
-                      description: Reference to an existing resource pool from which allocation is drawn
+                      description: Reference to an existing reservation identifier (if specified during instantiate)
                       type: string
                       format: leafref
                     'opnfv-promise:priority':
@@ -1829,11 +1935,7 @@ paths:
                 - $ref: '#/definitions/nfvi:virtual-server'
                 - properties:
                     'opnfv-promise:reservation-id':
-                      description: Reference to an existing reservation identifier (optional)
-                      type: string
-                      format: leafref
-                    'opnfv-promise:pool-id':
-                      description: Reference to an existing resource pool from which allocation is drawn
+                      description: Reference to an existing reservation identifier (if specified during instantiate)
                       type: string
                       format: leafref
                     'opnfv-promise:priority':
@@ -1858,11 +1960,7 @@ paths:
                 - $ref: '#/definitions/nfvi:virtual-server'
                 - properties:
                     'opnfv-promise:reservation-id':
-                      description: Reference to an existing reservation identifier (optional)
-                      type: string
-                      format: leafref
-                    'opnfv-promise:pool-id':
-                      description: Reference to an existing resource pool from which allocation is drawn
+                      description: Reference to an existing reservation identifier (if specified during instantiate)
                       type: string
                       format: leafref
                     'opnfv-promise:priority':
@@ -1891,11 +1989,7 @@ paths:
                 - $ref: '#/definitions/nfvi:virtual-server'
                 - properties:
                     'opnfv-promise:reservation-id':
-                      description: Reference to an existing reservation identifier (optional)
-                      type: string
-                      format: leafref
-                    'opnfv-promise:pool-id':
-                      description: Reference to an existing resource pool from which allocation is drawn
+                      description: Reference to an existing reservation identifier (if specified during instantiate)
                       type: string
                       format: leafref
                     'opnfv-promise:priority':
@@ -1923,11 +2017,7 @@ paths:
               - $ref: '#/definitions/nfvi:virtual-server'
               - properties:
                   'opnfv-promise:reservation-id':
-                    description: Reference to an existing reservation identifier (optional)
-                    type: string
-                    format: leafref
-                  'opnfv-promise:pool-id':
-                    description: Reference to an existing resource pool from which allocation is drawn
+                    description: Reference to an existing reservation identifier (if specified during instantiate)
                     type: string
                     format: leafref
                   'opnfv-promise:priority':
@@ -1950,11 +2040,7 @@ paths:
               - $ref: '#/definitions/nfvi:virtual-server'
               - properties:
                   'opnfv-promise:reservation-id':
-                    description: Reference to an existing reservation identifier (optional)
-                    type: string
-                    format: leafref
-                  'opnfv-promise:pool-id':
-                    description: Reference to an existing resource pool from which allocation is drawn
+                    description: Reference to an existing reservation identifier (if specified during instantiate)
                     type: string
                     format: leafref
                   'opnfv-promise:priority':
@@ -1975,11 +2061,7 @@ paths:
               - $ref: '#/definitions/nfvi:virtual-server'
               - properties:
                   'opnfv-promise:reservation-id':
-                    description: Reference to an existing reservation identifier (optional)
-                    type: string
-                    format: leafref
-                  'opnfv-promise:pool-id':
-                    description: Reference to an existing resource pool from which allocation is drawn
+                    description: Reference to an existing reservation identifier (if specified during instantiate)
                     type: string
                     format: leafref
                   'opnfv-promise:priority':
@@ -2002,11 +2084,7 @@ paths:
               - $ref: '#/definitions/nfvi:virtual-server'
               - properties:
                   'opnfv-promise:reservation-id':
-                    description: Reference to an existing reservation identifier (optional)
-                    type: string
-                    format: leafref
-                  'opnfv-promise:pool-id':
-                    description: Reference to an existing resource pool from which allocation is drawn
+                    description: Reference to an existing reservation identifier (if specified during instantiate)
                     type: string
                     format: leafref
                   'opnfv-promise:priority':
@@ -2027,11 +2105,7 @@ paths:
               - $ref: '#/definitions/nfvi:virtual-server'
               - properties:
                   'opnfv-promise:reservation-id':
-                    description: Reference to an existing reservation identifier (optional)
-                    type: string
-                    format: leafref
-                  'opnfv-promise:pool-id':
-                    description: Reference to an existing resource pool from which allocation is drawn
+                    description: Reference to an existing reservation identifier (if specified during instantiate)
                     type: string
                     format: leafref
                   'opnfv-promise:priority':
@@ -2584,6 +2658,7 @@ paths:
                 type: string
                 format: leafref
               'opnfv-promise:reservation-id':
+                description: An optional reference to an existing reservation
                 type: string
                 format: leafref
               networks:
@@ -2624,7 +2699,6 @@ paths:
         '200':
           description: Expected response of fabric
           schema:
-            description: Contains networking related resources
             type: object
             properties:
               network:
@@ -2679,7 +2753,6 @@ paths:
           in: body
           description: Contains networking related resources
           schema:
-            description: Contains networking related resources
             type: object
             properties:
               network:
@@ -2731,7 +2804,6 @@ paths:
         '200':
           description: Expected response of fabric
           schema:
-            description: Contains networking related resources
             type: object
             properties:
               network:
@@ -2786,7 +2858,6 @@ paths:
           in: body
           description: Contains networking related resources
           schema:
-            description: Contains networking related resources
             type: object
             properties:
               network:
@@ -2838,7 +2909,6 @@ paths:
         '200':
           description: Expected response of fabric
           schema:
-            description: Contains networking related resources
             type: object
             properties:
               network:
@@ -4319,7 +4389,6 @@ paths:
         '200':
           description: Expected response of storage
           schema:
-            description: Contains storage related resources
             type: object
             properties:
               'opnfv-promise:capacity':
@@ -4332,7 +4401,6 @@ paths:
           in: body
           description: Contains storage related resources
           schema:
-            description: Contains storage related resources
             type: object
             properties:
               'opnfv-promise:capacity':
@@ -4342,7 +4410,6 @@ paths:
         '200':
           description: Expected response of storage
           schema:
-            description: Contains storage related resources
             type: object
             properties:
               'opnfv-promise:capacity':
@@ -4355,7 +4422,6 @@ paths:
           in: body
           description: Contains storage related resources
           schema:
-            description: Contains storage related resources
             type: object
             properties:
               'opnfv-promise:capacity':
@@ -4365,7 +4431,6 @@ paths:
         '200':
           description: Expected response of storage
           schema:
-            description: Contains storage related resources
             type: object
             properties:
               'opnfv-promise:capacity':
@@ -4419,315 +4484,6 @@ paths:
       responses:
         '204':
           description: Expected response for delete
-  '/opnfv-infrastructure:controller/policy':
-    get:
-      description: Contains NFVI policy configurations
-      summary: View detail on policy
-      deprecated: false
-      responses:
-        '200':
-          description: Expected response of policy
-          schema:
-            description: Contains NFVI policy configurations
-            type: object
-            properties:
-              'opnfv-promise:reservation':
-                type: object
-                properties:
-                  max-future-start-range:
-                    description: Enforce reservation request 'start' time is within allowed range from now
-                    type: integer
-                    format: uint16
-                  max-future-end-range:
-                    description: Enforce reservation request 'end' time is within allowed range from now
-                    type: integer
-                    format: uint16
-                  max-duration:
-                    description: Enforce reservation duration (end-start) does not exceed specified threshold
-                    default: '8760'
-                    type: integer
-                    format: uint16
-                  expiry:
-                    description: |-
-                      Duration in minutes from start when unallocated reserved resources
-                        will be released back into the pool
-                    type: integer
-                    format: uint32
-    put:
-      summary: Update details on policy
-      deprecated: false
-      parameters:
-        - name: policy
-          in: body
-          description: Contains NFVI policy configurations
-          schema:
-            description: Contains NFVI policy configurations
-            type: object
-            properties:
-              'opnfv-promise:reservation':
-                type: object
-                properties:
-                  max-future-start-range:
-                    description: Enforce reservation request 'start' time is within allowed range from now
-                    type: integer
-                    format: uint16
-                  max-future-end-range:
-                    description: Enforce reservation request 'end' time is within allowed range from now
-                    type: integer
-                    format: uint16
-                  max-duration:
-                    description: Enforce reservation duration (end-start) does not exceed specified threshold
-                    default: '8760'
-                    type: integer
-                    format: uint16
-                  expiry:
-                    description: |-
-                      Duration in minutes from start when unallocated reserved resources
-                        will be released back into the pool
-                    type: integer
-                    format: uint32
-          required: false
-      responses:
-        '200':
-          description: Expected response of policy
-          schema:
-            description: Contains NFVI policy configurations
-            type: object
-            properties:
-              'opnfv-promise:reservation':
-                type: object
-                properties:
-                  max-future-start-range:
-                    description: Enforce reservation request 'start' time is within allowed range from now
-                    type: integer
-                    format: uint16
-                  max-future-end-range:
-                    description: Enforce reservation request 'end' time is within allowed range from now
-                    type: integer
-                    format: uint16
-                  max-duration:
-                    description: Enforce reservation duration (end-start) does not exceed specified threshold
-                    default: '8760'
-                    type: integer
-                    format: uint16
-                  expiry:
-                    description: |-
-                      Duration in minutes from start when unallocated reserved resources
-                        will be released back into the pool
-                    type: integer
-                    format: uint32
-    patch:
-      summary: Merge details on policy
-      deprecated: false
-      parameters:
-        - name: policy
-          in: body
-          description: Contains NFVI policy configurations
-          schema:
-            description: Contains NFVI policy configurations
-            type: object
-            properties:
-              'opnfv-promise:reservation':
-                type: object
-                properties:
-                  max-future-start-range:
-                    description: Enforce reservation request 'start' time is within allowed range from now
-                    type: integer
-                    format: uint16
-                  max-future-end-range:
-                    description: Enforce reservation request 'end' time is within allowed range from now
-                    type: integer
-                    format: uint16
-                  max-duration:
-                    description: Enforce reservation duration (end-start) does not exceed specified threshold
-                    default: '8760'
-                    type: integer
-                    format: uint16
-                  expiry:
-                    description: |-
-                      Duration in minutes from start when unallocated reserved resources
-                        will be released back into the pool
-                    type: integer
-                    format: uint32
-          required: false
-      responses:
-        '200':
-          description: Expected response of policy
-          schema:
-            description: Contains NFVI policy configurations
-            type: object
-            properties:
-              'opnfv-promise:reservation':
-                type: object
-                properties:
-                  max-future-start-range:
-                    description: Enforce reservation request 'start' time is within allowed range from now
-                    type: integer
-                    format: uint16
-                  max-future-end-range:
-                    description: Enforce reservation request 'end' time is within allowed range from now
-                    type: integer
-                    format: uint16
-                  max-duration:
-                    description: Enforce reservation duration (end-start) does not exceed specified threshold
-                    default: '8760'
-                    type: integer
-                    format: uint16
-                  expiry:
-                    description: |-
-                      Duration in minutes from start when unallocated reserved resources
-                        will be released back into the pool
-                    type: integer
-                    format: uint32
-    delete:
-      summary: Delete policy from controller
-      deprecated: false
-      responses:
-        '204':
-          description: Expected response for delete
-  '/opnfv-infrastructure:controller/policy/opnfv-promise:reservation':
-    get:
-      summary: 'View detail on opnfv-promise:reservation'
-      deprecated: false
-      responses:
-        '200':
-          description: 'Expected response of opnfv-promise:reservation'
-          schema:
-            type: object
-            properties:
-              max-future-start-range:
-                description: Enforce reservation request 'start' time is within allowed range from now
-                type: integer
-                format: uint16
-              max-future-end-range:
-                description: Enforce reservation request 'end' time is within allowed range from now
-                type: integer
-                format: uint16
-              max-duration:
-                description: Enforce reservation duration (end-start) does not exceed specified threshold
-                default: '8760'
-                type: integer
-                format: uint16
-              expiry:
-                description: |-
-                  Duration in minutes from start when unallocated reserved resources
-                    will be released back into the pool
-                type: integer
-                format: uint32
-    put:
-      summary: 'Update details on opnfv-promise:reservation'
-      deprecated: false
-      parameters:
-        - name: 'opnfv-promise:reservation'
-          in: body
-          schema:
-            type: object
-            properties:
-              max-future-start-range:
-                description: Enforce reservation request 'start' time is within allowed range from now
-                type: integer
-                format: uint16
-              max-future-end-range:
-                description: Enforce reservation request 'end' time is within allowed range from now
-                type: integer
-                format: uint16
-              max-duration:
-                description: Enforce reservation duration (end-start) does not exceed specified threshold
-                default: '8760'
-                type: integer
-                format: uint16
-              expiry:
-                description: |-
-                  Duration in minutes from start when unallocated reserved resources
-                    will be released back into the pool
-                type: integer
-                format: uint32
-          required: false
-      responses:
-        '200':
-          description: 'Expected response of opnfv-promise:reservation'
-          schema:
-            type: object
-            properties:
-              max-future-start-range:
-                description: Enforce reservation request 'start' time is within allowed range from now
-                type: integer
-                format: uint16
-              max-future-end-range:
-                description: Enforce reservation request 'end' time is within allowed range from now
-                type: integer
-                format: uint16
-              max-duration:
-                description: Enforce reservation duration (end-start) does not exceed specified threshold
-                default: '8760'
-                type: integer
-                format: uint16
-              expiry:
-                description: |-
-                  Duration in minutes from start when unallocated reserved resources
-                    will be released back into the pool
-                type: integer
-                format: uint32
-    patch:
-      summary: 'Merge details on opnfv-promise:reservation'
-      deprecated: false
-      parameters:
-        - name: 'opnfv-promise:reservation'
-          in: body
-          schema:
-            type: object
-            properties:
-              max-future-start-range:
-                description: Enforce reservation request 'start' time is within allowed range from now
-                type: integer
-                format: uint16
-              max-future-end-range:
-                description: Enforce reservation request 'end' time is within allowed range from now
-                type: integer
-                format: uint16
-              max-duration:
-                description: Enforce reservation duration (end-start) does not exceed specified threshold
-                default: '8760'
-                type: integer
-                format: uint16
-              expiry:
-                description: |-
-                  Duration in minutes from start when unallocated reserved resources
-                    will be released back into the pool
-                type: integer
-                format: uint32
-          required: false
-      responses:
-        '200':
-          description: 'Expected response of opnfv-promise:reservation'
-          schema:
-            type: object
-            properties:
-              max-future-start-range:
-                description: Enforce reservation request 'start' time is within allowed range from now
-                type: integer
-                format: uint16
-              max-future-end-range:
-                description: Enforce reservation request 'end' time is within allowed range from now
-                type: integer
-                format: uint16
-              max-duration:
-                description: Enforce reservation duration (end-start) does not exceed specified threshold
-                default: '8760'
-                type: integer
-                format: uint16
-              expiry:
-                description: |-
-                  Duration in minutes from start when unallocated reserved resources
-                    will be released back into the pool
-                type: integer
-                format: uint32
-    delete:
-      summary: 'Delete opnfv-promise:reservation from policy'
-      deprecated: false
-      responses:
-        '204':
-          description: Expected response for delete
   '/opnfv-infrastructure:controller/opnfv-promise:capacity':
     get:
       description: Describes current state info about capacity utilization info
@@ -4737,7 +4493,6 @@ paths:
         '200':
           description: 'Expected response of opnfv-promise:capacity'
           schema:
-            description: Describes current state info about capacity utilization info
             allOf:
               - $ref: '#/definitions/promise:reservations-list'
               - properties:
@@ -4763,7 +4518,6 @@ paths:
           in: body
           description: Describes current state info about capacity utilization info
           schema:
-            description: Describes current state info about capacity utilization info
             allOf:
               - $ref: '#/definitions/promise:reservations-list'
               - properties:
@@ -4786,7 +4540,6 @@ paths:
         '200':
           description: 'Expected response of opnfv-promise:capacity'
           schema:
-            description: Describes current state info about capacity utilization info
             allOf:
               - $ref: '#/definitions/promise:reservations-list'
               - properties:
@@ -4812,7 +4565,6 @@ paths:
           in: body
           description: Describes current state info about capacity utilization info
           schema:
-            description: Describes current state info about capacity utilization info
             allOf:
               - $ref: '#/definitions/promise:reservations-list'
               - properties:
@@ -4835,7 +4587,6 @@ paths:
         '200':
           description: 'Expected response of opnfv-promise:capacity'
           schema:
-            description: Describes current state info about capacity utilization info
             allOf:
               - $ref: '#/definitions/promise:reservations-list'
               - properties:
@@ -5040,7 +4791,9 @@ paths:
         - name: 'increase:input'
           in: body
           schema:
-            $ref: '#/definitions/promise:temporal-resource-collection'
+            allOf:
+              - $ref: '#/definitions/promise:time-window'
+              - $ref: '#/definitions/promise:resource-capacity'
           required: false
       responses:
         '200':
@@ -5061,13 +4814,16 @@ paths:
         - name: 'decrease:input'
           in: body
           schema:
-            $ref: '#/definitions/promise:temporal-resource-collection'
+            allOf:
+              - $ref: '#/definitions/promise:time-window'
+              - $ref: '#/definitions/promise:resource-capacity'
           required: false
       responses:
         '200':
           description: Expected response of decrease
           schema:
             allOf:
+              - $ref: '#/definitions/promise:time-window'
               - $ref: '#/definitions/promise:common-action-output'
               - properties:
                   pool-id:
@@ -5133,26 +4889,20 @@ paths:
                       format: instance-identifier
   '/opnfv-infrastructure:controller/opnfv-promise:capacity/pool':
     post:
-      description: |-
-        Each entry describes available capacity and elements for a given time
-        window
+      description: Each entry describes available capacity and elements for a given time window
       summary: Creates one or more new pool in reservations-list
       deprecated: false
       parameters:
         - name: pool
           in: body
-          description: |-
-            Each entry describes available capacity and elements for a given time
-            window
+          description: Each entry describes available capacity and elements for a given time window
           schema:
             type: array
             items:
-              description: |-
-                Each entry describes available capacity and elements for a given time
-                window
+              description: Each entry describes available capacity and elements for a given time window
               allOf:
-                - $ref: '#/definitions/nfvi:resource-element'
-                - $ref: '#/definitions/promise:temporal-resource-collection'
+                - $ref: '#/definitions/promise:temporal-resource-element'
+                - $ref: '#/definitions/promise:resource-collection'
           required: false
       responses:
         '200':
@@ -5160,12 +4910,10 @@ paths:
           schema:
             type: array
             items:
-              description: |-
-                Each entry describes available capacity and elements for a given time
-                window
+              description: Each entry describes available capacity and elements for a given time window
               allOf:
-                - $ref: '#/definitions/nfvi:resource-element'
-                - $ref: '#/definitions/promise:temporal-resource-collection'
+                - $ref: '#/definitions/promise:temporal-resource-element'
+                - $ref: '#/definitions/promise:resource-collection'
     get:
       summary: List all pools from reservations-list
       deprecated: false
@@ -5175,30 +4923,24 @@ paths:
           schema:
             type: array
             items:
-              description: |-
-                Each entry describes available capacity and elements for a given time
-                window
+              description: Each entry describes available capacity and elements for a given time window
               allOf:
-                - $ref: '#/definitions/nfvi:resource-element'
-                - $ref: '#/definitions/promise:temporal-resource-collection'
+                - $ref: '#/definitions/promise:temporal-resource-element'
+                - $ref: '#/definitions/promise:resource-collection'
     put:
       summary: Replace the entire pool collection
       deprecated: false
       parameters:
         - name: pool
           in: body
-          description: |-
-            Each entry describes available capacity and elements for a given time
-            window
+          description: Each entry describes available capacity and elements for a given time window
           schema:
             type: array
             items:
-              description: |-
-                Each entry describes available capacity and elements for a given time
-                window
+              description: Each entry describes available capacity and elements for a given time window
               allOf:
-                - $ref: '#/definitions/nfvi:resource-element'
-                - $ref: '#/definitions/promise:temporal-resource-collection'
+                - $ref: '#/definitions/promise:temporal-resource-element'
+                - $ref: '#/definitions/promise:resource-collection'
           required: false
       responses:
         '201':
@@ -5209,93 +4951,68 @@ paths:
       parameters:
         - name: pool
           in: body
-          description: |-
-            Each entry describes available capacity and elements for a given time
-            window
+          description: Each entry describes available capacity and elements for a given time window
           schema:
             type: array
             items:
-              description: |-
-                Each entry describes available capacity and elements for a given time
-                window
+              description: Each entry describes available capacity and elements for a given time window
               allOf:
-                - $ref: '#/definitions/nfvi:resource-element'
-                - $ref: '#/definitions/promise:temporal-resource-collection'
+                - $ref: '#/definitions/promise:temporal-resource-element'
+                - $ref: '#/definitions/promise:resource-collection'
           required: false
       responses:
         '201':
           description: Expected response for merging into collection
   '/opnfv-infrastructure:controller/opnfv-promise:capacity/pool/{id}':
     get:
-      description: |-
-        Each entry describes available capacity and elements for a given time
-        window
+      description: Each entry describes available capacity and elements for a given time window
       summary: View detail on pool
       deprecated: false
       responses:
         '200':
           description: Expected response of pool
           schema:
-            description: |-
-              Each entry describes available capacity and elements for a given time
-              window
             allOf:
-              - $ref: '#/definitions/nfvi:resource-element'
-              - $ref: '#/definitions/promise:temporal-resource-collection'
+              - $ref: '#/definitions/promise:temporal-resource-element'
+              - $ref: '#/definitions/promise:resource-collection'
     put:
       summary: Update details on pool
       deprecated: false
       parameters:
         - name: pool
           in: body
-          description: |-
-            Each entry describes available capacity and elements for a given time
-            window
+          description: Each entry describes available capacity and elements for a given time window
           schema:
-            description: |-
-              Each entry describes available capacity and elements for a given time
-              window
             allOf:
-              - $ref: '#/definitions/nfvi:resource-element'
-              - $ref: '#/definitions/promise:temporal-resource-collection'
+              - $ref: '#/definitions/promise:temporal-resource-element'
+              - $ref: '#/definitions/promise:resource-collection'
           required: false
       responses:
         '200':
           description: Expected response of pool
           schema:
-            description: |-
-              Each entry describes available capacity and elements for a given time
-              window
             allOf:
-              - $ref: '#/definitions/nfvi:resource-element'
-              - $ref: '#/definitions/promise:temporal-resource-collection'
+              - $ref: '#/definitions/promise:temporal-resource-element'
+              - $ref: '#/definitions/promise:resource-collection'
     patch:
       summary: Merge details on pool
       deprecated: false
       parameters:
         - name: pool
           in: body
-          description: |-
-            Each entry describes available capacity and elements for a given time
-            window
+          description: Each entry describes available capacity and elements for a given time window
           schema:
-            description: |-
-              Each entry describes available capacity and elements for a given time
-              window
             allOf:
-              - $ref: '#/definitions/nfvi:resource-element'
-              - $ref: '#/definitions/promise:temporal-resource-collection'
+              - $ref: '#/definitions/promise:temporal-resource-element'
+              - $ref: '#/definitions/promise:resource-collection'
           required: false
       responses:
         '200':
           description: Expected response of pool
           schema:
-            description: |-
-              Each entry describes available capacity and elements for a given time
-              window
             allOf:
-              - $ref: '#/definitions/nfvi:resource-element'
-              - $ref: '#/definitions/promise:temporal-resource-collection'
+              - $ref: '#/definitions/promise:temporal-resource-element'
+              - $ref: '#/definitions/promise:resource-collection'
     delete:
       summary: Delete pool from reservations-list
       deprecated: false
@@ -5406,15 +5123,9 @@ paths:
                 reserved along with any resource elements that are needed to be
                 available at the time of allocation(s).
               allOf:
-                - $ref: '#/definitions/nfvi:resource-element'
-                - $ref: '#/definitions/promise:temporal-resource-collection'
+                - $ref: '#/definitions/promise:temporal-resource-element'
+                - $ref: '#/definitions/promise:resource-collection'
                 - properties:
-                    created-on:
-                      type: string
-                      format: 'yang:date-and-time'
-                    modified-on:
-                      type: string
-                      format: 'yang:date-and-time'
                     remaining:
                       description: |-
                         Provides visibility into total remaining capacity for this
@@ -5441,6 +5152,12 @@ paths:
                           this reservation.
                         type: string
                         format: leafref
+                    created-on:
+                      type: string
+                      format: 'yang:date-and-time'
+                    modified-on:
+                      type: string
+                      format: 'yang:date-and-time'
           required: false
       responses:
         '200':
@@ -5461,15 +5178,9 @@ paths:
                 reserved along with any resource elements that are needed to be
                 available at the time of allocation(s).
               allOf:
-                - $ref: '#/definitions/nfvi:resource-element'
-                - $ref: '#/definitions/promise:temporal-resource-collection'
+                - $ref: '#/definitions/promise:temporal-resource-element'
+                - $ref: '#/definitions/promise:resource-collection'
                 - properties:
-                    created-on:
-                      type: string
-                      format: 'yang:date-and-time'
-                    modified-on:
-                      type: string
-                      format: 'yang:date-and-time'
                     remaining:
                       description: |-
                         Provides visibility into total remaining capacity for this
@@ -5496,6 +5207,12 @@ paths:
                           this reservation.
                         type: string
                         format: leafref
+                    created-on:
+                      type: string
+                      format: 'yang:date-and-time'
+                    modified-on:
+                      type: string
+                      format: 'yang:date-and-time'
     get:
       summary: List all reservations from reservations-list
       deprecated: false
@@ -5518,15 +5235,9 @@ paths:
                 reserved along with any resource elements that are needed to be
                 available at the time of allocation(s).
               allOf:
-                - $ref: '#/definitions/nfvi:resource-element'
-                - $ref: '#/definitions/promise:temporal-resource-collection'
+                - $ref: '#/definitions/promise:temporal-resource-element'
+                - $ref: '#/definitions/promise:resource-collection'
                 - properties:
-                    created-on:
-                      type: string
-                      format: 'yang:date-and-time'
-                    modified-on:
-                      type: string
-                      format: 'yang:date-and-time'
                     remaining:
                       description: |-
                         Provides visibility into total remaining capacity for this
@@ -5553,6 +5264,12 @@ paths:
                           this reservation.
                         type: string
                         format: leafref
+                    created-on:
+                      type: string
+                      format: 'yang:date-and-time'
+                    modified-on:
+                      type: string
+                      format: 'yang:date-and-time'
     put:
       summary: Replace the entire reservation collection
       deprecated: false
@@ -5587,15 +5304,9 @@ paths:
                 reserved along with any resource elements that are needed to be
                 available at the time of allocation(s).
               allOf:
-                - $ref: '#/definitions/nfvi:resource-element'
-                - $ref: '#/definitions/promise:temporal-resource-collection'
+                - $ref: '#/definitions/promise:temporal-resource-element'
+                - $ref: '#/definitions/promise:resource-collection'
                 - properties:
-                    created-on:
-                      type: string
-                      format: 'yang:date-and-time'
-                    modified-on:
-                      type: string
-                      format: 'yang:date-and-time'
                     remaining:
                       description: |-
                         Provides visibility into total remaining capacity for this
@@ -5622,6 +5333,12 @@ paths:
                           this reservation.
                         type: string
                         format: leafref
+                    created-on:
+                      type: string
+                      format: 'yang:date-and-time'
+                    modified-on:
+                      type: string
+                      format: 'yang:date-and-time'
           required: false
       responses:
         '201':
@@ -5660,15 +5377,9 @@ paths:
                 reserved along with any resource elements that are needed to be
                 available at the time of allocation(s).
               allOf:
-                - $ref: '#/definitions/nfvi:resource-element'
-                - $ref: '#/definitions/promise:temporal-resource-collection'
+                - $ref: '#/definitions/promise:temporal-resource-element'
+                - $ref: '#/definitions/promise:resource-collection'
                 - properties:
-                    created-on:
-                      type: string
-                      format: 'yang:date-and-time'
-                    modified-on:
-                      type: string
-                      format: 'yang:date-and-time'
                     remaining:
                       description: |-
                         Provides visibility into total remaining capacity for this
@@ -5695,6 +5406,12 @@ paths:
                           this reservation.
                         type: string
                         format: leafref
+                    created-on:
+                      type: string
+                      format: 'yang:date-and-time'
+                    modified-on:
+                      type: string
+                      format: 'yang:date-and-time'
           required: false
       responses:
         '201':
@@ -5719,28 +5436,10 @@ paths:
         '200':
           description: Expected response of reservation
           schema:
-            description: |-
-              Each entry Describes an accepted resource reservation request, created
-              usually as a result of 'reserve' action.
-
-              A ResourceReservation is a derived instance of a generic
-              ResourceCollection which has additional parameters to map the
-              pool(s) that were referenced to accept this reservation as well
-              as to track allocations made referencing this reservation.
-
-              Contains the capacities of various resource attributes being
-              reserved along with any resource elements that are needed to be
-              available at the time of allocation(s).
             allOf:
-              - $ref: '#/definitions/nfvi:resource-element'
-              - $ref: '#/definitions/promise:temporal-resource-collection'
+              - $ref: '#/definitions/promise:temporal-resource-element'
+              - $ref: '#/definitions/promise:resource-collection'
               - properties:
-                  created-on:
-                    type: string
-                    format: 'yang:date-and-time'
-                  modified-on:
-                    type: string
-                    format: 'yang:date-and-time'
                   remaining:
                     description: |-
                       Provides visibility into total remaining capacity for this
@@ -5767,6 +5466,12 @@ paths:
                         this reservation.
                       type: string
                       format: leafref
+                  created-on:
+                    type: string
+                    format: 'yang:date-and-time'
+                  modified-on:
+                    type: string
+                    format: 'yang:date-and-time'
     put:
       summary: Update details on reservation
       deprecated: false
@@ -5786,28 +5491,10 @@ paths:
             reserved along with any resource elements that are needed to be
             available at the time of allocation(s).
           schema:
-            description: |-
-              Each entry Describes an accepted resource reservation request, created
-              usually as a result of 'reserve' action.
-
-              A ResourceReservation is a derived instance of a generic
-              ResourceCollection which has additional parameters to map the
-              pool(s) that were referenced to accept this reservation as well
-              as to track allocations made referencing this reservation.
-
-              Contains the capacities of various resource attributes being
-              reserved along with any resource elements that are needed to be
-              available at the time of allocation(s).
             allOf:
-              - $ref: '#/definitions/nfvi:resource-element'
-              - $ref: '#/definitions/promise:temporal-resource-collection'
+              - $ref: '#/definitions/promise:temporal-resource-element'
+              - $ref: '#/definitions/promise:resource-collection'
               - properties:
-                  created-on:
-                    type: string
-                    format: 'yang:date-and-time'
-                  modified-on:
-                    type: string
-                    format: 'yang:date-and-time'
                   remaining:
                     description: |-
                       Provides visibility into total remaining capacity for this
@@ -5834,33 +5521,21 @@ paths:
                         this reservation.
                       type: string
                       format: leafref
+                  created-on:
+                    type: string
+                    format: 'yang:date-and-time'
+                  modified-on:
+                    type: string
+                    format: 'yang:date-and-time'
           required: false
       responses:
         '200':
           description: Expected response of reservation
           schema:
-            description: |-
-              Each entry Describes an accepted resource reservation request, created
-              usually as a result of 'reserve' action.
-
-              A ResourceReservation is a derived instance of a generic
-              ResourceCollection which has additional parameters to map the
-              pool(s) that were referenced to accept this reservation as well
-              as to track allocations made referencing this reservation.
-
-              Contains the capacities of various resource attributes being
-              reserved along with any resource elements that are needed to be
-              available at the time of allocation(s).
             allOf:
-              - $ref: '#/definitions/nfvi:resource-element'
-              - $ref: '#/definitions/promise:temporal-resource-collection'
+              - $ref: '#/definitions/promise:temporal-resource-element'
+              - $ref: '#/definitions/promise:resource-collection'
               - properties:
-                  created-on:
-                    type: string
-                    format: 'yang:date-and-time'
-                  modified-on:
-                    type: string
-                    format: 'yang:date-and-time'
                   remaining:
                     description: |-
                       Provides visibility into total remaining capacity for this
@@ -5887,6 +5562,12 @@ paths:
                         this reservation.
                       type: string
                       format: leafref
+                  created-on:
+                    type: string
+                    format: 'yang:date-and-time'
+                  modified-on:
+                    type: string
+                    format: 'yang:date-and-time'
     patch:
       summary: Merge details on reservation
       deprecated: false
@@ -5906,28 +5587,10 @@ paths:
             reserved along with any resource elements that are needed to be
             available at the time of allocation(s).
           schema:
-            description: |-
-              Each entry Describes an accepted resource reservation request, created
-              usually as a result of 'reserve' action.
-
-              A ResourceReservation is a derived instance of a generic
-              ResourceCollection which has additional parameters to map the
-              pool(s) that were referenced to accept this reservation as well
-              as to track allocations made referencing this reservation.
-
-              Contains the capacities of various resource attributes being
-              reserved along with any resource elements that are needed to be
-              available at the time of allocation(s).
             allOf:
-              - $ref: '#/definitions/nfvi:resource-element'
-              - $ref: '#/definitions/promise:temporal-resource-collection'
+              - $ref: '#/definitions/promise:temporal-resource-element'
+              - $ref: '#/definitions/promise:resource-collection'
               - properties:
-                  created-on:
-                    type: string
-                    format: 'yang:date-and-time'
-                  modified-on:
-                    type: string
-                    format: 'yang:date-and-time'
                   remaining:
                     description: |-
                       Provides visibility into total remaining capacity for this
@@ -5954,33 +5617,21 @@ paths:
                         this reservation.
                       type: string
                       format: leafref
+                  created-on:
+                    type: string
+                    format: 'yang:date-and-time'
+                  modified-on:
+                    type: string
+                    format: 'yang:date-and-time'
           required: false
       responses:
         '200':
           description: Expected response of reservation
           schema:
-            description: |-
-              Each entry Describes an accepted resource reservation request, created
-              usually as a result of 'reserve' action.
-
-              A ResourceReservation is a derived instance of a generic
-              ResourceCollection which has additional parameters to map the
-              pool(s) that were referenced to accept this reservation as well
-              as to track allocations made referencing this reservation.
-
-              Contains the capacities of various resource attributes being
-              reserved along with any resource elements that are needed to be
-              available at the time of allocation(s).
             allOf:
-              - $ref: '#/definitions/nfvi:resource-element'
-              - $ref: '#/definitions/promise:temporal-resource-collection'
+              - $ref: '#/definitions/promise:temporal-resource-element'
+              - $ref: '#/definitions/promise:resource-collection'
               - properties:
-                  created-on:
-                    type: string
-                    format: 'yang:date-and-time'
-                  modified-on:
-                    type: string
-                    format: 'yang:date-and-time'
                   remaining:
                     description: |-
                       Provides visibility into total remaining capacity for this
@@ -6007,6 +5658,12 @@ paths:
                         this reservation.
                       type: string
                       format: leafref
+                  created-on:
+                    type: string
+                    format: 'yang:date-and-time'
+                  modified-on:
+                    type: string
+                    format: 'yang:date-and-time'
     delete:
       summary: Delete reservation from reservations-list
       deprecated: false
@@ -6032,10 +5689,6 @@ paths:
         '200':
           description: Expected response of remaining
           schema:
-            description: |-
-              Provides visibility into total remaining capacity for this
-              reservation based on allocations that took effect utilizing
-              this reservation ID as a reference.
             $ref: '#/definitions/promise:resource-capacity'
     put:
       summary: Update details on remaining
@@ -6048,20 +5701,12 @@ paths:
             reservation based on allocations that took effect utilizing
             this reservation ID as a reference.
           schema:
-            description: |-
-              Provides visibility into total remaining capacity for this
-              reservation based on allocations that took effect utilizing
-              this reservation ID as a reference.
             $ref: '#/definitions/promise:resource-capacity'
           required: false
       responses:
         '200':
           description: Expected response of remaining
           schema:
-            description: |-
-              Provides visibility into total remaining capacity for this
-              reservation based on allocations that took effect utilizing
-              this reservation ID as a reference.
             $ref: '#/definitions/promise:resource-capacity'
     patch:
       summary: Merge details on remaining
@@ -6074,20 +5719,12 @@ paths:
             reservation based on allocations that took effect utilizing
             this reservation ID as a reference.
           schema:
-            description: |-
-              Provides visibility into total remaining capacity for this
-              reservation based on allocations that took effect utilizing
-              this reservation ID as a reference.
             $ref: '#/definitions/promise:resource-capacity'
           required: false
       responses:
         '200':
           description: Expected response of remaining
           schema:
-            description: |-
-              Provides visibility into total remaining capacity for this
-              reservation based on allocations that took effect utilizing
-              this reservation ID as a reference.
             $ref: '#/definitions/promise:resource-capacity'
     delete:
       summary: Delete remaining from reservation
@@ -6264,7 +5901,6 @@ definitions:
                         type: string
                         format: leafref
   'nfvi:resource-element':
-    description: A resource element represents access managed data entity.
     type: object
     required:
       - id
@@ -6482,12 +6118,10 @@ definitions:
       pool:
         type: array
         items:
-          description: |-
-            Each entry describes available capacity and elements for a given time
-            window
+          description: Each entry describes available capacity and elements for a given time window
           allOf:
-            - $ref: '#/definitions/nfvi:resource-element'
-            - $ref: '#/definitions/promise:temporal-resource-collection'
+            - $ref: '#/definitions/promise:temporal-resource-element'
+            - $ref: '#/definitions/promise:resource-collection'
       reservation:
         type: array
         items:
@@ -6504,15 +6138,9 @@ definitions:
             reserved along with any resource elements that are needed to be
             available at the time of allocation(s).
           allOf:
-            - $ref: '#/definitions/nfvi:resource-element'
-            - $ref: '#/definitions/promise:temporal-resource-collection'
+            - $ref: '#/definitions/promise:temporal-resource-element'
+            - $ref: '#/definitions/promise:resource-collection'
             - properties:
-                created-on:
-                  type: string
-                  format: 'yang:date-and-time'
-                modified-on:
-                  type: string
-                  format: 'yang:date-and-time'
                 remaining:
                   description: |-
                     Provides visibility into total remaining capacity for this
@@ -6539,31 +6167,33 @@ definitions:
                       this reservation.
                     type: string
                     format: leafref
-  'promise:temporal-resource-collection':
-    description: |-
-      Describes a time bound resource collection data model, which
-      represents a grouping of capacity and elements available during
-      a given window in time which is used by other resource
-      collection related models
+                created-on:
+                  type: string
+                  format: 'yang:date-and-time'
+                modified-on:
+                  type: string
+                  format: 'yang:date-and-time'
+  'promise:temporal-resource-element':
     allOf:
-      - $ref: '#/definitions/promise:resource-collection'
+      - $ref: '#/definitions/nfvi:resource-element'
+      - $ref: '#/definitions/promise:time-window'
       - properties:
-          start:
-            type: string
-            format: 'yang:date-and-time'
-          end:
-            type: string
-            format: 'yang:date-and-time'
           active:
             description: |-
-              Provides current state of this record whether it is enabled and within
-              specified start/end time
+              Provides current state of this element whether it is enabled and
+              within specified start/end time
             type: boolean
             format: boolean
+  'promise:time-window':
+    type: object
+    properties:
+      start:
+        type: string
+        format: 'yang:date-and-time'
+      end:
+        type: string
+        format: 'yang:date-and-time'
   'promise:resource-collection':
-    description: |-
-      Information model capturing parameters for describing a collection of
-      resource capacity and resource elements
     type: object
     properties:
       capacity:
@@ -6587,16 +6217,28 @@ definitions:
         type: string
         format: string
   'promise:resource-usage-request':
-    description: |-
-      Information model capturing available parameters to make a resource
-      usage request.
     allOf:
-      - $ref: '#/definitions/promise:temporal-resource-collection'
+      - $ref: '#/definitions/promise:time-window'
       - properties:
           zone:
             description: Optional identifier to an Availability Zone
             type: string
             format: instance-identifier
+      - properties:
+          instance:
+            type: array
+            items:
+              type: object
+              required:
+                - count
+              properties:
+                flavor:
+                  type: string
+                  format: leafref
+                count:
+                  type: integer
+                  format: uint16
+        type: object
   'promise:query-resource-collection':
     type: object
     properties:

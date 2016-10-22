@@ -339,10 +339,5 @@ module opnfv-infrastructure {
         "Contains storage related resources";
       // TBD
     }
-    container policy {
-      description
-        "Contains NFVI policy configurations";
-      // augmented by feature modules
-    }
   }
 }

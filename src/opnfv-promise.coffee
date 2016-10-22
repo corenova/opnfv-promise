@@ -11,7 +11,7 @@ require 'yang-js'
 
 module.exports = require('../schema/opnfv-promise.yang').bind {
 
-  '/{temporal-resource-collection}':
+  '/{temporal-resource-element}':
     start:  -> @content ?= (new Date).toJSON()
     active: ->
       now = new Date
