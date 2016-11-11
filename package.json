@@ -35,10 +35,12 @@
   },
   "preferGlobal": true,
   "dependencies": {
+    "config": "^1.24.0",
     "node-uuid": "^1.4.7",
     "superagent": "^2.0.0",
-    "yang-express": "^0.4.6",
-    "yang-js": "^0.16.16"
+    "yang-express": "^0.4.7",
+    "yang-js": "^0.16.18",
+    "yang-swagger": "^1.2.2"
   },
   "devDependencies": {
     "coffee-script": ">=1.7.0",
